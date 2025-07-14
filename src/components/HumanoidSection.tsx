@@ -1,81 +1,222 @@
-import React from "react";
-import { Dumbbell, Heart, ShoppingBag, Apple } from "lucide-react";
 
-const SegmentosSection = () => {
-  const segmentos = [
-    {
-      icon: Dumbbell,
-      title: "ACADEMIAS",
-      subtitle: "musculação, crossfit, lutas, danças",
-      description: "Espaço dedicado às principais academias, studios e boxes de treino. Aqui o visitante vivencia o universo da musculação, do funcional, das lutas, do cross e das danças — com demonstrações ao vivo, aulas experimentais e networking com profissionais do setor.",
-      color: "bg-primary",
-      textColor: "text-white"
-    },
-    {
-      icon: Heart,
-      title: "BEM-ESTAR", 
-      subtitle: "yoga, pilates, massagens, terapias holísticas",
-      description: "Um refúgio de equilíbrio e autocuidado. Este pilar reúne práticas como yoga, pilates, massagens, aromaterapia e terapias integrativas, convidando o público a desacelerar, respirar e reconectar com o corpo e a mente.",
-      color: "bg-secondary",
-      textColor: "text-white"
-    },
-    {
-      icon: ShoppingBag,
-      title: "ARTIGOS ESPORTIVOS",
-      subtitle: "moda fitness, acessórios, equipamentos", 
-      description: "Moda, tecnologia e inovação para quem vive o movimento. De roupas funcionais a acessórios inteligentes, esse espaço é voltado às marcas e produtos que vestem, equipam e impulsionam o desempenho de atletas e entusiastas.",
-      color: "bg-accent",
-      textColor: "text-primary"
-    },
-    {
-      icon: Apple,
-      title: "SAÚDE E NUTRIÇÃO",
-      subtitle: "clínicas de estética, consultorias, suplementos",
-      description: "O ponto de encontro entre estética, ciência e nutrição inteligente. Reúne consultorias nutricionais, marcas de suplementos, produtos naturais, alimentação saudável e clínicas especializadas no cuidado com o corpo e o bem-estar.",
-      color: "bg-gradient-to-br from-primary to-secondary",
-      textColor: "text-white"
+import React, { useEffect, useRef, useState } from "react";
+
+const HumanoidSection = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ticking = useRef(false);
+  const lastScrollY = useRef(0);
+
+  // More responsive timing function with shorter duration
+  const cardStyle = {
+    height: '60vh',
+    maxHeight: '600px',
+    borderRadius: '20px',
+    transition: 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
+    willChange: 'transform, opacity'
+  };
+
+  useEffect(() => {
+    // Create intersection observer to detect when section is in view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 0.1 } // Start observing when 10% of element is visible
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
     }
-  ];
+    
+    // Optimized scroll handler using requestAnimationFrame
+    const handleScroll = () => {
+      if (!ticking.current) {
+        lastScrollY.current = window.scrollY;
+        
+        window.requestAnimationFrame(() => {
+          if (!sectionRef.current) return;
+          
+          const sectionRect = sectionRef.current.getBoundingClientRect();
+          const viewportHeight = window.innerHeight;
+          const totalScrollDistance = viewportHeight * 2;
+          
+          // Calculate the scroll progress
+          let progress = 0;
+          if (sectionRect.top <= 0) {
+            progress = Math.min(1, Math.max(0, Math.abs(sectionRect.top) / totalScrollDistance));
+          }
+          
+          // Determine which card should be visible based on progress
+          if (progress >= 0.66) {
+            setActiveCardIndex(2);
+          } else if (progress >= 0.33) {
+            setActiveCardIndex(1);
+          } else {
+            setActiveCardIndex(0);
+          }
+          
+          ticking.current = false;
+        });
+        
+        ticking.current = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // Initial calculation
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
+  // Card visibility based on active index instead of direct scroll progress
+  const isFirstCardVisible = isIntersecting;
+  const isSecondCardVisible = activeCardIndex >= 1;
+  const isThirdCardVisible = activeCardIndex >= 2;
 
   return (
-    <section className="py-20 bg-white" id="segmentos">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4 text-primary">
-            Segmentos Presentes
-          </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Descubra os principais pilares que compõem a FESPIN 2025, cada um oferecendo experiências únicas para todos os perfis de visitantes.
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {segmentos.map((segmento, index) => (
+    <div 
+      ref={sectionRef} 
+      className="relative" 
+      style={{ height: '300vh' }}
+    >
+      <section className="w-full h-screen py-10 md:py-16 sticky top-0 overflow-hidden bg-white" id="why-humanoid">
+        <div className="container px-6 lg:px-8 mx-auto h-full flex flex-col">
+          <div className="mb-2 md:mb-3">
+            <div className="flex items-center gap-4 mb-2 md:mb-2 pt-8 sm:pt-6 md:pt-4">
+              <div className="pulse-chip opacity-0 animate-fade-in" style={{
+                animationDelay: "0.1s"
+              }}>
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pulse-500 text-white mr-2">02</span>
+                <span>Humanoid</span>
+              </div>
+            </div>
+            
+            <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-display font-bold mb-1 md:mb-2">
+              Why Humanoid
+            </h2>
+          </div>
+          
+          <div ref={cardsContainerRef} className="relative flex-1 perspective-1000">
+            {/* First Card */}
             <div 
-              key={index}
-              className={`${segmento.color} ${segmento.textColor} rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2`}
+              className={`absolute inset-0 overflow-hidden shadow-xl ${isFirstCardVisible ? 'animate-card-enter' : ''}`} 
+              style={{
+                ...cardStyle,
+                zIndex: 10,
+                transform: `translateY(${isFirstCardVisible ? '90px' : '200px'}) scale(0.9)`,
+                opacity: isFirstCardVisible ? 0.9 : 0
+              }}
             >
-              <div className="flex items-center justify-center w-16 h-16 rounded-full bg-white/20 mb-6">
-                <segmento.icon className="w-8 h-8" />
+              <div
+                className="absolute inset-0 z-0 bg-gradient-to-b from-pulse-900/40 to-dark-900/80"
+                style={{
+                  backgroundImage: "url('/background-section1.png')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "top center",
+                  backgroundBlendMode: "overlay"
+                }}
+              ></div>
+              
+              <div className="absolute top-4 right-4 z-20">
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white">
+                  <span className="text-sm font-medium">The vision</span>
+                </div>
               </div>
               
-              <h3 className="text-xl font-bold mb-2">
-                {segmento.title}
-              </h3>
-              
-              <p className="text-sm opacity-90 mb-4 font-medium">
-                {segmento.subtitle}
-              </p>
-              
-              <p className="text-sm opacity-80 leading-relaxed">
-                {segmento.description}
-              </p>
+              <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
+                <div className="max-w-lg">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-white font-bold leading-tight mb-4">
+                    We're giving AI a way to navigate the physical world
+                  </h3>
+                </div>
+              </div>
             </div>
-          ))}
+            
+            {/* Second Card */}
+            <div 
+              className={`absolute inset-0 overflow-hidden shadow-xl ${isSecondCardVisible ? 'animate-card-enter' : ''}`} 
+              style={{
+                ...cardStyle,
+                zIndex: 20,
+                transform: `translateY(${isSecondCardVisible ? activeCardIndex === 1 ? '55px' : '45px' : '200px'}) scale(0.95)`,
+                opacity: isSecondCardVisible ? 1 : 0,
+                pointerEvents: isSecondCardVisible ? 'auto' : 'none'
+              }}
+            >
+              <div
+                className="absolute inset-0 z-0 bg-gradient-to-b from-pulse-900/40 to-dark-900/80"
+                style={{
+                  backgroundImage: "url('/background-section2.png')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundBlendMode: "overlay"
+                }}
+              ></div>
+              
+              <div className="absolute top-4 right-4 z-20">
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white">
+                  <span className="text-sm font-medium">The vision</span>
+                </div>
+              </div>
+              
+              <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
+                <div className="max-w-lg">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-white font-bold leading-tight mb-4">
+                    We're bringing adaptive intelligence to where humans work
+                  </h3>
+                </div>
+              </div>
+            </div>
+            
+            {/* Third Card */}
+            <div 
+              className={`absolute inset-0 overflow-hidden shadow-xl ${isThirdCardVisible ? 'animate-card-enter' : ''}`} 
+              style={{
+                ...cardStyle,
+                zIndex: 30,
+                transform: `translateY(${isThirdCardVisible ? activeCardIndex === 2 ? '15px' : '0' : '200px'}) scale(1)`,
+                opacity: isThirdCardVisible ? 1 : 0,
+                pointerEvents: isThirdCardVisible ? 'auto' : 'none'
+              }}
+            >
+              <div
+                className="absolute inset-0 z-0 bg-gradient-to-b from-pulse-900/40 to-dark-900/80"
+                style={{
+                  backgroundImage: "url('/background-section3.png')",
+                  backgroundSize: "cover",
+                  backgroundPosition: "bottom center",
+                  backgroundBlendMode: "overlay"
+                }}
+              ></div>
+              
+              <div className="absolute top-4 right-4 z-20">
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white">
+                  <span className="text-sm font-medium">The vision</span>
+                </div>
+              </div>
+              
+              <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
+                <div className="max-w-lg">
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-display text-white font-bold leading-tight mb-4">
+                    We're creating companions, <span className="text-[#FC4D0A]">not replacements</span>
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 
-export default SegmentosSection;
+export default HumanoidSection;
