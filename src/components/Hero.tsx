@@ -1,13 +1,12 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ArrowRight } from "lucide-react";
-import LottieAnimation from "./LottieAnimation";
+import { ArrowRight, Calendar, MapPin } from "lucide-react";
+import heroImage from "@/assets/people-exercising-hero.jpg";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [lottieData, setLottieData] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -22,12 +21,6 @@ const Hero = () => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  useEffect(() => {
-    fetch('/loop-header.lottie')
-      .then(response => response.json())
-      .then(data => setLottieData(data))
-      .catch(error => console.error("Error loading Lottie animation:", error));
-  }, []);
 
   useEffect(() => {
     // Skip effect on mobile
@@ -88,96 +81,91 @@ const Hero = () => {
   
   return (
     <section 
-      className="overflow-hidden relative bg-cover" 
-      id="hero" 
-      style={{
-        backgroundImage: 'url("/Header-background.webp")',
-        backgroundPosition: 'center 30%', 
-        padding: isMobile ? '100px 12px 40px' : '120px 20px 60px'
-      }}
+      className="overflow-hidden relative min-h-screen bg-fespin-gradient-hero" 
+      id="hero"
     >
-      <div className="absolute -top-[10%] -right-[5%] w-1/2 h-[70%] bg-pulse-gradient opacity-20 blur-3xl rounded-full"></div>
+      <div className="absolute inset-0 bg-fespin-overlay"></div>
+      <div className="absolute -top-[10%] -right-[5%] w-1/2 h-[70%] bg-accent opacity-20 blur-3xl rounded-full"></div>
       
-      <div className="container px-4 sm:px-6 lg:px-8" ref={containerRef}>
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 items-center">
-          <div className="w-full lg:w-1/2">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+      
+        <div className="flex flex-col lg:flex-row gap-12 items-center" ref={containerRef}>
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
             <div 
-              className="pulse-chip mb-3 sm:mb-6 opacity-0 animate-fade-in" 
+              className="inline-flex items-center px-4 py-2 rounded-full bg-accent text-primary font-medium text-sm mb-6 opacity-0 animate-fade-in" 
               style={{ animationDelay: "0.1s" }}
             >
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pulse-500 text-white mr-2">01</span>
-              <span>Purpose</span>
+              <Calendar className="w-4 h-4 mr-2" />
+              <span>2025</span>
             </div>
             
             <h1 
-              className="section-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl leading-tight opacity-0 animate-fade-in" 
+              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold leading-tight text-white opacity-0 animate-fade-in" 
               style={{ animationDelay: "0.3s" }}
             >
-              Atlas: Where Code<br className="hidden sm:inline" />Meets Motion
+              FESPIN 2025<br />
+              <span className="text-accent">Movimento que Transforma</span>
             </h1>
             
-            <p 
-              style={{ animationDelay: "0.5s" }} 
-              className="section-subtitle mt-3 sm:mt-6 mb-4 sm:mb-8 leading-relaxed opacity-0 animate-fade-in text-gray-950 font-normal text-base sm:text-lg text-left"
+            <div 
+              className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-6 mb-8 opacity-0 animate-fade-in text-white/90" 
+              style={{ animationDelay: "0.5s" }}
             >
-              The humanoid companion that learns and adapts alongside you.
-            </p>
+              <div className="flex items-center">
+                <Calendar className="w-5 h-5 mr-2 text-accent" />
+                <span className="text-lg">14 a 16 de novembro</span>
+              </div>
+              <div className="flex items-center">
+                <MapPin className="w-5 h-5 mr-2 text-accent" />
+                <span className="text-lg">Espaço Viber, Indaiatuba/SP</span>
+              </div>
+            </div>
             
             <div 
               className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in" 
               style={{ animationDelay: "0.7s" }}
             >
               <a 
-                href="#get-access" 
-                className="flex items-center justify-center group w-full sm:w-auto text-center" 
-                style={{
-                  backgroundColor: '#FE5C02',
-                  borderRadius: '1440px',
-                  boxSizing: 'border-box',
-                  color: '#FFFFFF',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  lineHeight: '20px',
-                  padding: '16px 24px', // Slightly reduced padding for mobile
-                  border: '1px solid white',
-                }}
+                href="#participar" 
+                className="flex items-center justify-center group bg-accent text-primary font-semibold py-4 px-8 rounded-full transition-all duration-300 hover:bg-accent/90 hover:scale-105 transform" 
               >
-                Request Access
-                <ArrowRight className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                Quero Participar
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </a>
+              <a 
+                href="#expositor" 
+                className="flex items-center justify-center group bg-transparent border-2 border-white text-white font-semibold py-4 px-8 rounded-full transition-all duration-300 hover:bg-white hover:text-primary hover:scale-105 transform" 
+              >
+                Seja um Expositor
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
               </a>
             </div>
           </div>
           
-          <div className="w-full lg:w-1/2 relative mt-6 lg:mt-0">
-            {lottieData ? (
-              <div className="relative z-10 animate-fade-in" style={{ animationDelay: "0.9s" }}>
-                <LottieAnimation 
-                  animationPath={lottieData} 
-                  className="w-full h-auto max-w-lg mx-auto"
-                  loop={true}
-                  autoplay={true}
-                />
-              </div>
-            ) : (
-              <>
-              <div className="absolute inset-0 bg-dark-900 rounded-2xl sm:rounded-3xl -z-10 shadow-xl"></div>
-              <div className="relative transition-all duration-500 ease-out overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
-                <img 
-                  ref={imageRef} 
-                  src="/lovable-uploads/5663820f-6c97-4492-9210-9eaa1a8dc415.png" 
-                  alt="Atlas Robot" 
-                  className="w-full h-auto object-cover transition-transform duration-500 ease-out" 
-                  style={{ transformStyle: 'preserve-3d' }} 
-                />
-                <div className="absolute inset-0" style={{ backgroundImage: 'url("/hero-image.jpg")', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'overlay', opacity: 0.5 }}></div>
-              </div>
-              </>
-            )}
+          <div className="w-full lg:w-1/2 relative mt-12 lg:mt-0">
+            <div className="relative transition-all duration-500 ease-out overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl opacity-0 animate-fade-in" style={{ animationDelay: "0.9s" }}>
+              <img 
+                ref={imageRef} 
+                src={heroImage} 
+                alt="Pessoas se exercitando na FESPIN" 
+                className="w-full h-auto object-cover transition-transform duration-500 ease-out" 
+                style={{ transformStyle: 'preserve-3d' }} 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent"></div>
+            </div>
+            
+            {/* Floating elements */}
+            <div className="absolute -top-4 -right-4 w-16 h-16 bg-accent rounded-full flex items-center justify-center animate-float">
+              <span className="text-primary font-bold text-xl">2025</span>
+            </div>
+            <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-secondary rounded-full flex items-center justify-center animate-float" style={{ animationDelay: "1s" }}>
+              <span className="text-white font-bold text-sm">NOV</span>
+            </div>
           </div>
         </div>
       </div>
       
-      <div className="hidden lg:block absolute bottom-0 left-1/4 w-64 h-64 bg-pulse-100/30 rounded-full blur-3xl -z-10 parallax" data-speed="0.05"></div>
+      <div className="hidden lg:block absolute bottom-0 left-1/4 w-64 h-64 bg-secondary/30 rounded-full blur-3xl -z-10 parallax" data-speed="0.05"></div>
     </section>
   );
 };

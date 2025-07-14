@@ -52,13 +52,14 @@ const Navbar = () => {
             e.preventDefault();
             scrollToTop();
           }}
-          aria-label="Pulse Robot"
+          aria-label="FESPIN 2025"
         >
-          <img 
-            src="/logo.svg" 
-            alt="Pulse Robot Logo" 
-            className="h-7 sm:h-8" 
-          />
+          <div className="text-2xl font-bold bg-fespin-gradient bg-clip-text text-transparent">
+            FESPIN
+          </div>
+          <div className="text-sm font-medium text-accent">
+            2025
+          </div>
         </a>
 
         {/* Desktop Navigation */}
@@ -71,10 +72,12 @@ const Navbar = () => {
               scrollToTop();
             }}
           >
-            Home
+            Início
           </a>
-          <a href="#features" className="nav-link">About</a>
-          <a href="#details" className="nav-link">Contact</a>
+          <a href="#sobre" className="nav-link">Sobre</a>
+          <a href="#programacao" className="nav-link">Programação</a>
+          <a href="#expositores" className="nav-link">Expositores</a>
+          <a href="#contato" className="nav-link">Contato</a>
         </nav>
 
         {/* Mobile menu button - increased touch target */}
@@ -103,27 +106,47 @@ const Navbar = () => {
               document.body.style.overflow = '';
             }}
           >
-            Home
+            Início
           </a>
           <a 
-            href="#features" 
+            href="#sobre" 
             className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
             onClick={() => {
               setIsMenuOpen(false);
               document.body.style.overflow = '';
             }}
           >
-            About
+            Sobre
           </a>
           <a 
-            href="#details" 
+            href="#programacao" 
             className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
             onClick={() => {
               setIsMenuOpen(false);
               document.body.style.overflow = '';
             }}
           >
-            Contact
+            Programação
+          </a>
+          <a 
+            href="#expositores" 
+            className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
+            onClick={() => {
+              setIsMenuOpen(false);
+              document.body.style.overflow = '';
+            }}
+          >
+            Expositores
+          </a>
+          <a 
+            href="#contato" 
+            className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
+            onClick={() => {
+              setIsMenuOpen(false);
+              document.body.style.overflow = '';
+            }}
+          >
+            Contato
           </a>
         </nav>
       </div>

@@ -63,19 +63,12 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for Pulse Robot
-				pulse: {
-					"50": "#fff7ed",
-					"100": "#ffedd5",
-					"200": "#fed7aa",
-					"300": "#fdba74",
-					"400": "#fb923c",
-					"500": "#f97316", // Primary orange
-					"600": "#ea580c",
-					"700": "#c2410c",
-					"800": "#9a3412",
-					"900": "#7c2d12",
-					"950": "#431407",
+				// Custom colors for FESPIN
+				fespin: {
+					"dark": "#0a2856",     // Primário Escuro
+					"light": "#00d856",    // Primário Claro  
+					"accent": "#b1f727",   // Destaque
+					"white": "#FFFFFF",    // Neutro
 				},
 				dark: {
 					"900": "#121212", // Almost black
@@ -137,9 +130,9 @@ export default {
 				'float': 'float 6s ease-in-out infinite'
 			},
 			backgroundImage: {
-				'hero-gradient': 'linear-gradient(90deg, hsla(24, 100%, 83%, 1) 0%, hsla(341, 91%, 68%, 1) 100%)',
-				'hero-gradient-2': 'linear-gradient(90deg, hsla(39, 100%, 77%, 1) 0%, hsla(22, 90%, 57%, 1) 100%)',
-				'pulse-gradient': 'linear-gradient(180deg, rgba(249,115,22,0.8) 0%, rgba(249,115,22,0) 100%)',
+				'fespin-gradient': 'linear-gradient(135deg, #0a2856 0%, #00d856 100%)',
+				'fespin-gradient-hero': 'linear-gradient(135deg, #0a2856 0%, #00d856 70%, #b1f727 100%)',
+				'fespin-overlay': 'linear-gradient(180deg, rgba(10, 40, 86, 0.8) 0%, rgba(0, 216, 86, 0.3) 100%)',
 			},
 			fontFamily: {
 				'sans': ['Inter', 'sans-serif'],

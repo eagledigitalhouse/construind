@@ -26,24 +26,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 24 95% 53%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 216 85% 19%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 136 100% 42%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 84 92% 56%;
+    --accent-foreground: 216 85% 19%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 24 95% 53%;
+    --ring: 136 100% 42%;
 
     --radius: 0.5rem;
 
@@ -67,17 +67,17 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 24 95% 53%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 216 85% 19%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 136 100% 42%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 84 92% 56%;
+    --accent-foreground: 216 85% 19%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -138,8 +138,8 @@
     background-position: center;
   }
 
-  .pulse-chip {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-pulse-100 text-pulse-600 border border-pulse-200;
+  .fespin-chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent text-primary border border-accent/30;
   }
   
   .section-container {
@@ -163,15 +163,15 @@
   }
   
   .button-primary {
-    @apply bg-pulse-500 hover:bg-pulse-600 text-white font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98];
+    @apply bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98];
   }
 
   .button-secondary {
-    @apply bg-transparent border border-gray-300 hover:border-pulse-500 text-gray-800 hover:text-pulse-500 font-medium py-3 px-6 rounded-full transition-all duration-300;
+    @apply bg-transparent border border-gray-300 hover:border-secondary text-gray-800 hover:text-secondary font-medium py-3 px-6 rounded-full transition-all duration-300;
   }
   
   .nav-link {
-    @apply relative text-gray-800 hover:text-pulse-500 py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-pulse-500 after:transition-all hover:after:w-full;
+    @apply relative text-gray-800 hover:text-secondary py-2 transition-colors duration-300 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-secondary after:transition-all hover:after:w-full;
   }
 }
 
