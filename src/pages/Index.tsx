@@ -2,14 +2,15 @@
 import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import HumanoidSection from "@/components/HumanoidSection";
-import SpecsSection from "@/components/SpecsSection";
-import DetailsSection from "@/components/DetailsSection";
-import ImageShowcaseSection from "@/components/ImageShowcaseSection";
+import AboutSection from "@/components/AboutSection";
+import SegmentosSection from "@/components/HumanoidSection";
 import Features from "@/components/Features";
-import Testimonials from "@/components/Testimonials";
+import CTASection from "@/components/CTASection";
+import SpecsSection from "@/components/SpecsSection";
+import ExpositorPatrocinioSection from "@/components/ExpositorPatrocinioSection";
+import PatrocinadoresSection from "@/components/PatrocinadoresSection";
+import LocalDataSection from "@/components/LocalDataSection";
 import Newsletter from "@/components/Newsletter";
-import MadeByHumans from "@/components/MadeByHumans";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -61,18 +62,19 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="space-y-4 sm:space-y-8"> {/* Reduced space on mobile */}
+      <main className="space-y-2 sm:space-y-4"> {/* Harmonic spacing between sections */}
         <Hero />
-        <HumanoidSection />
-        <SpecsSection />
-        <DetailsSection />
-        <ImageShowcaseSection />
+        <AboutSection />
         <Features />
-        <Testimonials />
+        <SegmentosSection />
+        <CTASection variant="home" />
+        <SpecsSection />
+        <ExpositorPatrocinioSection />
+        <PatrocinadoresSection />
+        <LocalDataSection />
         <Newsletter />
-        <MadeByHumans />
       </main>
-      <Footer />
+      <Footer variant="home" />
     </div>
   );
 };

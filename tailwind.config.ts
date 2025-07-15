@@ -131,14 +131,12 @@ export default {
 			},
 			backgroundImage: {
 				'fespin-gradient': 'linear-gradient(135deg, #0a2856 0%, #00d856 100%)',
-				'fespin-gradient-hero': 'linear-gradient(135deg, #0a2856 0%, #00d856 70%, #b1f727 100%)',
+				'fespin-gradient-hero': 'linear-gradient(135deg, rgba(10, 40, 86, 0.95) 0%, rgba(0, 216, 86, 0.85) 70%, rgba(177, 247, 39, 0.75) 100%)',
 				'fespin-overlay': 'linear-gradient(180deg, rgba(10, 40, 86, 0.8) 0%, rgba(0, 216, 86, 0.3) 100%)',
 			},
 			fontFamily: {
-				'sans': ['Inter', 'sans-serif'],
-				'display': ['Brockmann', 'SF Pro Display', 'Inter', 'sans-serif'],
-				'brockmann': ['Brockmann', 'serif'],
-				'playfair': ['"Playfair Display"', 'serif'],
+				'sans': ['Brockmann', 'Inter', 'sans-serif'],
+				'display': ['Brockmann', 'Inter', 'sans-serif'],
 			},
 			boxShadow: {
 				'elegant': '0 4px 20px rgba(0, 0, 0, 0.08)',

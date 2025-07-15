@@ -1,28 +1,93 @@
 
 import React from "react";
+import novaImagem from "../assets/41NYhR0lTlSlGvmRpFyhKQ.webp";
 
 const SpecsSection = () => {
   return (
-    <section className="w-full py-6 sm:py-10 bg-white" id="specifications">
+    <section className="w-full py-10 md:py-14 bg-white" id="por-que-existe">
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
-        {/* Header with badge and line */}
-        <div className="flex items-center gap-4 mb-8 sm:mb-16">
-          <div className="flex items-center gap-4">
-            <div className="pulse-chip">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pulse-500 text-white mr-2">3</span>
-              <span>Specs</span>
+        {/* Header centralizado */}
+        <div className="text-center mb-8 md:mb-12">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="fespin-chip opacity-0 animate-fade-in" style={{
+              animationDelay: "0.1s"
+            }}>
+              <span>Por que a FESPIN existe?</span>
             </div>
           </div>
-          <div className="flex-1 h-[1px] bg-gray-300"></div>
-        </div>
-        
-        {/* Main content with text mask image - responsive text sizing */}
-        <div className="max-w-5xl pl-4 sm:pl-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-display leading-tight mb-8 sm:mb-12">
-            <span className="block bg-clip-text text-transparent bg-[url('/text-mask-image.jpg')] bg-cover bg-center">
-              Atlas works with your team, not instead of it. By handling repetitive tasks, improving safety conditions, and learning from every interaction, Atlas helps humans focus on what they do best: create, solve, and innovate.
-            </span>
+          
+          <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-display font-extrabold leading-tight mb-2 opacity-0 animate-fade-in" style={{
+            animationDelay: "0.3s",
+            fontWeight: "900"
+          }}>
+            Acreditamos que o <span className="text-[#00d856]">movimento transforma</span>.
           </h2>
+          
+          <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+            animationDelay: "0.5s"
+          }}>
+            Saúde vai além do físico... é atitude, é escolha, é comunidade.
+          </p>
+        </div>
+
+        {/* Layout principal */}
+        <div className="max-w-6xl mx-auto opacity-0 animate-fade-in" style={{ animationDelay: "0.7s" }}>
+          {/* Bloco superior: imagem e manifesto lado a lado */}
+          <div className="bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              {/* Imagem à esquerda */}
+              <div className="lg:border-r border-gray-100 h-auto">
+                <img 
+                  src={novaImagem} 
+                  alt="FESPIN - Movimento que transforma" 
+                  className="w-full h-auto object-cover sm:object-contain lg:object-cover"
+                  style={{ 
+                    maxHeight: "500px",
+                    height: "auto"
+                  }}
+                />
+              </div>
+              
+              {/* Manifesto à direita */}
+              <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
+                <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                  <p className="relative pl-4 sm:pl-6 border-l-4 border-[#00d856]">
+                    <span className="text-lg sm:text-xl md:text-2xl font-semibold text-[#0a2856]">Movimento que transforma</span> é mais do que um slogan — é o coração da FESPIN. Ele representa a ideia de que toda mudança significativa começa com uma ação, por menor que seja.
+                  </p>
+                  
+                  <p>
+                    Ao incentivar o corpo a se mover, também despertamos a mente, criamos conexões e abrimos espaço para novas possibilidades. Esse movimento não se limita ao esporte: ele inspira escolhas mais saudáveis, relações mais fortes e uma comunidade mais ativa e unida.
+                  </p>
+                  
+                  <p className="text-center text-lg sm:text-xl md:text-2xl font-display font-bold text-[#0a2856] pt-2">
+                    É sobre transformar vidas, uma experiência de cada vez.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bloco inferior: números em linha */}
+            <div className="border-t border-gray-100">
+              <div className="grid grid-cols-2 sm:grid-cols-4">
+                <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">+15mil</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">visitantes</div>
+                </div>
+                <div className="text-center py-4 px-2 sm:p-6 border-r sm:border-r border-gray-100">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">3</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">dias de evento</div>
+                </div>
+                <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">4</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">segmentos</div>
+                </div>
+                <div className="text-center py-4 px-2 sm:p-6">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">∞</div>
+                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">conexões</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

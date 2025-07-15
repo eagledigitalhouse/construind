@@ -1,6 +1,14 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@font-face {
+  font-family: 'Brockmann';
+  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
+       url('/brockmann-medium.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
   font-family: 'Brockmann';
@@ -11,12 +19,58 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Brockmann';
+  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
+       url('/brockmann-medium.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brockmann';
+  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
+       url('/brockmann-medium.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brockmann';
+  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
+       url('/brockmann-medium.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Brockmann';
+  src: url('/brockmann-medium-webfont.ttf') format('truetype'),
+       url('/brockmann-medium.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  body {
+    font-family: 'Brockmann', 'Inter', sans-serif;
+  }
+  
   :root {
+    /* FESPIN Colors */
+    --fespin-primary-dark: #0a2856;
+    --fespin-primary-light: #00d856;
+    --fespin-accent: #b1f727;
+    --fespin-neutral: #FFFFFF;
+    
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -137,21 +191,121 @@
     background-size: cover;
     background-position: center;
   }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fadeInUp {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 
   .fespin-chip {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent text-primary border border-accent/30;
+    @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#00d856] text-white border border-[#00d856]/30;
   }
   
   .section-container {
-    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12;
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10;
   }
 
   .section-title {
-    @apply text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-tight;
+    @apply text-4xl md:text-5xl lg:text-6xl font-display font-extrabold tracking-tight leading-tight;
+    font-weight: 500 !important;
+    letter-spacing: -0.02em;
+    -webkit-text-stroke: 0.5px currentColor;
+    text-stroke: 0.5px currentColor;
+  }
+
+  .hero-title {
+    @apply font-display font-extrabold leading-tight;
+    font-weight: 500 !important;
+    letter-spacing: -0.03em;
+    -webkit-text-stroke: 0.8px currentColor;
+    text-stroke: 0.8px currentColor;
   }
 
   .section-subtitle {
-    @apply text-lg md:text-xl text-gray-600 mt-4 max-w-3xl;
+    @apply text-2xl md:text-3xl font-display font-bold tracking-tight leading-tight;
+    font-weight: 500 !important;
+    letter-spacing: -0.01em;
+    -webkit-text-stroke: 0.3px currentColor;
+    text-stroke: 0.3px currentColor;
+  }
+
+  .card-title {
+    @apply font-display font-bold;
+    font-weight: 500 !important;
+    -webkit-text-stroke: 0.4px currentColor;
+    text-stroke: 0.4px currentColor;
+  }
+
+  .logo-text {
+    @apply font-display font-bold;
+    font-weight: 500 !important;
+    -webkit-text-stroke: 0.3px currentColor;
+    text-stroke: 0.3px currentColor;
+  }
+
+  .section-description {
+    @apply text-lg md:text-xl text-gray-600 mt-1 max-w-3xl leading-relaxed;
+    font-weight: 400 !important;
+  }
+
+  /* Forçar títulos principais a serem mais marcantes */
+  h1, h2, h3 {
+    font-weight: 900 !important;
+    font-family: 'Brockmann', 'Inter', sans-serif !important;
+  }
+
+  .font-extrabold {
+    font-weight: 900 !important;
+    font-family: 'Brockmann', 'Inter', sans-serif !important;
+  }
+
+  .font-bold {
+    font-weight: 700 !important;
+    font-family: 'Brockmann', 'Inter', sans-serif !important;
+  }
+
+  .font-display {
+    font-family: 'Brockmann', 'Inter', sans-serif !important;
+  }
+
+  /* Garantir que títulos de seção sejam super marcantes */
+  .section-title, .hero-title {
+    font-weight: 900 !important;
+    font-family: 'Brockmann', 'Inter', sans-serif !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .section-header {
+    @apply text-center mb-8 md:mb-12;
+  }
+
+  .section-badge {
+    @apply flex items-center justify-center gap-4 mb-4;
+  }
+
+  .section-spacing {
+    @apply space-y-4;
   }
 
   .glass-card {
@@ -163,11 +317,17 @@
   }
   
   .button-primary {
-    @apply bg-secondary hover:bg-secondary/90 text-white font-medium py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98];
+    @apply bg-secondary hover:bg-secondary/90 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98];
+    font-weight: 500 !important;
+    -webkit-text-stroke: 0.2px currentColor;
+    text-stroke: 0.2px currentColor;
   }
 
   .button-secondary {
-    @apply bg-transparent border border-gray-300 hover:border-secondary text-gray-800 hover:text-secondary font-medium py-3 px-6 rounded-full transition-all duration-300;
+    @apply bg-transparent border border-gray-300 hover:border-secondary text-gray-800 hover:text-secondary font-bold py-3 px-6 rounded-full transition-all duration-300;
+    font-weight: 500 !important;
+    -webkit-text-stroke: 0.2px currentColor;
+    text-stroke: 0.2px currentColor;
   }
   
   .nav-link {
@@ -220,4 +380,18 @@
 .parallax {
   transform: translateY(var(--parallax-y, 0));
   transition: transform 0.1s ease-out;
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fade-in 1s ease-in-out forwards;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
 }

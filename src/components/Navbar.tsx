@@ -54,7 +54,7 @@ const Navbar = () => {
           }}
           aria-label="FESPIN 2025"
         >
-          <div className="text-2xl font-bold bg-fespin-gradient bg-clip-text text-transparent">
+          <div className="text-2xl logo-text bg-fespin-gradient bg-clip-text text-transparent">
             FESPIN
           </div>
           <div className="text-sm font-medium text-accent">
@@ -76,7 +76,8 @@ const Navbar = () => {
           </a>
           <a href="#sobre" className="nav-link">Sobre</a>
           <a href="#programacao" className="nav-link">Programação</a>
-          <a href="#expositores" className="nav-link">Expositores</a>
+          <a href="/expositor" className="nav-link">Expositor</a>
+          <a href="/patrocinio" className="nav-link">Patrocínio</a>
           <a href="#contato" className="nav-link">Contato</a>
         </nav>
 
@@ -129,14 +130,24 @@ const Navbar = () => {
             Programação
           </a>
           <a 
-            href="#expositores" 
+            href="/expositor" 
             className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
             onClick={() => {
               setIsMenuOpen(false);
               document.body.style.overflow = '';
             }}
           >
-            Expositores
+            Expositor
+          </a>
+          <a 
+            href="/patrocinio" 
+            className="text-xl font-medium py-3 px-6 w-full text-center rounded-lg hover:bg-gray-100" 
+            onClick={() => {
+              setIsMenuOpen(false);
+              document.body.style.overflow = '';
+            }}
+          >
+            Patrocínio
           </a>
           <a 
             href="#contato" 

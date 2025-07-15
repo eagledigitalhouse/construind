@@ -59,16 +59,15 @@ const TestimonialCard = ({
 const Testimonials = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  return <section className="py-12 bg-white relative" id="testimonials" ref={sectionRef}> {/* Reduced from py-20 */}
+    return <section className="py-10 md:py-14 bg-white relative" id="testimonials" ref={sectionRef}> {/* Reduced from py-20 */}
       <div className="section-container opacity-0 animate-on-scroll">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="pulse-chip">
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pulse-500 text-white mr-2">04</span>
-            <span>Testimonials</span>
-          </div>
+                  <div className="flex items-center gap-4 mb-4">
+            <div className="fespin-chip">
+              <span>Testimonials</span>
+            </div>
         </div>
         
-        <h2 className="text-5xl font-display font-bold mb-12 text-left">What others say</h2>
+        <h2 className="text-5xl font-display font-bold leading-tight mb-6 text-left">What others say</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {testimonials.map((testimonial, index) => <TestimonialCard key={index} content={testimonial.content} author={testimonial.author} role={testimonial.role} gradient={testimonial.gradient} backgroundImage={testimonial.backgroundImage} />)}

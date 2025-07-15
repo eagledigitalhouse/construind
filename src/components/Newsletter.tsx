@@ -1,54 +1,78 @@
 import React, { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { Mail, ArrowRight } from "lucide-react";
+
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast({
-        title: "Please enter your email address",
-        variant: "destructive"
-      });
-      return;
-    }
-    setIsSubmitting(true);
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
     // Simulate API call
-    setTimeout(() => {
-      toast({
-        title: "Thank you for subscribing!",
-        description: "You'll receive updates about Atlas soon."
-      });
-      setEmail("");
-      setIsSubmitting(false);
-    }, 1000);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Reset form
+    setEmail("");
+    setIsSubmitting(false);
+    
+    // Show success message
+    alert("Obrigado por se inscrever na newsletter da FESPIN!");
   };
-  return <section id="newsletter" className="bg-white py-0">
-      <div className="section-container opacity-0 animate-on-scroll">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="pulse-chip">
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-pulse-500 text-white mr-2">05</span>
-              <span>Newsletter</span>
-            </div>
+
+  return (
+    <section className="py-16 md:py-20 bg-[#00d856] relative overflow-hidden" id="newsletter">
+      {/* Elementos decorativos */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl -translate-x-48 -translate-y-48"></div>
+      <div className="absolute bottom-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl translate-x-40 translate-y-40"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white mb-3 shadow-xl">
+            <Mail className="w-5 h-5 mr-2" />
+            <span className="font-bold">Newsletter FESPIN</span>
           </div>
           
-          <h2 className="text-5xl font-display font-bold mb-4 text-left">Subscribe to the newsletter</h2>
-          <p className="text-xl text-gray-700 mb-10 text-left">
-            Be first to hear about breakthroughs, partnerships, and deployment opportunities
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-4 leading-tight text-white">
+            Fique por dentro do{" "}
+            <span className="text-[#0a2856]">movimento</span>
+          </h2>
+          
+          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
+            Receba as últimas novidades sobre a FESPIN 2025, programação, 
+            expositores e oportunidades exclusivas antes de todo mundo.
           </p>
           
-          <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-            <div className="relative flex-grow">
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email address" className="w-full px-6 py-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pulse-500 text-gray-700" required />
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
+            <div className="relative flex-grow w-full sm:w-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Seu melhor e-mail"
+                className="w-full px-6 py-4 rounded-2xl border-2 border-white/20 bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-white/50 transition-all duration-300"
+                required
+              />
             </div>
-            <button type="submit" disabled={isSubmitting} className="bg-pulse-500 hover:bg-pulse-600 text-white font-medium py-4 px-10 rounded-full transition-all duration-300 md:ml-4">
-              {isSubmitting ? "Submitting..." : "Submit"}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="group bg-[#0a2856] hover:bg-[#0a2856]/90 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl min-w-[200px]"
+            >
+              <span className="flex items-center justify-center">
+                {isSubmitting ? "Enviando..." : "Inscrever-se"}
+                <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              </span>
             </button>
           </form>
+          
+          <p className="text-white/70 text-sm mt-6">
+            ✨ Receba conteúdo exclusivo e seja o primeiro a saber das novidades
+          </p>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 };
+
 export default Newsletter;
