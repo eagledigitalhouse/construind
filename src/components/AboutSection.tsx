@@ -1,72 +1,90 @@
 import React from "react";
 import { Users, Store, Dumbbell, Utensils } from "lucide-react";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { GlassChip } from "@/components/ui/glass-chip";
 
 const AboutSection = () => {
   const highlights = [
     {
-      icon: <Users className="w-8 h-8" />,
+      icon: <Users className="w-10 h-10" />,
       number: "+15 mil",
-      text: "visitantes"
+      text: "visitantes esperados"
     },
     {
-      icon: <Store className="w-8 h-8" />,
+      icon: <Store className="w-10 h-10" />,
       number: "83",
-      text: "estandes"
+      text: "estandes comerciais"
     },
     {
-      icon: <Dumbbell className="w-8 h-8" />,
+      icon: <Dumbbell className="w-10 h-10" />,
       number: "2",
-      text: "arenas para aulas e vivências"
+      text: "arenas de experiências"
     },
     {
-      icon: <Utensils className="w-8 h-8" />,
+      icon: <Utensils className="w-10 h-10" />,
       number: "1",
-      text: "praça de alimentação saudável"
+      text: "praça gastronômica"
     }
   ];
 
   return (
-    <section className="w-full py-10 md:py-14 bg-white" id="sobre">
+    <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-white" id="sobre">
       <div className="container px-6 lg:px-8 mx-auto">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="mb-8 md:mb-12">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="fespin-chip opacity-0 animate-fade-in" style={{
-                animationDelay: "0.1s"
-              }}>
-                <span>Sobre</span>
+          <div className="text-center mb-12 md:mb-16">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Users className="w-4 h-4" />}>
+                Sobre
+              </GlassChip>
+            </div>
+            
+            <div className="mb-8">
+              <div className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] mb-2 leading-tight">
+                <div className="mb-2">
+                  <TextReveal className="py-0" highlightWords={["feira"]}>
+                    Muito mais do que uma feira.
+                  </TextReveal>
+                </div>
+                <div>
+                  <TextReveal className="py-0" highlightWords={["movimento", "transformação"]}>
+                    Um movimento de transformação.
+                  </TextReveal>
+                </div>
               </div>
             </div>
             
-            <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-display font-extrabold leading-tight mb-2 opacity-0 animate-fade-in" style={{
-              animationDelay: "0.3s",
-              fontWeight: "900"
-            }}>
-              Muito mais do que uma feira.<br />
-              <span className="text-[#00d856]">Um movimento de transformação.</span>
-            </h2>
-            
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed opacity-0 animate-fade-in" style={{
-              animationDelay: "0.5s"
-            }}>
-              A FESPIN – Feira do Esporte de Indaiatuba – reúne marcas, profissionais e apaixonados por saúde, esporte, nutrição e bem-estar em um ambiente de experiências, conexões e evolução. Em 2025, esperamos mais de 15 mil pessoas para vivenciar três dias intensos de movimento, performance e qualidade de vida.
-            </p>
+            <div className="max-w-3xl mx-auto">
+              <p className="text-base md:text-lg text-gray-600 leading-relaxed opacity-0 animate-fade-in" style={{
+                animationDelay: "0.5s"
+              }}>
+                A FESPIN – Feira do Esporte de Indaiatuba – reúne marcas, profissionais e apaixonados por saúde, esporte, nutrição e bem-estar em um ambiente de experiências, conexões e evolução.
+              </p>
+              <p className="text-base md:text-lg text-gray-600 leading-relaxed opacity-0 animate-fade-in mt-3" style={{
+                animationDelay: "0.7s"
+              }}>
+                Em 2025, esperamos mais de 15 mil pessoas para vivenciar três dias intensos de movimento, performance e qualidade de vida.
+              </p>
+            </div>
           </div>
           
           {/* Highlights Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-12 opacity-0 animate-fade-in" style={{
-            animationDelay: "0.7s"
-          }}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {highlights.map((highlight, index) => (
-              <div key={index} className="flex flex-col items-center text-center group">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#0a2856] to-[#00d856] flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-300">
+              <div 
+                key={index}
+                className="text-center p-6 md:p-8 rounded-2xl bg-gray-50 hover:bg-gray-100 hover:shadow-md transition-all duration-300 opacity-0 animate-fade-in"
+                style={{
+                  animationDelay: `${0.9 + index * 0.1}s`
+                }}
+              >
+                <div className="flex justify-center mb-4 text-[#00d856]">
                   {highlight.icon}
                 </div>
-                <div className="text-3xl md:text-4xl font-display font-extrabold text-[#0a2856] mb-2">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] mb-3">
                   {highlight.number}
                 </div>
-                <div className="text-gray-600 font-medium">
+                <div className="text-sm md:text-base text-gray-600 leading-snug font-medium">
                   {highlight.text}
                 </div>
               </div>

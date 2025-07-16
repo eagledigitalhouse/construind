@@ -1,1 +1,171 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8f9fa"/>
+  
+  <!-- Title -->
+  <text x="400" y="50" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#0a2856">
+    MAPA DO EVENTO FESPIN 2025
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    Espaço Viber - Indaiatuba/SP
+  </text>
+  
+  <!-- Main entrance -->
+  <rect x="350" y="100" width="100" height="20" fill="#0a2856"/>
+  <text x="400" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+    ENTRADA
+  </text>
+  
+  <!-- Estandes 3x3m - Academias -->
+  <g>
+    <rect x="50" y="150" width="150" height="120" fill="#b1f727" stroke="#333" stroke-width="2"/>
+    <text x="125" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#0a2856">
+      ACADEMIAS
+    </text>
+    <text x="125" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#0a2856">
+      Estandes 3x3m
+    </text>
+    
+    <!-- Individual booths -->
+    <rect x="60" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="90" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="120" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="150" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="60" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="90" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="120" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="150" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+  </g>
+  
+  <!-- Estandes 3x3m - Bem-estar -->
+  <g>
+    <rect x="220" y="150" width="150" height="120" fill="#ff6b6b" stroke="#333" stroke-width="2"/>
+    <text x="295" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      BEM-ESTAR
+    </text>
+    <text x="295" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Estandes 3x3m
+    </text>
+    
+    <!-- Individual booths -->
+    <rect x="230" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="260" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="290" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="320" y="210" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="230" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="260" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="290" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="320" y="240" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+  </g>
+  
+  <!-- Estandes 3x3m - Artigos Esportivos -->
+  <g>
+    <rect x="430" y="150" width="150" height="120" fill="#4ecdc4" stroke="#333" stroke-width="2"/>
+    <text x="505" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      ARTIGOS
+    </text>
+    <text x="505" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      ESPORTIVOS
+    </text>
+    <text x="505" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Estandes 3x3m
+    </text>
+    
+    <!-- Individual booths -->
+    <rect x="440" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="470" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="500" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="530" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="440" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="470" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="500" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="530" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+  </g>
+  
+  <!-- Estandes 3x3m - Saúde & Nutrição -->
+  <g>
+    <rect x="600" y="150" width="150" height="120" fill="#45b7d1" stroke="#333" stroke-width="2"/>
+    <text x="675" y="180" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      SAÚDE &amp;
+    </text>
+    <text x="675" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      NUTRIÇÃO
+    </text>
+    <text x="675" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Estandes 3x3m
+    </text>
+    
+    <!-- Individual booths -->
+    <rect x="610" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="640" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="670" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="700" y="220" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="610" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="640" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="670" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+    <rect x="700" y="250" width="25" height="25" fill="white" stroke="#333" stroke-width="1"/>
+  </g>
+  
+  <!-- Área Livre 5x5m -->
+  <g>
+    <rect x="150" y="320" width="200" height="80" fill="#ffa500" stroke="#333" stroke-width="2"/>
+    <text x="250" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      ÁREA LIVRE 5X5M
+    </text>
+    <text x="250" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Espaço para demonstrações
+    </text>
+  </g>
+  
+  <!-- Área Livre 5x5m -->
+  <g>
+    <rect x="450" y="320" width="200" height="80" fill="#ffa500" stroke="#333" stroke-width="2"/>
+    <text x="550" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      ÁREA LIVRE 5X5M
+    </text>
+    <text x="550" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Espaço para demonstrações
+    </text>
+  </g>
+  
+  <!-- Área de Networking -->
+  <g>
+    <rect x="250" y="450" width="300" height="60" fill="#00d856" stroke="#333" stroke-width="2"/>
+    <text x="400" y="475" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">
+      ÁREA DE NETWORKING
+    </text>
+    <text x="400" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="white">
+      Praça de alimentação e descanso
+    </text>
+  </g>
+  
+  <!-- Legenda -->
+  <g>
+    <text x="50" y="540" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#0a2856">
+      LEGENDA:
+    </text>
+    
+    <rect x="50" y="550" width="20" height="15" fill="#b1f727" stroke="#333"/>
+    <text x="75" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">
+      Estandes 3x3m (9m²)
+    </text>
+    
+    <rect x="200" y="550" width="20" height="15" fill="#ffa500" stroke="#333"/>
+    <text x="225" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">
+      Área Livre 5x5m (25m²)
+    </text>
+    
+    <rect x="370" y="550" width="20" height="15" fill="#00d856" stroke="#333"/>
+    <text x="395" y="562" font-family="Arial, sans-serif" font-size="12" fill="#333">
+      Área de Networking
+    </text>
+  </g>
+  
+  <!-- Footer -->
+  <text x="400" y="590" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">
+    * Este é um mapa ilustrativo - Substitua pela imagem real após converter o PDF
+  </text>
+</svg> 

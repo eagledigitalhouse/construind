@@ -1,5 +1,7 @@
 import React from "react";
 import { MapPin, Calendar, Clock } from "lucide-react";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { GlassChip } from "@/components/ui/glass-chip";
 
 const LocalDataSection = () => {
   return (
@@ -7,16 +9,16 @@ const LocalDataSection = () => {
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
         {/* Header centralizado */}
         <div className="text-center mb-8 md:mb-12">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="fespin-chip opacity-0 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-              <span>Local e Data</span>
-            </div>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <GlassChip icon={<MapPin className="w-4 h-4" />}>
+              Local e Data
+            </GlassChip>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold leading-tight mb-2 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#0a2856] to-[#00d856]">
+          <div className="mb-1">
+            <TextReveal className="py-0" highlightWords={["Indaiatuba"]}>
               Encontre-nos em Indaiatuba
-            </span>
-          </h2>
+            </TextReveal>
+          </div>
           <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto opacity-0 animate-fade-in" style={{ animationDelay: "0.5s" }}>
             Três dias de movimento, transformação e conexões no coração de Indaiatuba
           </p>

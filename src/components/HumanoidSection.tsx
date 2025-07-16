@@ -1,394 +1,232 @@
 
 import React, { useEffect, useRef, useState } from "react";
+import { Dumbbell, Heart, ShoppingBag, Apple, Zap } from "lucide-react";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { GlassChip } from "@/components/ui/glass-chip";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SegmentosSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
-  const [activeCardIndex, setActiveCardIndex] = useState(0);
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const [showFinalLayout, setShowFinalLayout] = useState(false);
-  const ticking = useRef(false);
-  const lastScrollY = useRef(0);
+  const [activeCardIndex, setActiveCardIndex] = useState(-1);
+  const prevScrollY = useRef(0);
+  const isMobile = useIsMobile();
 
-  // Modalidades específicas para cada segmento
-  const segmentosData = [
+  const segmentos = [
     {
-      id: 'academias',
-      title: 'ACADEMIAS',
-      description: 'Espaço dedicado às principais academias, studios e boxes de treino. Aqui o visitante vivencia o universo da musculação, do funcional, das lutas, do cross e das danças — com demonstrações ao vivo, aulas experimentais e networking com profissionais do setor.',
-      modalidades: ['Musculação', 'Crossfit', 'Lutas', 'Danças', 'Funcional'],
-      background: 'url("https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")'
+      id: "academias",
+      titulo: "ACADEMIAS",
+      icone: <Dumbbell className="w-6 h-6" />,
+      cor: "#0a2856", // FESPIN primário escuro
+      descricao: "Espaço dedicado às principais academias, studios e boxes de treino com demonstrações ao vivo de musculação, crossfit, lutas e danças.",
+      imagem: "/lovable-uploads/academia.jpg",
+      tags: ["Musculação", "CrossFit", "Lutas", "Danças", "Funcional"]
     },
     {
-      id: 'bem-estar',
-      title: 'BEM-ESTAR',
-      description: 'Um refúgio de equilíbrio e autocuidado. Este pilar reúne práticas como yoga, pilates, massagens, aromaterapia e terapias integrativas, convidando o público a desacelerar, respirar e reconectar com o corpo e a mente.',
-      modalidades: ['Yoga', 'Pilates', 'Massagens', 'Aromaterapia', 'Terapias'],
-      background: 'url("https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")'
+      id: "bem-estar",
+      titulo: "BEM-ESTAR",
+      icone: <Heart className="w-6 h-6" />,
+      cor: "#00d856", // FESPIN primário claro
+      descricao: "Um refúgio de equilíbrio e autocuidado com práticas como yoga, pilates, massagens, aromaterapia e terapias integrativas.",
+      imagem: "/lovable-uploads/bem%20estar.png",
+      tags: ["Yoga", "Pilates", "Massagens", "Aromaterapia", "Terapias"]
     },
     {
-      id: 'artigos',
-      title: 'ARTIGOS ESPORTIVOS',
-      description: 'Moda, tecnologia e inovação para quem vive o movimento. De roupas funcionais a acessórios inteligentes, esse espaço é voltado às marcas e produtos que vestem, equipam e impulsionam o desempenho de atletas e entusiastas.',
-      modalidades: ['Moda Fitness', 'Tecnologia', 'Equipamentos', 'Acessórios', 'Inovação'],
-      background: 'url("https://images.unsplash.com/photo-1556906781-9a412961c28c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")'
+      id: "artigos",
+      titulo: "ARTIGOS ESPORTIVOS",
+      icone: <ShoppingBag className="w-6 h-6" />,
+      cor: "#b1f727", // FESPIN destaque
+      descricao: "Moda, tecnologia e inovação para quem vive o movimento. Roupas funcionais, equipamentos e acessórios inteligentes.",
+      imagem: "/lovable-uploads/artigosesportivos.png",
+      tags: ["Moda Fitness", "Equipamentos", "Tecnologia", "Acessórios"]
     },
     {
-      id: 'saude',
-      title: 'SAÚDE E NUTRIÇÃO',
-      description: 'O ponto de encontro entre estética, ciência e nutrição inteligente. Reúne consultorias nutricionais, marcas de suplementos, produtos naturais, alimentação saudável e clínicas especializadas no cuidado com o corpo e o bem-estar.',
-      modalidades: ['Nutrição', 'Suplementos', 'Alimentação', 'Estética', 'Consultorias'],
-      background: 'url("https://images.unsplash.com/photo-1559839734-2b71ea197ec2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")'
+      id: "saude",
+      titulo: "SAÚDE E NUTRIÇÃO",
+      icone: <Apple className="w-6 h-6" />,
+      cor: "#0a2856", // FESPIN primário escuro
+      descricao: "Consultorias nutricionais, suplementos, produtos naturais e alimentação saudável para cuidar do corpo e bem-estar.",
+      imagem: "/lovable-uploads/saude%20e%20nutri%C3%A7%C3%A3o.jpg",
+      tags: ["Nutrição", "Suplementos", "Alimentação", "Estética"]
     }
   ];
 
-  const cardStyle = {
-    height: '35vh', // Reduzindo a altura no mobile
-    maxHeight: '400px', // Reduzindo altura máxima
-    minHeight: '300px', // Adicionando altura mínima para consistência
-    borderRadius: '20px',
-    transition: 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
-    willChange: 'transform, opacity'
-  };
-
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsIntersecting(true);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
     const handleScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(() => {
-          if (!sectionRef.current) return;
-
-          const rect = sectionRef.current.getBoundingClientRect();
-          const sectionHeight = rect.height;
-          const sectionTop = rect.top;
-          const progress = Math.abs(sectionTop) / (sectionHeight - window.innerHeight);
-          const isMobile = window.innerWidth < 768;
-
-          // No mobile, não mostramos todos os cards de uma vez
-          if (isMobile) {
-            if (progress >= 0.85) {
-              setActiveCardIndex(3);
-            } else if (progress >= 0.6) {
-              setActiveCardIndex(2);
-            } else if (progress >= 0.35) {
-              setActiveCardIndex(1);
-            } else {
-              setActiveCardIndex(0);
-            }
-            setShowFinalLayout(false); // Nunca mostra o layout final no mobile
-          } else {
-            // Desktop mantém o comportamento original
-            const isScrollingUp = lastScrollY.current > window.scrollY;
-            lastScrollY.current = window.scrollY;
-
-            if (isScrollingUp) {
-              if (progress >= 0.85) {
-                setShowFinalLayout(true);
-                setActiveCardIndex(3);
-              } else if (progress >= 0.6) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(3);
-              } else if (progress >= 0.35) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(2);
-              } else if (progress >= 0.15) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(1);
-              } else {
-                setShowFinalLayout(false);
-                setActiveCardIndex(0);
-              }
-            } else {
-              if (progress >= 0.9) {
-                setShowFinalLayout(true);
-                setActiveCardIndex(3);
-              } else if (progress >= 0.65) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(3);
-              } else if (progress >= 0.4) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(2);
-              } else if (progress >= 0.2) {
-                setShowFinalLayout(false);
-                setActiveCardIndex(1);
-              } else {
-                setShowFinalLayout(false);
-                setActiveCardIndex(0);
-              }
-            }
-          }
-          
-          ticking.current = false;
-        });
+      if (!sectionRef.current) return;
+      
+      const { top, height } = sectionRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const currentScrollY = window.scrollY;
+      
+      // Determinar a direção do scroll
+      const isScrollingDown = currentScrollY > prevScrollY.current;
+      prevScrollY.current = currentScrollY;
+      
+      // Dividir a altura total da seção em 4 partes para os 4 cards
+      const sectionProgress = (windowHeight - top) / height;
+      
+      // Calcular qual card deve estar visível com base no progresso do scroll
+      if (sectionProgress < 0.1) {
+        // Antes da seção
+        setActiveCardIndex(-1);
+      } else if (sectionProgress > 0.9) {
+        // Após a seção, todos os cards visíveis
+        setActiveCardIndex(3);
+      } else {
+        // Dentro da seção, mostrar cards progressivamente
+        const partSize = 0.8 / segmentos.length; // 0.8 dividido pelo número de segmentos
+        const adjustedProgress = (sectionProgress - 0.1) / 0.8; // Normalizar entre 0.1 e 0.9
         
-        ticking.current = true;
+        if (isScrollingDown) {
+          // Rolando para baixo: progressivamente mostrar os cards
+          const newIndex = Math.floor(adjustedProgress * segmentos.length);
+          setActiveCardIndex(Math.min(newIndex, 3));
+        } else {
+          // Rolando para cima: progressivamente esconder os cards
+          const newIndex = Math.ceil(adjustedProgress * segmentos.length) - 1;
+          setActiveCardIndex(Math.max(newIndex, -1));
+        }
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Inicializar
     
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  const isFirstCardVisible = isIntersecting;
-  const isSecondCardVisible = activeCardIndex >= 1;
-  const isThirdCardVisible = activeCardIndex >= 2;
-  const isFourthCardVisible = activeCardIndex >= 3;
-
-  const getModalidadeIcon = (modalidade: string) => {
-    switch (modalidade.toLowerCase()) {
-      // Academias
-      case 'musculação':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 20h4m4 0h4M12 4v16M8 8H4m0 4H2m2 4H4m16-8h-4m4 4h2m-2 4h-4" />
-          </svg>
-        );
-      case 'crossfit':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 22V2M2 12h20" />
-          </svg>
-        );
-      case 'lutas':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 14h6m10-4h-6M8 4v6m8 4v6" />
-          </svg>
-        );
-      case 'danças':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="8" r="3" />
-            <path d="M12 11v8m-3-4l3 4l3-4" />
-          </svg>
-        );
-      case 'funcional':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M18 4l3 3l-3 3M6 20l-3-3l3-3" />
-            <path d="M3 17l18-10" />
-          </svg>
-        );
-      
-      // Bem-estar
-      case 'yoga':
-      case 'pilates':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="8" />
-            <path d="M12 8v8m-4-4h8" />
-          </svg>
-        );
-      case 'massagens':
-      case 'aromaterapia':
-      case 'terapias':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 21a9 9 0 1 0 0-18a9 9 0 0 0 0 18Z" />
-            <path d="M12 13a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z" />
-          </svg>
-        );
-
-      // Artigos Esportivos
-      case 'moda fitness':
-      case 'equipamentos':
-      case 'acessórios':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M21 8V7l-3 2-3-2v1l3 2 3-2z" />
-            <path d="M3 7V6l3 2 3-2v1l-3 2-3-2z" />
-            <path d="M12 22a8 8 0 1 0 0-16a8 8 0 0 0 0 16z" />
-          </svg>
-        );
-      case 'tecnologia':
-      case 'inovação':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 6V4m0 16v-2m6-10h2M4 12h2m12 5l1.5 1.5M4.5 4.5L6 6m12 0l1.5-1.5M4.5 19.5L6 18" />
-          </svg>
-        );
-
-      // Saúde e Nutrição
-      case 'nutrição':
-      case 'alimentação':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M12 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z" />
-            <path d="M19 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z" />
-            <path d="M5 15a3 3 0 1 0 0-6a3 3 0 0 0 0 6Z" />
-          </svg>
-        );
-      case 'suplementos':
-      case 'estética':
-      case 'consultorias':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20 12V8H8a4 4 0 1 0 0 8h12v-4Z" />
-          </svg>
-        );
-      default:
-        return null;
-    }
-  };
-
-  const SegmentoCard = ({ segmento, style = {} }) => (
-    <div 
-      className="group rounded-2xl overflow-hidden shadow-xl relative"
-      style={{
-        ...style,
-        backgroundImage: segmento.background,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100%' // Garantindo que o card ocupe toda a altura disponível
-      }}
-    >
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          background: 'linear-gradient(135deg, rgba(10, 40, 86, 0.85) 0%, rgba(0, 216, 86, 0.75) 100%)'
-        }}
-      />
-      
-      <div className="relative z-10 p-4 sm:p-6 md:p-8 h-full flex flex-col items-center justify-center text-center">
-        <div className="max-w-lg">
-          <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 sm:mb-4 tracking-wide">
-            {segmento.title}
-          </h3>
-          
-          <p className="text-white/90 text-sm sm:text-base leading-relaxed mb-4 sm:mb-8">
-            {segmento.description}
-          </p>
-
-          <div className="w-full">
-            <div className="text-white/60 text-xs uppercase tracking-wider mb-2 sm:mb-3">
-              Modalidades
-            </div>
-            <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center">
-              {segmento.modalidades.map((modalidade, index) => (
-                <span
-                  key={index}
-                  className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-white/10 hover:bg-white/15 text-white text-[10px] sm:text-xs rounded-lg transition-colors duration-300 flex items-center gap-1.5"
-                >
-                  {getModalidadeIcon(modalidade)}
-                  {modalidade}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  // Layout final (2x2)
-  if (showFinalLayout) {
-    return (
-      <div ref={sectionRef} className="relative" style={{ height: '400vh' }}>
-        <section className="w-full h-screen py-10 md:py-16 sticky top-0 overflow-hidden bg-white" id="segmentos">
-          <div className="container px-6 lg:px-8 mx-auto h-full flex flex-col">
-            <div className="mb-12 text-center">
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="fespin-chip">
-                  <span>Segmentos</span>
-                </div>
-              </div>
-              
-              <h2 className="text-4xl md:text-5xl font-display font-extrabold" style={{ fontWeight: "900" }}>
-                Segmentos Presentes
-              </h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto w-full">
-              {segmentosData.map((segmento) => (
-                <SegmentoCard 
-                  key={segmento.id} 
-                  segmento={segmento}
-                  style={{ minHeight: '300px' }}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      </div>
-    );
-  }
-
-  // Layout de sobreposição durante o scroll
   return (
-    <div ref={sectionRef} className="relative" style={{ height: '400vh' }}>
-      <section className="w-full h-screen py-10 md:py-16 sticky top-0 overflow-hidden bg-white" id="segmentos">
-        <div className="container px-6 lg:px-8 mx-auto h-full flex flex-col">
-          <div className="mb-12 text-center">
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="fespin-chip opacity-0 animate-fade-in" style={{
-                animationDelay: "0.1s"
-              }}>
-                <span>Segmentos</span>
-              </div>
-            </div>
-            
-            <h2 className="text-4xl md:text-5xl font-display font-extrabold" style={{ fontWeight: "900" }}>
-              Segmentos Presentes
-            </h2>
+    <div 
+      ref={sectionRef} 
+      id="segmentos" 
+      className="min-h-[400vh] relative bg-white"
+    >
+      <div className="min-h-screen sticky top-0 flex flex-col items-center justify-center py-16">
+        <div className="container mx-auto px-4 text-center mb-8">
+          <div className="flex items-center justify-center gap-4 mb-2">
+            <GlassChip icon={<Zap className="w-4 h-4" />}>
+              Segmentos
+            </GlassChip>
           </div>
           
-          <div ref={cardsContainerRef} className="relative flex-1 max-w-4xl mx-auto w-full">
-            {segmentosData.map((segmento, index) => {
-              const isVisible = index === 0 ? isFirstCardVisible : 
-                               index === 1 ? isSecondCardVisible :
-                               index === 2 ? isThirdCardVisible :
-                               isFourthCardVisible;
-              
-              const zIndex = 10 + (index * 10);
-              const scale = 0.85 + (index * 0.05);
-              const translateY = isVisible ? 
-                (activeCardIndex === index ? `${100 - (index * 35)}px` : `${60 - (index * 35)}px`) : 
-                '200px';
-              const opacity = isVisible ? 1 : 0;
+          <div className="mb-1">
+            <TextReveal className="py-0" highlightWords={["Presentes"]}>
+              Segmentos Presentes na Feira
+            </TextReveal>
+          </div>
+          
+          <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+            animationDelay: "0.3s"
+          }}>
+            A FESPIN reúne os principais segmentos do esporte e bem-estar em um só lugar,
+            criando uma experiência completa para todos os visitantes.
+          </p>
+        </div>
 
-              return (
-                <SegmentoCard 
-                  key={segmento.id} 
-                  segmento={segmento}
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    height: '45vh',
-                    maxHeight: '500px',
-                    zIndex,
-                    transform: `translateY(${translateY}) scale(${scale})`,
-                    opacity,
-                    pointerEvents: isVisible ? 'auto' : 'none',
-                    transition: 'transform 0.5s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1)',
-                    willChange: 'transform, opacity'
-                  }}
+        <div className="w-full max-w-4xl mx-auto px-4 relative min-h-[500px]">
+          <div className="flex justify-center mb-8">
+            <div className="flex space-x-2">
+              {segmentos.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    idx <= activeCardIndex 
+                      ? "w-12 bg-[#00d856]" 
+                      : "w-6 bg-gray-300"
+                  }`}
                 />
+              ))}
+            </div>
+          </div>
+
+          {/* Cards de segmentos */}
+          <div className="relative h-[500px]">
+            {segmentos.map((segmento, idx) => {
+              // Determinar se o card deve estar visível
+              const isVisible = idx <= activeCardIndex;
+              
+              return (
+                <div
+                  key={segmento.id}
+                  className={`absolute inset-x-0 rounded-2xl overflow-hidden shadow-lg transition-all duration-700
+                    ${isVisible ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+                  style={{
+                    height: "500px",
+                    zIndex: idx,
+                    transform: isVisible
+                      ? "translateY(0) scale(1)"
+                      : "translateY(100px) scale(0.9)",
+                    transitionProperty: "transform, opacity",
+                    transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)"
+                  }}
+                >
+                  {/* Imagem de fundo com overlay */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{ backgroundImage: `url(${segmento.imagem})` }}
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0a2856]/90 via-[#0a2856]/60 to-[#0a2856]/30" />
+
+                  {/* Ícone na parte superior direita */}
+                  <div className="absolute top-8 right-8 z-20">
+                    <div
+                      className="w-16 h-16 rounded-xl flex items-center justify-center text-white shadow-lg"
+                      style={{ backgroundColor: segmento.cor }}
+                    >
+                      {segmento.icone}
+                    </div>
+                  </div>
+
+                  {/* Conteúdo */}
+                  <div className="relative h-full flex flex-col p-8 z-10">
+                    {/* Espaço vazio superior - maior para empurrar o conteúdo para baixo */}
+                    <div className="flex-grow-[3]"></div>
+                    
+                    {/* Conteúdo centralizado (título, descrição) */}
+                    <div className="text-center w-full mb-6">
+                      <h3 className="text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+                        {segmento.titulo}
+                      </h3>
+
+                      <p className="text-white/80 max-w-lg mx-auto text-sm md:text-base">
+                        {segmento.descricao}
+                      </p>
+                    </div>
+                    
+                    {/* Espaço mínimo entre o conteúdo e as modalidades */}
+                    <div className="flex-grow-[0.5]"></div>
+
+                    {/* Parte de modalidades na parte inferior */}
+                    <div className="text-center w-full">
+                      <div className="text-white/70 text-xs uppercase tracking-wider mb-2 md:mb-3 font-semibold">
+                        Modalidades incluídas
+                      </div>
+                      <div className="flex flex-wrap gap-1 md:gap-2 justify-center">
+                        {segmento.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className={`
+                              px-2 py-1 md:px-3 md:py-1.5 
+                              bg-white/20 rounded-full 
+                              text-xs md:text-sm text-white 
+                              backdrop-blur-sm border border-[#00d856]/30
+                            `}
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 };

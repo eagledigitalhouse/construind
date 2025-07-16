@@ -3,6 +3,10 @@ import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp
 import Navbar from "@/components/Navbar";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import { GlassChip } from "@/components/ui/glass-chip";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { AnimatedList } from "@/components/ui/animated-list";
+import TabelaComparativa from "@/components/TabelaComparativa";
 
 
 const PatrocinioPage = () => {
@@ -148,7 +152,7 @@ const PatrocinioPage = () => {
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-3xl mx-auto leading-tight font-light">
               Conecte sua marca com mais de <span className="font-bold text-[#b1f727]">12 mil pessoas</span> apaixonadas por esporte, bem-estar e qualidade de vida na maior feira do interior.
             </p>
             
@@ -176,65 +180,86 @@ const PatrocinioPage = () => {
         </div>
       </section>
 
-      {/* Benefícios Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-        {/* Elementos decorativos de fundo */}
-        <div className="absolute top-0 left-0 w-72 h-72 bg-[#00d856]/5 rounded-full blur-3xl -translate-x-36 -translate-y-36"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#b1f727]/5 rounded-full blur-3xl translate-x-48 translate-y-48"></div>
-        
+            {/* Benefícios Section */}
+      <section className="py-20 bg-white relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-3 shadow-lg">
-              <Target className="w-5 h-5 mr-2" />
-              <span className="font-bold">Por que patrocinar?</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Coluna Esquerda - Conteúdo */}
+            <div className="lg:sticky lg:top-8">
+              <div className="mb-6">
+                <GlassChip icon={<Target className="w-4 h-4" />}>
+                  POR QUE PATROCINAR?
+                </GlassChip>
+              </div>
+              
+              <div className="space-y-4 text-left">
+                <h2 className="text-5xl sm:text-6xl md:text-7xl font-display font-extrabold text-gray-900 leading-tight">
+                  <span className="block text-left">
+                    Benefícios <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">exclusivos</span>
+                  </span>
+                  <span className="block text-left">
+                    para nossos <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">patrocinadores</span>
+                  </span>
+                </h2>
+                
+                <p className="text-xl text-gray-600 leading-tight max-w-lg">
+                  Maximize o alcance da sua marca com benefícios únicos pensados 
+                  para gerar resultados reais e conexões valiosas.
+                </p>
+              </div>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 mb-3 leading-tight">
-              Benefícios exclusivos para{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                patrocinadores
-              </span>
-            </h2>
-            
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Maximize o alcance da sua marca com benefícios únicos pensados 
-              para gerar resultados reais e conexões valiosas.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-5">
-            {beneficiosPatrocinio.map((beneficio, index) => (
-              <div 
-                key={index} 
-                className="group relative bg-white rounded-xl p-5 shadow-md hover:shadow-lg transition-all duration-300 hover:translate-y-[-4px] border border-gray-100/50 backdrop-blur-sm overflow-hidden flex flex-col"
-                style={{
-                  animation: `fadeInUp 0.5s ease-out forwards`,
-                  animationDelay: `${index * 0.1}s`,
-                  opacity: 0
-                }}
-              >
-                {/* Gradient overlay sutil */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00d856]/5 to-[#b1f727]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                {/* Header com ícone e título */}
-                <div className="flex items-center mb-3">
-                  {/* Ícone com gradiente */}
-                  <div className="relative w-10 h-10 rounded-lg bg-gradient-to-br from-[#0a2856] to-[#00d856] flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-200 shadow-md mr-3 flex-shrink-0">
-                    {beneficio.icon}
+            {/* Coluna Direita - Benefícios */}
+            <div>
+              <AnimatedList delay={800} className="space-y-4">
+                {[
+                  {
+                    icon: <Eye className="w-6 h-6" />,
+                    title: "Visibilidade da marca",
+                    description: "Exponha sua marca para milhares de visitantes e potenciais clientes do segmento esportivo.",
+                    color: "text-blue-600 bg-blue-50"
+                  },
+                  {
+                    icon: <Users className="w-6 h-6" />,
+                    title: "Networking qualificado",
+                    description: "Conecte-se com profissionais, atletas e empresários do setor esportivo regional.",
+                    color: "text-green-600 bg-green-50"
+                  },
+                  {
+                    icon: <TrendingUp className="w-6 h-6" />,
+                    title: "Aumente suas vendas",
+                    description: "Aproveite o ambiente propício para apresentar produtos e fechar negócios.",
+                    color: "text-purple-600 bg-purple-50"
+                  },
+                  {
+                    icon: <Target className="w-6 h-6" />,
+                    title: "Posicionamento estratégico",
+                    description: "Associe sua marca ao primeiro evento esportivo do interior da região.",
+                    color: "text-orange-600 bg-orange-50"
+                  }
+                ].map((beneficio, index) => (
+                  <div 
+                    key={index} 
+                    className="group flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-300"
+                  >
+                    {/* Ícone */}
+                    <div className={`flex-shrink-0 w-14 h-14 rounded-xl ${beneficio.color} flex items-center justify-center group-hover:scale-105 transition-transform duration-300`}>
+                      {beneficio.icon}
+                    </div>
+                    
+                    {/* Conteúdo */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-display font-bold text-gray-900 mb-2 leading-tight">
+                        {beneficio.title}
+                      </h3>
+                      <p className="text-gray-600 text-base leading-tight">
+                        {beneficio.description}
+                      </p>
+                    </div>
                   </div>
-                  
-                  <h3 className="text-lg font-display font-bold text-gray-900 group-hover:text-[#0a2856] transition-colors duration-300">
-                    {beneficio.title}
-                  </h3>
-                </div>
-                
-                <div className="relative">
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    {beneficio.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+                ))}
+              </AnimatedList>
+            </div>
           </div>
         </div>
       </section>
@@ -250,19 +275,19 @@ const PatrocinioPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a2856] to-[#00d856] text-white mb-4 shadow-lg">
-              <Zap className="w-5 h-5 mr-2" />
-              <span className="font-bold">Sobre a FESPIN</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Zap className="w-4 h-4" />}>
+                Sobre a FESPIN
+              </GlassChip>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 mb-4 leading-tight">
-              A maior feira de esporte do{" "}
-              <span className="bg-gradient-to-r from-[#0a2856] to-[#00d856] bg-clip-text text-transparent">
-                interior
-              </span>
-            </h2>
+            <div className="mb-4">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+                A maior feira de <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">esporte</span> do interior
+              </h2>
+            </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
               A FESPIN é mais que uma feira - é um movimento que transforma vidas 
               através do esporte e da conexão entre pessoas.
             </p>
@@ -274,7 +299,7 @@ const PatrocinioPage = () => {
                 <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-6">
                   Movimento que transforma vidas
                 </h3>
-                <p className="text-lg text-gray-600 leading-relaxed mb-8">
+                <p className="text-lg text-gray-600 leading-tight mb-8">
                   A FESPIN reúne academias, profissionais, marcas e entusiastas do esporte 
                   em um ambiente único de conexão, aprendizado e transformação. Três dias 
                   intensos de experiências (8h às 20h), networking e oportunidades de negócios.
@@ -441,19 +466,19 @@ const PatrocinioPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a2856] to-[#00d856] text-white mb-3 shadow-lg">
-              <Star className="w-5 h-5 mr-2" />
-              <span className="font-bold">Cotas disponíveis</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Star className="w-4 h-4" />}>
+                Cotas disponíveis
+              </GlassChip>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 mb-3 leading-tight">
-              Escolha a cota ideal para sua{" "}
-              <span className="bg-gradient-to-r from-[#0a2856] to-[#00d856] bg-clip-text text-transparent">
-                empresa
-              </span>
-            </h2>
+            <div className="mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+                Escolha a <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">cota</span> ideal para sua empresa
+              </h2>
+            </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
               Diferentes níveis de patrocínio para atender às necessidades 
               e objetivos da sua marca.
             </p>
@@ -490,10 +515,10 @@ const PatrocinioPage = () => {
                   <ul className="space-y-4 mb-8 flex-1">
                     {cota.beneficios.map((beneficio, beneficioIndex) => (
                       <li key={beneficioIndex} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#00d856] to-[#b1f727] flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle className="w-4 h-4 text-white" />
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle className="w-4 h-4 text-gray-700" />
                         </div>
-                        <span className="text-gray-700 text-base leading-relaxed">{beneficio}</span>
+                        <span className="text-gray-700 text-base leading-tight">{beneficio}</span>
                       </li>
                     ))}
                   </ul>
@@ -544,19 +569,19 @@ const PatrocinioPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-3 shadow-lg">
-              <CheckCircle className="w-5 h-5 mr-2" />
-              <span className="font-bold">Comparação detalhada</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<CheckCircle className="w-4 h-4" />}>
+                Comparação detalhada
+              </GlassChip>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 mb-3 leading-tight">
-              Compare os{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                benefícios
-              </span>
-            </h2>
+            <div className="mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+                Compare os <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">benefícios</span>
+              </h2>
+            </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
               Veja em detalhes tudo o que cada cota de patrocínio oferece para sua marca
             </p>
             <p className="text-sm text-gray-500 mt-2 md:hidden bg-yellow-50 border border-yellow-200 rounded-lg p-2 mx-auto max-w-sm">
@@ -564,199 +589,7 @@ const PatrocinioPage = () => {
             </p>
           </div>
           
-          <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-            <div className="overflow-x-auto scrollbar-hide">
-              <table className="w-full min-w-[800px]">
-                <thead>
-                  <tr className="bg-gradient-to-r from-[#0a2856] via-[#00d856] to-[#b1f727]">
-                    <th className="text-left p-8 font-display font-bold text-xl text-white">BENEFÍCIOS</th>
-                    <th className="text-center p-8 font-display font-bold text-xl text-white">
-                      <div className="flex flex-col items-center">
-                        <Crown className="w-6 h-6 mb-2" />
-                        DIAMANTE
-                      </div>
-                    </th>
-                    <th className="text-center p-8 font-display font-bold text-xl text-white">
-                      <div className="flex flex-col items-center">
-                        <Trophy className="w-6 h-6 mb-2" />
-                        OURO
-                      </div>
-                    </th>
-                    <th className="text-center p-8 font-display font-bold text-xl text-white">
-                      <div className="flex flex-col items-center">
-                        <Sparkles className="w-6 h-6 mb-2" />
-                        PRATA
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Estande no evento</td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        12m²
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        9m²
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        9m²
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Tempo na arena esportiva</td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Tempo no palco principal</td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Logo no site oficial</td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        GRANDE
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        MÉDIO
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        PEQUENO
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Logo no telão LED</td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        VÍDEO 20s
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        ESTÁTICO 15s
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        ESTÁTICO 15s
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Logo nos criativos oficiais</td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        DESTAQUE TOTAL
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        EM GRUPO
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        EM GRUPO
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Posts colaborativos Instagram</td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        02 POSTS
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        01 POST
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        ❌
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Sorteio de brindes no palco</td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="inline-flex items-center justify-center px-3 py-1 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                        ❌
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-gradient-to-r hover:from-gray-50 hover:to-transparent transition-all duration-200">
-                    <td className="p-6 font-semibold text-gray-900 text-lg">Agradecimento no palco</td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                    <td className="p-6 text-center">
-                      <div className="w-8 h-8 rounded-full bg-[#00d856] flex items-center justify-center mx-auto">
-                        <CheckCircle className="w-5 h-5 text-white" />
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <TabelaComparativa />
         </div>
       </section>
 
@@ -768,19 +601,19 @@ const PatrocinioPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-8 md:mb-10">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-3 shadow-lg">
-              <Phone className="w-5 h-5 mr-2" />
-              <span className="font-bold">Fale conosco</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Phone className="w-4 h-4" />}>
+                Fale conosco
+              </GlassChip>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 mb-3 leading-tight">
-              Vamos construir uma{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                parceria
-              </span>
-            </h2>
+            <div className="mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+                Vamos construir uma <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">parceria</span>
+              </h2>
+            </div>
             
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-tight">
               Nossa equipe está pronta para criar a proposta ideal para sua empresa. 
               Entre em contato e descubra como sua marca pode brilhar na FESPIN 2025.
             </p>

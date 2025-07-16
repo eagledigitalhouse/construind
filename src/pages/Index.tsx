@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
+import MarketDataSection from "@/components/MarketDataSection";
 import SegmentosSection from "@/components/HumanoidSection";
 import Features from "@/components/Features";
 import CTASection from "@/components/CTASection";
@@ -62,11 +63,12 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <main className="space-y-2 sm:space-y-4"> {/* Harmonic spacing between sections */}
+      <main className="space-y-0"> {/* Removido espaçamento entre seções */}
         <Hero />
         <AboutSection />
-        <Features />
         <SegmentosSection />
+        <MarketDataSection />
+        <Features />
         <CTASection variant="home" />
         <SpecsSection />
         <ExpositorPatrocinioSection />

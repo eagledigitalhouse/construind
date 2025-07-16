@@ -4,6 +4,9 @@ import Navbar from "@/components/Navbar";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import MapViewer from "@/components/MapViewer";
+import { GlassChip } from "@/components/ui/glass-chip";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { AnimatedList } from "@/components/ui/animated-list";
 
 const ExpositorPage = () => {
   const beneficiosExpositor = [
@@ -146,7 +149,7 @@ const ExpositorPage = () => {
               </span>
             </h1>
             
-            <p className="text-base md:text-lg text-white/90 mb-4 max-w-3xl mx-auto leading-relaxed font-light">
+            <p className="text-base md:text-lg text-white/90 mb-4 max-w-3xl mx-auto leading-tight font-light">
               Posicione sua marca como líder desde o início. Conecte-se com mais de <span className="font-bold text-[#b1f727]">15.000 visitantes</span> qualificados na primeira feira de esporte do interior de São Paulo.
             </p>
             
@@ -174,60 +177,89 @@ const ExpositorPage = () => {
         </div>
       </section>
 
-      {/* Por que Expor na FESPIN */}
-      <section className="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-[#00d856]/5 rounded-full blur-3xl -translate-x-36 -translate-y-36"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#b1f727]/5 rounded-full blur-3xl translate-x-48 translate-y-48"></div>
-        
+            {/* Por que Expor na FESPIN */}
+      <section className="py-20 bg-white relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-6 md:mb-8">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-2 shadow-lg">
-              <Target className="w-5 h-5 mr-2" />
-              <span className="font-bold">Oportunidade única</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Coluna Esquerda - Conteúdo */}
+            <div className="lg:sticky lg:top-8">
+              <div className="flex items-start gap-4 mb-8 justify-start">
+                <GlassChip icon={<Target className="w-4 h-4" />}>
+                  Oportunidade única
+                </GlassChip>
+              </div>
+              
+              <div className="space-y-6">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight text-left">
+                  <span className="block">
+                    <TextReveal className="py-0 text-left" highlightWords={["expor"]}>
+                      Por que expor na
+                    </TextReveal>
+                  </span>
+                  <span className="block">
+                    <TextReveal className="py-0 text-left" highlightWords={["FESPIN", "2025"]}>
+                      FESPIN 2025?
+                    </TextReveal>
+                  </span>
+                </h2>
+                
+                <p className="text-lg text-gray-600 leading-tight max-w-lg text-left">
+                  A primeira feira de esporte do interior é sua chance de liderar um mercado em expansão 
+                  e conectar-se com um público altamente qualificado.
+                </p>
+              </div>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 mb-2 leading-tight">
-              Por que expor na{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                FESPIN 2025?
-              </span>
-            </h2>
-            
-            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              A primeira feira de esporte do interior é sua chance de liderar um mercado em expansão 
-              e conectar-se com um público altamente qualificado.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {beneficiosExpositor.map((beneficio, index) => (
-              <div 
-                key={index} 
-                className="group relative bg-white rounded-xl p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:translate-y-[-4px] border border-gray-100/50 backdrop-blur-sm overflow-hidden"
-                style={{
-                  animation: `fadeInUp 0.5s ease-out forwards`,
-                  animationDelay: `${index * 0.1}s`,
-                  opacity: 0
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#00d856]/5 to-[#b1f727]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                <div className="flex items-start mb-4">
-                  <div className="relative w-12 h-12 rounded-lg bg-gradient-to-br from-[#0a2856] to-[#00d856] flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-200 shadow-md mr-4 flex-shrink-0">
+            {/* Coluna Direita - Benefícios */}
+            <div className="space-y-6">
+              {[
+                {
+                  icon: <Eye className="w-5 h-5" />,
+                  title: "Visibilidade da marca",
+                  description: "Exponha sua marca para milhares de visitantes e potenciais clientes do segmento esportivo."
+                },
+                {
+                  icon: <Users className="w-5 h-5" />,
+                  title: "Networking qualificado",
+                  description: "Conecte-se com profissionais, atletas e empresários do setor esportivo regional."
+                },
+                {
+                  icon: <TrendingUp className="w-5 h-5" />,
+                  title: "Aumente suas vendas",
+                  description: "Aproveite o ambiente propício para apresentar produtos e fechar negócios."
+                },
+                {
+                  icon: <Target className="w-5 h-5" />,
+                  title: "Posicionamento estratégico",
+                  description: "Associe sua marca ao primeiro evento esportivo do interior da região."
+                }
+              ].map((beneficio, index) => (
+                <div 
+                  key={index} 
+                  className="group flex gap-4 p-6 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-300"
+                  style={{
+                    animation: `fadeInUp 0.6s ease-out forwards`,
+                    animationDelay: `${index * 0.1}s`,
+                    opacity: 0
+                  }}
+                >
+                  {/* Ícone */}
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center text-gray-700 group-hover:bg-gray-100 transition-colors duration-300">
                     {beneficio.icon}
                   </div>
                   
-                  <div className="flex-1">
-                    <h3 className="text-lg font-display font-bold text-gray-900 group-hover:text-[#0a2856] transition-colors duration-300 mb-1">
+                  {/* Conteúdo */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-display font-bold text-gray-900 mb-2 leading-tight">
                       {beneficio.title}
                     </h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-gray-600 text-sm leading-tight">
                       {beneficio.description}
                     </p>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -236,19 +268,21 @@ const ExpositorPage = () => {
       <section id="mapa-evento" className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-6 md:mb-8">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-2 shadow-lg">
-              <MapPin className="w-5 h-5 mr-2" />
-              <span className="font-bold">Layout do evento</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<MapPin className="w-4 h-4" />}>
+                Layout do evento
+              </GlassChip>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 mb-2 leading-tight">
-              Mapa do{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                evento
-              </span>
-            </h2>
+            <div className="mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
+                <TextReveal className="py-0" highlightWords={["Mapa", "evento"]}>
+                  Mapa do evento
+                </TextReveal>
+              </h2>
+            </div>
             
-            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-tight">
               Veja a distribuição dos estandes e escolha a localização ideal para sua marca.
             </p>
           </div>
@@ -292,19 +326,21 @@ const ExpositorPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-6 md:mb-8">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a2856] to-[#00d856] text-white mb-2 shadow-lg">
-              <Store className="w-5 h-5 mr-2" />
-              <span className="font-bold">Escolha seu espaço</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Store className="w-4 h-4" />}>
+                Escolha seu espaço
+              </GlassChip>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 mb-2 leading-tight">
-              Tipos de{" "}
-              <span className="bg-gradient-to-r from-[#0a2856] to-[#00d856] bg-clip-text text-transparent">
-                estandes
-              </span>
-            </h2>
+            <div className="mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
+                <TextReveal className="py-0" highlightWords={["Tipos", "estandes"]}>
+                  Tipos de estandes
+                </TextReveal>
+              </h2>
+            </div>
             
-            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-tight">
               Escolha o formato ideal para apresentar sua marca e produtos no evento.
             </p>
           </div>
@@ -340,10 +376,10 @@ const ExpositorPage = () => {
                   <ul className="space-y-3 mb-8">
                     {tipo.beneficios.map((beneficio, beneficioIndex) => (
                       <li key={beneficioIndex} className="flex items-start gap-3">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#00d856] to-[#b1f727] flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <CheckCircle className="w-4 h-4 text-white" />
+                        <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <CheckCircle className="w-4 h-4 text-gray-700" />
                         </div>
-                        <span className="text-gray-700 leading-relaxed">{beneficio}</span>
+                                                  <span className="text-gray-700 leading-tight">{beneficio}</span>
                       </li>
                     ))}
                   </ul>
@@ -371,19 +407,21 @@ const ExpositorPage = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#0a2856] to-[#00d856] text-white mb-2 shadow-lg">
-              <Activity className="w-5 h-5 mr-2" />
-              <span className="font-bold">Segmentos especializados</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Activity className="w-4 h-4" />}>
+                Segmentos especializados
+              </GlassChip>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 mb-2 leading-tight">
-              Áreas exclusivas para{" "}
-              <span className="bg-gradient-to-r from-[#0a2856] to-[#00d856] bg-clip-text text-transparent">
-                cada segmento
-              </span>
-            </h2>
+            <div className="mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
+                <TextReveal className="py-0" highlightWords={["Áreas", "exclusivas", "segmento"]}>
+                  Áreas exclusivas para cada segmento
+                </TextReveal>
+              </h2>
+            </div>
             
-            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base text-gray-600 max-w-3xl mx-auto leading-tight">
               Cada segmento tem sua área exclusiva para maximizar o networking 
               e as oportunidades de negócios entre empresas do mesmo setor.
             </p>
@@ -395,7 +433,7 @@ const ExpositorPage = () => {
                 <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4">
                   4 Segmentos Especializados
                 </h3>
-                <p className="text-base text-gray-600 leading-relaxed mb-6">
+                <p className="text-base text-gray-600 leading-tight mb-6">
                   Cada área do evento foi pensada para criar conexões estratégicas 
                   entre empresas complementares, maximizando as oportunidades de 
                   networking e parcerias comerciais.
@@ -586,19 +624,21 @@ const ExpositorPage = () => {
       <section id="contato" className="py-12 md:py-16 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center mb-6 md:mb-8">
-            <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] mb-2 shadow-lg">
-              <Phone className="w-5 h-5 mr-2" />
-              <span className="font-bold">Fale conosco</span>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip icon={<Phone className="w-4 h-4" />}>
+                Fale conosco
+              </GlassChip>
             </div>
             
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 mb-2 leading-tight">
-              Garanta seu espaço na{" "}
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                FESPIN 2025
-              </span>
-            </h2>
+            <div className="mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
+                <TextReveal className="py-0" highlightWords={["Garanta", "espaço", "FESPIN", "2025"]}>
+                  Garanta seu espaço na FESPIN 2025
+                </TextReveal>
+              </h2>
+            </div>
             
-            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
               Entre em contato conosco e garante seu espaço na primeira feira de esporte do interior. 
               Nossa equipe está pronta para ajudar você a escolher a melhor opção.
             </p>

@@ -1,6 +1,8 @@
 
 import React from "react";
 import novaImagem from "../assets/41NYhR0lTlSlGvmRpFyhKQ.webp";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { GlassChip } from "@/components/ui/glass-chip";
 
 const SpecsSection = () => {
   return (
@@ -8,22 +10,19 @@ const SpecsSection = () => {
       <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
         {/* Header centralizado */}
         <div className="text-center mb-8 md:mb-12">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="fespin-chip opacity-0 animate-fade-in" style={{
-              animationDelay: "0.1s"
-            }}>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <GlassChip>
               <span>Por que a FESPIN existe?</span>
-            </div>
+            </GlassChip>
           </div>
           
-          <h2 className="section-title text-3xl sm:text-4xl md:text-5xl font-display font-extrabold leading-tight mb-2 opacity-0 animate-fade-in" style={{
-            animationDelay: "0.3s",
-            fontWeight: "900"
-          }}>
-            Acreditamos que o <span className="text-[#00d856]">movimento transforma</span>.
-          </h2>
+          <div className="mb-1">
+            <TextReveal className="py-0" highlightWords={["movimento", "transforma"]}>
+              Acreditamos que o movimento transforma.
+            </TextReveal>
+          </div>
           
-          <p className="text-lg md:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+          <p className="text-lg md:text-xl text-gray-700 leading-snug max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
             animationDelay: "0.5s"
           }}>
             Saúde vai além do físico... é atitude, é escolha, é comunidade.
@@ -50,7 +49,7 @@ const SpecsSection = () => {
               
               {/* Manifesto à direita */}
               <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <div className="space-y-4 text-base sm:text-lg leading-relaxed text-gray-700">
+                <div className="space-y-4 text-base sm:text-lg leading-snug text-gray-700">
                   <p className="relative pl-4 sm:pl-6 border-l-4 border-[#00d856]">
                     <span className="text-lg sm:text-xl md:text-2xl font-semibold text-[#0a2856]">Movimento que transforma</span> é mais do que um slogan — é o coração da FESPIN. Ele representa a ideia de que toda mudança significativa começa com uma ação, por menor que seja.
                   </p>
@@ -59,7 +58,7 @@ const SpecsSection = () => {
                     Ao incentivar o corpo a se mover, também despertamos a mente, criamos conexões e abrimos espaço para novas possibilidades. Esse movimento não se limita ao esporte: ele inspira escolhas mais saudáveis, relações mais fortes e uma comunidade mais ativa e unida.
                   </p>
                   
-                  <p className="text-center text-lg sm:text-xl md:text-2xl font-display font-bold text-[#0a2856] pt-2">
+                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold text-[#0a2856] pt-2">
                     É sobre transformar vidas, uma experiência de cada vez.
                   </p>
                 </div>

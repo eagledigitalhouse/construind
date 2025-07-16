@@ -69,6 +69,7 @@ export default {
 					"light": "#00d856",    // Primário Claro  
 					"accent": "#b1f727",   // Destaque
 					"white": "#FFFFFF",    // Neutro
+					"green": "#00d856",    // Verde (mesmo que o light)
 				},
 				dark: {
 					"900": "#121212", // Almost black
@@ -118,6 +119,14 @@ export default {
 				'float': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-10px)' }
+				},
+				'shimmer-slide': {
+					'0%': { transform: 'translateX(100%)' },
+					'100%': { transform: 'translateX(-100%)' }
+				},
+				'spin-around': {
+					'0%': { transform: 'rotate(0deg)' },
+					'100%': { transform: 'rotate(360deg)' }
 				}
 			},
 			animation: {
@@ -127,7 +136,9 @@ export default {
 				'fade-in-right': 'fade-in-right 0.7s ease-out forwards',
 				'fade-in-left': 'fade-in-left 0.7s ease-out forwards',
 				'pulse-slow': 'pulse-slow 3s infinite',
-				'float': 'float 6s ease-in-out infinite'
+				'float': 'float 6s ease-in-out infinite',
+				'shimmer-slide': 'shimmer-slide 3s linear infinite',
+				'spin-around': 'spin-around 4s linear infinite'
 			},
 			backgroundImage: {
 				'fespin-gradient': 'linear-gradient(135deg, #0a2856 0%, #00d856 100%)',

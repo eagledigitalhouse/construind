@@ -41,7 +41,7 @@ const Hero = () => {
   
   return (
     <section 
-      className="overflow-hidden relative min-h-screen flex items-center bg-[#0a2856]" 
+      className="overflow-hidden relative min-h-screen flex items-center bg-[#0a2856] pt-24" 
       id="hero"
     >
       {/* Background com gradiente base */}

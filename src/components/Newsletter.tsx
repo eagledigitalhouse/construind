@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Mail, ArrowRight } from "lucide-react";
+import { TextReveal } from "@/components/ui/text-reveal";
+import { GlassChip } from "@/components/ui/glass-chip";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -28,22 +30,28 @@ const Newsletter = () => {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center justify-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white mb-3 shadow-xl">
-            <Mail className="w-5 h-5 mr-2" />
-            <span className="font-bold">Newsletter FESPIN</span>
+          <div className="mb-8 md:mb-12">
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <GlassChip theme="dark" icon={<Mail className="w-4 h-4" />}>
+                Newsletter FESPIN
+              </GlassChip>
+            </div>
+            
+            <div className="mb-1">
+              <TextReveal className="py-0" highlightWords={["movimento"]} theme="dark" highlightColor="gradient">
+                Fique por dentro do movimento
+              </TextReveal>
+            </div>
+            
+            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed opacity-0 animate-fade-in" style={{
+              animationDelay: "0.5s"
+            }}>
+              Receba as últimas novidades sobre a FESPIN 2025, programação, 
+              expositores e oportunidades exclusivas antes de todo mundo.
+            </p>
           </div>
           
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-4 leading-tight text-white">
-            Fique por dentro do{" "}
-            <span className="text-[#0a2856]">movimento</span>
-          </h2>
-          
-          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-            Receba as últimas novidades sobre a FESPIN 2025, programação, 
-            expositores e oportunidades exclusivas antes de todo mundo.
-          </p>
-          
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 items-center justify-center max-w-2xl mx-auto">
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 items-center justify-center max-w-2xl mx-auto mt-8">
             <div className="relative flex-grow w-full sm:w-auto">
               <input
                 type="email"
