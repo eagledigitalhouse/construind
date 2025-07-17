@@ -2,7 +2,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { ArrowRight, Calendar, MapPin } from "lucide-react";
-import fespinBackground from "@/assets/FESPIN -APRESENTAÇÃO.png";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -41,29 +40,20 @@ const Hero = () => {
   
   return (
     <section 
-      className="overflow-hidden relative min-h-screen flex items-center bg-[#0a2856] pt-24" 
+      className="overflow-hidden relative min-h-screen flex items-center bg-gradient-to-br from-[#0a2856] via-[#0a2856] to-[#1a3a6b] pt-24" 
       id="hero"
     >
-      {/* Background com gradiente base */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0a2856] from-40% via-[#00d856]/90 via-75% to-[#b1f727]/80"></div>
+      {/* Background com gradiente limpo */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0a2856] from-20% via-[#1a3a6b] via-60% to-[#2a4a7b] to-100%"></div>
       
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: `url(${fespinBackground})`,
-          opacity: 0.75,
-          mixBlendMode: 'overlay'
-        }}
-      />
-
-      {/* Gradiente adicional para melhorar contraste */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#0a2856]/80 from-0% via-transparent via-30% to-transparent"></div>
+      {/* Elementos decorativos com gradiente */}
+      <div className="absolute top-20 right-10 w-32 h-32 bg-gradient-to-br from-[#00d856]/20 to-[#b1f727]/20 rounded-full blur-xl"></div>
+      <div className="absolute bottom-20 left-10 w-40 h-40 bg-gradient-to-br from-[#b1f727]/15 to-[#00d856]/15 rounded-full blur-2xl"></div>
       
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-        <div className="flex flex-col items-center lg:items-start max-w-4xl mx-auto" ref={containerRef}>
+        <div className="flex flex-col items-center text-center max-w-5xl mx-auto" ref={containerRef}>
           <div 
-            className="inline-flex items-center px-4 py-2 rounded-full bg-accent text-primary font-medium text-sm mb-4 lg:mb-6 opacity-0 animate-fade-in" 
+            className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium text-sm mb-8 opacity-0 animate-fade-in" 
             style={{ animationDelay: "0.1s" }}
           >
             <Calendar className="w-4 h-4 mr-2" />
@@ -71,53 +61,53 @@ const Hero = () => {
           </div>
           
           <h1 
-            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl hero-title text-white text-center lg:text-left opacity-0 animate-fade-in" 
-            style={{ animationDelay: "0.3s", fontWeight: "900" }}
+            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white text-center leading-tight mb-6 opacity-0 animate-fade-in" 
+            style={{ animationDelay: "0.3s" }}
           >
-            <span className="block">FESPIN 2025</span>
-            <span className="text-accent block">Movimento que Transforma</span>
+            <span className="block mb-2">FESPIN 2025</span>
+            <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent block">Movimento que</span>
+            <span className="bg-gradient-to-r from-[#b1f727] to-[#00d856] bg-clip-text text-transparent block">Transforma</span>
           </h1>
           
-          <div 
-            className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mt-4 lg:mt-6 mb-6 lg:mb-8 opacity-0 animate-fade-in text-white/90" 
+          <p 
+            className="text-xl sm:text-2xl text-white/80 text-center max-w-3xl mb-8 opacity-0 animate-fade-in leading-relaxed" 
             style={{ animationDelay: "0.5s" }}
           >
-            <div className="flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-accent" />
-              <span className="text-lg">14 a 16 de novembro</span>
+            A maior feira de esporte, fitness e bem-estar do interior paulista. Conectando pessoas, marcas e oportunidades em um só lugar.
+          </p>
+          
+          <div 
+            className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10 opacity-0 animate-fade-in text-white/90" 
+            style={{ animationDelay: "0.6s" }}
+          >
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
+              <Calendar className="w-5 h-5 mr-3 text-[#00d856]" />
+              <span className="text-lg font-medium">14 a 16 de novembro</span>
             </div>
-            <div className="flex items-center">
-              <MapPin className="w-5 h-5 mr-2 text-accent" />
-              <span className="text-lg">Espaço Viber, Indaiatuba/SP</span>
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
+              <MapPin className="w-5 h-5 mr-3 text-[#b1f727]" />
+              <span className="text-lg font-medium">Espaço Viber, Indaiatuba/SP</span>
             </div>
           </div>
           
           <div 
-            className="flex flex-col sm:flex-row gap-4 opacity-0 animate-fade-in" 
-            style={{ animationDelay: "0.7s" }}
+            className="flex flex-col sm:flex-row gap-6 opacity-0 animate-fade-in" 
+            style={{ animationDelay: "0.8s" }}
           >
             <a 
               href="#participar" 
-              className="flex items-center justify-center group bg-accent text-primary button-primary py-4 px-8 rounded-full transition-all duration-300 hover:bg-accent/90 hover:scale-105 transform" 
+              className="flex items-center justify-center group bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] font-bold py-4 px-10 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl transform text-lg" 
             >
               Quero Participar
-              <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </a>
             <a 
               href="#expositor" 
-              className="flex items-center justify-center group bg-transparent border-2 border-white text-white button-secondary py-4 px-8 rounded-full transition-all duration-300 hover:bg-white hover:text-primary hover:scale-105 transform" 
+              className="flex items-center justify-center group bg-transparent border-2 border-white/30 backdrop-blur-sm text-white font-bold py-4 px-10 rounded-full transition-all duration-300 hover:bg-white/10 hover:border-white hover:scale-105 transform text-lg" 
             >
               Seja um Expositor
-              <ArrowRight className="ml-2 w-5 h-5 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </a>
-          </div>
-
-          {/* Floating elements */}
-          <div className="absolute top-4 right-4 lg:-right-4 w-16 h-16 bg-accent rounded-full flex items-center justify-center animate-float">
-            <span className="text-primary font-extrabold text-xl">2025</span>
-          </div>
-          <div className="absolute -bottom-4 left-4 lg:-left-4 w-20 h-20 bg-secondary rounded-full flex items-center justify-center animate-float" style={{ animationDelay: "1s" }}>
-            <span className="text-white font-extrabold text-sm">NOV</span>
           </div>
         </div>
       </div>

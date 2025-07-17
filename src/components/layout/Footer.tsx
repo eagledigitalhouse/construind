@@ -32,13 +32,17 @@ const Footer: React.FC<FooterProps> = ({
     <footer className="bg-[#0a2856] text-white relative overflow-visible min-h-[400px] z-40 border-t-4 border-[#00d856]">
       {/* Círculo decorativo sutil */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#00d856]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="container mx-auto px-6 pt-48 md:pt-32 pb-12 relative z-10">
+      <div className="container mx-auto px-6 pt-64 md:pt-48 pb-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
           {/* Logo e Descrição */}
           <div className="flex flex-col items-center md:items-start">
-            <h3 className="text-2xl font-bold font-display mb-3">
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">FESPIN</span> 2025
-            </h3>
+            <div className="mb-3">
+              <img 
+                src="/LOGO BRANCO COM ICONE VERDE.png" 
+                alt="FESPIN Logo" 
+                className="w-56 h-auto"
+              />
+            </div>
             <p className="text-white/80 text-sm mb-3">Feira do Esporte de Indaiatuba</p>
             <p className="text-white/70 text-sm leading-relaxed">A maior feira de esporte do interior paulista. Conectando marcas, pessoas e comunidades através do esporte.</p>
             <div className="flex items-center justify-center md:justify-start gap-2 mt-4">

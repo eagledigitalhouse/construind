@@ -103,8 +103,8 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
         minWidth: visible ? "800px" : "100%",
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start bg-transparent px-4 py-3 lg:flex dark:bg-transparent", // Reduced padding
-        visible && "bg-white/90 dark:bg-neutral-950/90 rounded-lg", // Added rounded-lg only when visible
+        "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start bg-transparent py-3 lg:flex dark:bg-transparent", // Restored vertical padding
+        visible && "bg-white/90 dark:bg-neutral-950/90 rounded-lg px-4", // Added padding only when visible
         className,
       )}
     >
@@ -113,14 +113,15 @@ export const NavBody = ({ children, className, visible }: NavBodyProps) => {
   );
 };
 
-export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
+export const NavItems = ({ items, className, onItemClick, isScrolled }: NavItemsProps & { isScrolled?: boolean }) => {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
     <motion.div
       onMouseLeave={() => setHovered(null)}
       className={cn(
-        "absolute inset-0 hidden flex-1 flex-row items-center justify-center gap-2 text-base font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 lg:flex", // Reduced gap
+        "hidden flex-row items-center justify-center gap-1 text-base font-medium transition duration-200 lg:flex", // Removed absolute positioning
+        isScrolled ? "text-fespin-green hover:text-fespin-accent" : "text-white hover:text-gray-200",
         className,
       )}
     >
@@ -128,7 +129,10 @@ export const NavItems = ({ items, className, onItemClick }: NavItemsProps) => {
         <a
           onMouseEnter={() => setHovered(idx)}
           onClick={onItemClick}
-          className="relative px-4 py-2 text-neutral-600 dark:text-neutral-300" // Reduced padding
+          className={cn(
+            "relative px-2 py-2 transition duration-200", // Further reduced padding
+            isScrolled ? "text-fespin-green hover:text-fespin-accent" : "text-white hover:text-gray-200"
+          )}
           key={`link-${idx}`}
           href={item.link}
         >
@@ -165,7 +169,7 @@ export const MobileNav = ({ children, className, visible }: MobileNavProps) => {
         damping: 50,
       }}
       className={cn(
-        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-4 py-4 lg:hidden", // Aumentado padding
+        "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-4 py-4 lg:hidden", // Restored vertical padding
         visible && "bg-white/90 dark:bg-neutral-950/90 rounded-lg", // Adicionado rounded-lg apenas quando visível
         className,
       )}
@@ -285,4 +289,4 @@ export const NavbarButton = ({
       {children}
     </Tag>
   );
-}; 
+};

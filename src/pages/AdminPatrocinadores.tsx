@@ -14,6 +14,9 @@ import {
   Loader2,
   AlertCircle
 } from 'lucide-react';
+import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
+import Newsletter from '@/components/sections/Newsletter';
 import { usePatrocinadores } from '../hooks/usePatrocinadores';
 import { useCotasPatrocinio, type CotaPatrocinio } from '../hooks/useCotasPatrocinio';
 import { uploadImage } from '../lib/uploadImage';
@@ -1138,6 +1141,9 @@ const AdminPatrocinadores: React.FC = () => {
           </div>
         </div>
       )}
+      
+      <Newsletter />
+      <Footer />
     </div>
   );
 };

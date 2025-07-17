@@ -29,7 +29,7 @@ const ExpositorPatrocinioSection = () => {
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-5'>
 
             {/* COLUMN-1 - EXPOSITOR */}
-            <div className="bg-darkblue bg-beliefs pt-12 px-10 sm:px-24 pb-52 md:pb-70 rounded-3xl">
+            <div className="bg-darkblue pt-12 px-10 sm:px-24 pb-12 rounded-3xl">
               <h2 className="text-lg font-normal text-white tracking-widest mb-5 text-center sm:text-start">EXPOSITOR</h2>
               <h3 className="text-4xl sm:text-65xl font-bold text-white leading-snug mb-5 text-center sm:text-start">Mostre <span className="text-grey">seus produtos e serviços.</span></h3>
               <h5 className="text-offwhite pt-2 mb-5 text-center sm:text-start">Acesso direto ao público qualificado do setor com networking premium e oportunidades de vendas estratégicas.</h5>

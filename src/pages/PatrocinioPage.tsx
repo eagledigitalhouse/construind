@@ -3,6 +3,7 @@ import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp
 import Navbar from "@/components/layout/Navbar";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
+import Newsletter from "@/components/sections/Newsletter";
 import { GlassChip } from "@/components/ui/glass-chip";
 
 import { AnimatedList } from "@/components/ui/animated-list";
@@ -720,6 +721,7 @@ const PatrocinioPage = () => {
         </div>
       </section>
 
+      <Newsletter />
       <Footer variant="patrocinio" />
     </div>
   );

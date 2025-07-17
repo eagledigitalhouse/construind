@@ -3,6 +3,7 @@ import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp
 import Navbar from "@/components/layout/Navbar";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
+import Newsletter from "@/components/sections/Newsletter";
 import MapViewer from "@/components/pages/MapViewer";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { AnimatedList } from "@/components/ui/animated-list";
@@ -272,9 +273,9 @@ const ExpositorPage = () => {
             
             <div className="mb-2">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
-                <TextReveal className="py-0" highlightWords={["Mapa", "evento"]}>
-                  Mapa do evento
-                </TextReveal>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 py-0">
+                Confira o <span className="text-[#00d856]">Mapa</span> do <span className="text-[#00d856]">evento</span>
+              </div>
               </h2>
             </div>
             
@@ -330,9 +331,9 @@ const ExpositorPage = () => {
             
             <div className="mb-2">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
-                <TextReveal className="py-0" highlightWords={["Tipos", "estandes"]}>
-                  Tipos de estandes
-                </TextReveal>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 py-0">
+                <span className="text-[#00d856]">Tipos</span> de <span className="text-[#00d856]">estandes</span> disponíveis
+              </div>
               </h2>
             </div>
             
@@ -411,9 +412,9 @@ const ExpositorPage = () => {
             
             <div className="mb-2">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
-                <TextReveal className="py-0" highlightWords={["Áreas", "exclusivas", "segmento"]}>
-                  Áreas exclusivas para cada segmento
-                </TextReveal>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 py-0">
+                <span className="text-[#00d856]">Áreas</span> <span className="text-[#00d856]">exclusivas</span> por <span className="text-[#00d856]">segmento</span>
+              </div>
               </h2>
             </div>
             
@@ -628,9 +629,9 @@ const ExpositorPage = () => {
             
             <div className="mb-2">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-extrabold text-gray-900 leading-tight">
-                <TextReveal className="py-0" highlightWords={["Garanta", "espaço", "FESPIN", "2025"]}>
-                  Garanta seu espaço na FESPIN 2025
-                </TextReveal>
+                <div className="text-2xl md:text-3xl font-bold text-gray-900 py-0">
+                <span className="text-[#00d856]">Garanta</span> seu <span className="text-[#00d856]">espaço</span> na <span className="text-[#00d856]">FESPIN</span> <span className="text-[#00d856]">2025</span>
+              </div>
               </h2>
             </div>
             
@@ -747,6 +748,7 @@ const ExpositorPage = () => {
         </div>
       </section>
 
+      <Newsletter />
       <Footer />
     </div>
   );

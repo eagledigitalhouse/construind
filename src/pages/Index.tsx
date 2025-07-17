@@ -66,12 +66,12 @@ const Index = () => {
       <main className="space-y-0"> {/* Removido espaçamento entre seções */}
         <Hero />
         <AboutSection />
-        <SegmentosSection />
         <MarketDataSection />
+        <SegmentosSection />
         <Features />
+        <PatrocinadoresSection />
         <SpecsSection />
         <ExpositorPatrocinioSection />
-        <PatrocinadoresSection />
         <LocalDataSection />
       </main>
       <div className="relative">

@@ -14,19 +14,18 @@ import {
   MobileNavMenu,
 } from "@/components/ui/resizable-navbar";
 
-const CustomNavbarLogo = () => {
+const CustomNavbarLogo = ({ isScrolled }: { isScrolled: boolean }) => {
   return (
-    <Link 
+    <Link
       to="/"
-      className="relative z-20 flex items-center space-x-2 px-2"
+      className="relative z-20 flex items-center px-2"
       aria-label="FESPIN 2025"
     >
-      <div className="text-2xl logo-text bg-fespin-gradient bg-clip-text text-transparent">
-        FESPIN
-      </div>
-      <div className="text-sm font-medium text-white">
-        2025
-      </div>
+      <img 
+        src={isScrolled ? "/LOGO FESPIN - AZUL _ DEGRADE.png" : "/LOGO BRANCO COM ICONE VERDE.png"}
+        alt="FESPIN Logo" 
+        className="w-20 md:w-24 h-auto"
+      />
     </Link>
   );
 };
@@ -105,44 +104,46 @@ const Navbar = () => {
       {/* Desktop Navigation */}
       <NavBody 
         className={isScrolled 
-          ? "bg-transparent backdrop-blur-sm hover:bg-white/10 dark:hover:bg-neutral-950/10 px-4 md:px-6" 
-          : "bg-fespin-green shadow-md w-full px-4 md:px-6"
+          ? "bg-transparent backdrop-blur-sm hover:bg-white/10 dark:hover:bg-neutral-950/10 px-6 md:px-12" 
+          : "bg-fespin-dark/90 backdrop-blur-sm shadow-lg w-full px-6 md:px-12"
         }
       >
-        <CustomNavbarLogo />
-        <NavItems 
-          items={navItems} 
-          onItemClick={() => {
-            // Implementar a lógica de rolagem para as âncoras
-            const links = document.querySelectorAll('.nav-link');
-            links.forEach(link => {
-              link.addEventListener('click', (e) => {
-                const href = (link as HTMLAnchorElement).getAttribute('href');
-                if (href && href.startsWith('#')) {
-                  // Corrigindo o erro de tipagem usando uma abordagem mais segura
-                  if (e.preventDefault) {
-                    e.preventDefault();
-                    const targetId = href.substring(1);
-                    if (location.pathname === '/') {
-                      const targetElement = document.getElementById(targetId);
-                      if (targetElement) {
-                        const offset = window.innerWidth < 768 ? 100 : 80;
-                        window.scrollTo({
-                          top: targetElement.offsetTop - offset,
-                          behavior: 'smooth'
-                        });
+        <div className="flex items-center justify-center w-full px-1">
+          <div className="flex items-center gap-6">
+            <CustomNavbarLogo isScrolled={isScrolled} />
+            <NavItems 
+              items={navItems} 
+              isScrolled={isScrolled}
+              onItemClick={() => {
+                // Implementar a lógica de rolagem para as âncoras
+                const links = document.querySelectorAll('.nav-link');
+                links.forEach(link => {
+                  link.addEventListener('click', (e) => {
+                    const href = (link as HTMLAnchorElement).getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                      // Corrigindo o erro de tipagem usando uma abordagem mais segura
+                      if (e.preventDefault) {
+                        e.preventDefault();
+                        const targetId = href.substring(1);
+                        if (location.pathname === '/') {
+                          const targetElement = document.getElementById(targetId);
+                          if (targetElement) {
+                            const offset = window.innerWidth < 768 ? 100 : 80;
+                            window.scrollTo({
+                              top: targetElement.offsetTop - offset,
+                              behavior: 'smooth'
+                            });
+                          }
+                        } else {
+                          window.location.href = `/#${targetId}`;
+                        }
                       }
-                    } else {
-                      window.location.href = `/#${targetId}`;
                     }
-                  }
-                }
-              });
-            });
-          }}
-          className={isScrolled ? "" : "text-white hover:text-white"}
-        />
-        <div className="flex items-center gap-3 z-20 relative">
+                  });
+                });
+              }}
+            />
+            <div className="flex items-center gap-2">
           <Link 
             to="/admin" 
             className={`p-2 rounded-lg transition-colors duration-200 ${
@@ -156,10 +157,10 @@ const Navbar = () => {
           </Link>
           <Link to="/expositor">
             <ShimmerButton
-              background={isScrolled ? "#0a2856" : "#ffffff"}
-              shimmerColor={isScrolled ? "#b1f727" : "#00d856"}
+              background={isScrolled ? "#0a2856" : "#00d856"}
+              shimmerColor={isScrolled ? "#b1f727" : "#b1f727"}
               borderRadius="0.375rem"
-              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "" : "text-fespin-dark"}`}
+              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-white" : "text-fespin-dark"}`}
             >
               <span className="flex items-center">
                 Quero ser expositor
@@ -170,9 +171,9 @@ const Navbar = () => {
           <Link to="/patrocinio">
             <ShimmerButton
               background={isScrolled ? "#00d856" : "#ffffff"}
-              shimmerColor={isScrolled ? "#ffffff" : "#b1f727"}
+              shimmerColor={isScrolled ? "#ffffff" : "#00d856"}
               borderRadius="0.375rem"
-              className="px-4 py-2 text-sm font-medium text-fespin-dark"
+              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-fespin-dark" : "text-fespin-dark"}`}
             >
               <span className="flex items-center">
                 Quero patrocinar
@@ -180,18 +181,20 @@ const Navbar = () => {
               </span>
             </ShimmerButton>
           </Link>
+            </div>
+          </div>
         </div>
       </NavBody>
 
       {/* Mobile Navigation */}
       <MobileNav 
         className={isScrolled 
-          ? "bg-transparent backdrop-blur-sm px-4" 
-          : "bg-fespin-green shadow-md w-full px-4"
+          ? "bg-transparent backdrop-blur-sm px-6" 
+          : "bg-fespin-dark/90 backdrop-blur-sm shadow-lg w-full px-2"
         }
       >
         <MobileNavHeader>
-          <CustomNavbarLogo />
+          <CustomNavbarLogo isScrolled={isScrolled} />
           <MobileNavToggle
             isOpen={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

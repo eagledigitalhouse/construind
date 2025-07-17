@@ -49,6 +49,3 @@ export { ShimmerButton } from './shimmer-button';
 export { GlassChip } from './glass-chip';
 export { AnimatedBeam } from './animated-beam';
 export { AnimatedList } from './animated-list';
-export { TextReveal } from './text-reveal';
-export { Chart, ChartContainer, ChartTooltip, ChartTooltipContent } from './chart';
-export { ResizableNavbar } from './resizable-navbar';

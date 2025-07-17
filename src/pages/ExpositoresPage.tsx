@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import { Search, MapPin, Store, Filter, ArrowUpDown, Grid3X3, Grid2X2, X, ChevronRight, Loader2, AlertCircle } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Newsletter from "@/components/sections/Newsletter";
 import { GlassChip } from "@/components/ui/glass-chip";
-import { TextReveal } from "@/components/ui/text-reveal";
+
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -390,13 +391,9 @@ const ExpositoresPage = () => {
             </GlassChip>
             
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight mb-6">
-              <TextReveal highlightWords={["espaço"]}>
-                Reserve seu espaço na
-              </TextReveal>
+              Reserve seu <span className="text-[#00d856] font-semibold">espaço</span> na
               <br />
-              <TextReveal highlightWords={["FESPIN", "2025"]}>
-                FESPIN 2025
-              </TextReveal>
+              <span className="text-[#00d856] font-semibold">FESPIN</span> <span className="text-[#00d856] font-semibold">2025</span>
             </h2>
             
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -421,6 +418,7 @@ const ExpositoresPage = () => {
         </div>
       </section>
       
+      <Newsletter />
       <Footer />
     </div>
   );

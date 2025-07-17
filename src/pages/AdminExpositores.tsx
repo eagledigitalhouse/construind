@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Store, Upload, Edit2, Trash2, Save, X, Plus, Database, ExternalLink, MapPin, Palette } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Newsletter from "@/components/sections/Newsletter";
 import { useExpositores } from "@/hooks/useExpositores";
 import { toast } from "sonner";
 import { Expositor } from "@/lib/supabase";
@@ -677,6 +678,7 @@ const AdminExpositores = () => {
         )}
       </div>
       
+      <Newsletter />
       <Footer />
     </div>
   );

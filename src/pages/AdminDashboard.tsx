@@ -5,13 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import Newsletter from '@/components/sections/Newsletter';
 import { usePatrocinadores } from '@/hooks/usePatrocinadores';
 import { useExpositores } from '@/hooks/useExpositores';
 import { useCotasPatrocinio } from '@/hooks/useCotasPatrocinio';
 
 const AdminDashboard: React.FC = () => {
-  const { patrocinadores, isLoading: loadingPatrocinadores, patrocinadorPorCategoria } = usePatrocinadores();
-  const { expositores, isLoading: loadingExpositores } = useExpositores();
+  const { patrocinadores, loading: loadingPatrocinadores, patrocinadorPorCategoria } = usePatrocinadores();
+  const { expositores, loading: loadingExpositores } = useExpositores();
   const { cotas, loading: loadingCotas } = useCotasPatrocinio();
 
   const stats = [
@@ -198,6 +199,7 @@ const AdminDashboard: React.FC = () => {
         </Card>
       </div>
       
+      <Newsletter />
       <Footer />
     </div>
   );
