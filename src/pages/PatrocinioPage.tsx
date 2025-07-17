@@ -1,12 +1,12 @@
 import React from "react";
 import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp, Award, Crown, Sparkles, Heart, Calendar, MapPin, Phone, Mail, CheckCircle, Trophy, Activity, Dumbbell, Building2, UserCheck, Clock } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import CTASection from "@/components/sections/CTASection";
+import Footer from "@/components/layout/Footer";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { AnimatedList } from "@/components/ui/animated-list";
-import TabelaComparativa from "@/components/TabelaComparativa";
+import TabelaComparativa from "@/components/pages/TabelaComparativa";
 
 
 const PatrocinioPage = () => {
@@ -725,4 +725,4 @@ const PatrocinioPage = () => {
   );
 };
 
-export default PatrocinioPage; 
+export default PatrocinioPage;

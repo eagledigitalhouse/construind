@@ -38,7 +38,7 @@ const PatrocinadoresSection = () => {
   };
 
   return (
-    <section className="py-12 md:py-16 bg-white">
+    <section className="py-6 md:py-8 bg-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-8 md:mb-12">
@@ -220,25 +220,7 @@ const PatrocinadoresSection = () => {
           </div>
         )}
 
-        {/* Call to Action para se tornar patrocinador */}
-        <div className="mt-20">
-          <div className="bg-gray-50 rounded-2xl p-8 md:p-12 text-center border border-gray-100">
-            <h3 className="text-xl md:text-2xl font-display font-bold text-gray-900 mb-4">
-              Seja um Patrocinador FESPIN 2025
-            </h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Junte-se às empresas que estão transformando o futuro do esporte e bem-estar no interior de São Paulo.
-            </p>
-            <a
-              href="/patrocinio"
-              className="inline-flex items-center justify-center bg-[#0a2856] hover:bg-[#0a2856]/90 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300"
-            >
-              <Crown className="w-5 h-5 mr-2" />
-              Quero ser Patrocinador
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </a>
-          </div>
-        </div>
+
       </div>
     </section>
   );

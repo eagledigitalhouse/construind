@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -66,7 +65,7 @@ export default {
 				// Custom colors for FESPIN
 				fespin: {
 					"dark": "#0a2856",     // Primário Escuro
-					"light": "#00d856",    // Primário Claro  
+					"light": "#00d856",    // Primário Claro
 					"accent": "#b1f727",   // Destaque
 					"white": "#FFFFFF",    // Neutro
 					"green": "#00d856",    // Verde (mesmo que o light)
@@ -77,11 +76,22 @@ export default {
 					"700": "#2d2d2d",
 					"600": "#3d3d3d",
 				},
+				// Cores adicionais para PatrocinadorExpositorSection
+				'darkblue': '#102A43',
+				'grey': '#F0F4F8',
+				'offwhite': '#F8FAFC',
+				'blue': '#336699',
+				'hoblue': '#2A527A',
+				'bluish': '#E0E8F0',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			fontSize: {
+				// Tamanho adicional para PatrocinadorExpositorSection
+				'65xl': ['65px', { lineHeight: '1' }],
 			},
 			keyframes: {
 				'accordion-down': {

@@ -1,0 +1,11 @@
+export { default as Hero } from './Hero';
+export { default as AboutSection } from './AboutSection';
+export { default as MarketDataSection } from './MarketDataSection';
+export { default as HumanoidSection } from './HumanoidSection';
+export { default as Features } from './Features';
+export { default as CTASection } from './CTASection';
+export { default as SpecsSection } from './SpecsSection';
+export { default as ExpositorPatrocinioSection } from './ExpositorPatrocinioSection';
+export { default as PatrocinadoresSection } from './PatrocinadoresSection';
+export { default as LocalDataSection } from './LocalDataSection';
+export { default as Newsletter } from './Newsletter';

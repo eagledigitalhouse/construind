@@ -89,7 +89,7 @@ const Features = () => {
   }, []);
   
   return (
-    <section className="py-10 sm:py-12 md:py-14 pb-0 relative bg-gray-50" id="programacao" ref={sectionRef}>
+    <section className="py-10 sm:py-12 md:py-14 pb-0 relative bg-white" id="programacao" ref={sectionRef}>
       <div className="section-container px-4 sm:px-6 md:px-8 max-w-6xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
             <div className="flex items-center justify-center gap-4 mb-6">
@@ -99,12 +99,12 @@ const Features = () => {
             </div>
             
             <div className="mb-1">
-              <TextReveal className="py-1" highlightWords={["transformam"]}>
+              <TextReveal className="whitespace-nowrap" highlightWords={["transformam"]}>
                 Experiências que transformam.
               </TextReveal>
             </div>
             
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed opacity-0 animate-fade-in" style={{
+            <p className="text-lg md:text-xl text-gray-700 leading-relaxed opacity-0 animate-fade-in max-w-2xl mx-auto" style={{
               animationDelay: "0.5s"
             }}>
               Três dias repletos de atividades, conexões e descobertas que vão elevar sua paixão pelo movimento e bem-estar.

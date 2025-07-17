@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Store, Upload, Edit2, Trash2, Save, X, Plus, Database, ExternalLink, MapPin, Palette } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useExpositores } from "@/hooks/useExpositores";
 import { toast } from "sonner";
 import { Expositor } from "@/lib/supabase";

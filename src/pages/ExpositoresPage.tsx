@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Search, MapPin, Store, Filter, ArrowUpDown, Grid3X3, Grid2X2, X, ChevronRight, Loader2, AlertCircle } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";

@@ -1,6 +1,6 @@
 
 import React from "react";
-import novaImagem from "../assets/41NYhR0lTlSlGvmRpFyhKQ.webp";
+import novaImagem from "@/assets/41NYhR0lTlSlGvmRpFyhKQ.webp";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 

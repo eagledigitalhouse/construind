@@ -227,8 +227,7 @@ const AdminPatrocinadores: React.FC = () => {
 
   // Handlers para drag and drop
   const handleDragStart = (e: React.DragEvent, patrocinador: Patrocinador) => {
-    console.log('🎯 Iniciando drag para:', patrocinador.nome, 'ID:', patrocinador.id);
-    console.log('🎯 DataTransfer disponível:', !!e.dataTransfer);
+    // Iniciando drag para patrocinador
     
     // Configurar o dataTransfer
     if (e.dataTransfer) {
@@ -238,7 +237,7 @@ const AdminPatrocinadores: React.FC = () => {
     }
     
     setDraggedPatrocinador(patrocinador);
-    console.log('🎯 Estado draggedPatrocinador definido:', patrocinador.nome);
+    // Estado draggedPatrocinador definido
   };
 
   const handleDragOver = (e: React.DragEvent, cotaId: string) => {
@@ -247,7 +246,7 @@ const AdminPatrocinadores: React.FC = () => {
     e.dataTransfer.dropEffect = 'move';
     
     if (dragOverCota !== cotaId) {
-      console.log('📍 Drag over categoria:', cotaId);
+      // Drag over categoria
       setDragOverCota(cotaId);
     }
   };
@@ -268,7 +267,7 @@ const AdminPatrocinadores: React.FC = () => {
     const y = e.clientY;
     
     if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
-      console.log('🚪 Saindo da categoria:', cotaId);
+      // Saindo da categoria
       setDragOverCota(null);
     }
   };
@@ -276,24 +275,22 @@ const AdminPatrocinadores: React.FC = () => {
   const handleDrop = async (e: React.DragEvent, novaCotaId: string) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🎯 Drop na categoria:', novaCotaId);
+    // Drop na categoria
     
     setDragOverCota(null);
 
     if (!draggedPatrocinador) {
-      console.log('❌ Nenhum patrocinador sendo arrastado');
       return;
     }
 
     if (draggedPatrocinador.categoria_id === novaCotaId) {
-      console.log('ℹ️ Patrocinador já está nesta categoria');
-      setDraggedPatrocinador(null);
-      toast.success(`${draggedPatrocinador.nome} já está nesta categoria.`);
-      return;
-    }
+       setDraggedPatrocinador(null);
+       toast.success(`${draggedPatrocinador.nome} já está nesta categoria.`);
+       return;
+     }
 
     try {
-      console.log('🔄 Movendo patrocinador:', draggedPatrocinador.nome, 'para categoria:', novaCotaId);
+      // Movendo patrocinador para nova categoria
       
       await atualizarPatrocinador(draggedPatrocinador.id, {
         ...draggedPatrocinador,
@@ -303,9 +300,9 @@ const AdminPatrocinadores: React.FC = () => {
       // Estado local já é atualizado pela função atualizarPatrocinador
       
       toast.success(`${draggedPatrocinador.nome} movido com sucesso!`);
-      console.log('✅ Patrocinador movido com sucesso e dados recarregados!');
+      // Patrocinador movido com sucesso
     } catch (error) {
-      console.error('❌ Erro ao mover patrocinador:', error);
+      console.error('Erro ao mover patrocinador:', error);
       toast.error('Erro ao mover patrocinador');
     }
     

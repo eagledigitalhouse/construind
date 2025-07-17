@@ -295,4 +295,4 @@ const MarketDataSection = () => {
   );
 };
 
-export default MarketDataSection; 
+export default MarketDataSection;

@@ -1,9 +1,9 @@
 import React from "react";
 import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp, Award, Crown, CheckCircle, Calendar, Building2, UserCheck, Phone, Mail, MapPin, Clock, Activity, Sparkles } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import CTASection from "@/components/CTASection";
-import Footer from "@/components/Footer";
-import MapViewer from "@/components/MapViewer";
+import Navbar from "@/components/layout/Navbar";
+import CTASection from "@/components/sections/CTASection";
+import Footer from "@/components/layout/Footer";
+import MapViewer from "@/components/pages/MapViewer";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { TextReveal } from "@/components/ui/text-reveal";
 import { AnimatedList } from "@/components/ui/animated-list";
@@ -756,4 +756,4 @@ const ExpositorPage = () => {
   );
 };
 
-export default ExpositorPage; 
+export default ExpositorPage;

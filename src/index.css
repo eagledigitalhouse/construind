@@ -461,3 +461,21 @@
 .resizable-navbar-links a {
   @apply text-white hover:text-accent transition-colors duration-200;
 }
+/* Classes para ExpositorPatrocinioSection */
+.bg-build {
+  background-image: url('/images/beliefs/bg.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: unset;
+}
+
+.pb-70 {
+  padding-bottom: 18rem;
+}
+
+.bg-beliefs {
+  background-image: url('/images/beliefs/swirls.svg');
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: contain;
+}

@@ -105,13 +105,13 @@ const SegmentosSection = () => {
     >
       <div className="min-h-screen sticky top-0 flex flex-col items-center justify-center py-16">
         <div className="container mx-auto px-4 text-center mb-8">
-          <div className="flex items-center justify-center gap-4 mb-2">
+          <div className="flex items-center justify-center gap-4 mb-8">
             <GlassChip icon={<Zap className="w-4 h-4" />}>
               Segmentos
             </GlassChip>
           </div>
           
-          <div className="mb-1">
+          <div className="mb-4">
             <TextReveal className="py-0" highlightWords={["Presentes"]}>
               Segmentos Presentes na Feira
             </TextReveal>

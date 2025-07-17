@@ -1,18 +1,18 @@
 
 import React, { useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import AboutSection from "@/components/AboutSection";
-import MarketDataSection from "@/components/MarketDataSection";
-import SegmentosSection from "@/components/HumanoidSection";
-import Features from "@/components/Features";
-import CTASection from "@/components/CTASection";
-import SpecsSection from "@/components/SpecsSection";
-import ExpositorPatrocinioSection from "@/components/ExpositorPatrocinioSection";
-import PatrocinadoresSection from "@/components/PatrocinadoresSection";
-import LocalDataSection from "@/components/LocalDataSection";
-import Newsletter from "@/components/Newsletter";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Hero from "@/components/sections/Hero";
+import AboutSection from "@/components/sections/AboutSection";
+import MarketDataSection from "@/components/sections/MarketDataSection";
+import SegmentosSection from "@/components/sections/HumanoidSection";
+import Features from "@/components/sections/Features";
+import CTASection from "@/components/sections/CTASection";
+import SpecsSection from "@/components/sections/SpecsSection";
+import ExpositorPatrocinioSection from "@/components/sections/ExpositorPatrocinioSection";
+import PatrocinadoresSection from "@/components/sections/PatrocinadoresSection";
+import LocalDataSection from "@/components/sections/LocalDataSection";
+import Newsletter from "@/components/sections/Newsletter";
+import Footer from "@/components/layout/Footer";
 
 const Index = () => {
   // Initialize intersection observer to detect when elements enter viewport
@@ -69,14 +69,15 @@ const Index = () => {
         <SegmentosSection />
         <MarketDataSection />
         <Features />
-        <CTASection variant="home" />
         <SpecsSection />
         <ExpositorPatrocinioSection />
         <PatrocinadoresSection />
         <LocalDataSection />
-        <Newsletter />
       </main>
-      <Footer variant="home" />
+      <div className="relative">
+        <Newsletter />
+        <Footer variant="home" />
+      </div>
     </div>
   );
 };
