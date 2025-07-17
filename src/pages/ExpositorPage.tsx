@@ -5,7 +5,6 @@ import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
 import MapViewer from "@/components/pages/MapViewer";
 import { GlassChip } from "@/components/ui/glass-chip";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { AnimatedList } from "@/components/ui/animated-list";
 
 const ExpositorPage = () => {
@@ -142,14 +141,14 @@ const ExpositorPage = () => {
               <span className="font-semibold">Seja um Expositor FESPIN 2025</span>
             </div>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-[0.9] mb-2">
+            <h1 className="title-hero font-display font-extrabold leading-[0.9] spacing-title">
               <span className="block text-white mb-1">Seja pioneiro na</span>
               <span className="block bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent animate-pulse-slow">
                 primeira feira do segmento
               </span>
             </h1>
             
-            <p className="text-base md:text-lg text-white/90 mb-4 max-w-3xl mx-auto leading-tight font-light">
+            <p className="text-lead text-white/90 spacing-text max-w-3xl mx-auto leading-tight font-light">
               Posicione sua marca como líder desde o início. Conecte-se com mais de <span className="font-bold text-[#b1f727]">15.000 visitantes</span> qualificados na primeira feira de esporte do interior de São Paulo.
             </p>
             
@@ -190,22 +189,19 @@ const ExpositorPage = () => {
               </div>
               
               <div className="space-y-6">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight text-left">
+                <h2 className="title-section font-display font-extrabold text-gray-900 leading-tight">
                   <span className="block">
-                    <TextReveal className="py-0 text-left" highlightWords={["expor"]}>
-                      Por que expor na
-                    </TextReveal>
+                    Por que <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">expor na</span>
                   </span>
                   <span className="block">
-                    <TextReveal className="py-0 text-left" highlightWords={["FESPIN", "2025"]}>
-                      FESPIN 2025?
-                    </TextReveal>
+                    <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">FESPIN</span> 2025?
                   </span>
                 </h2>
                 
-                <p className="text-lg text-gray-600 leading-tight max-w-lg text-left">
-                  A primeira feira de esporte do interior é sua chance de liderar um mercado em expansão 
-                  e conectar-se com um público altamente qualificado.
+                <p className="text-base md:text-lg text-gray-700 max-w-xl text-left">
+                  A primeira feira de esporte do interior é sua chance de
+                  liderar um mercado em expansão e conectar-se com um
+                  público altamente qualificado.
                 </p>
               </div>
             </div>

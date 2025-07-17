@@ -88,8 +88,8 @@ const AdminDashboard: React.FC = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Painel Administrativo</h1>
-          <p className="text-gray-600">Gerencie patrocinadores e expositores da FESPIN 2025</p>
+          <h1 className="title-page text-gray-900">Painel Administrativo</h1>
+          <p className="text-lead text-gray-600">Gerencie patrocinadores e expositores da FESPIN 2025</p>
         </div>
 
         {/* Stats Cards */}
@@ -100,8 +100,8 @@ const AdminDashboard: React.FC = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-caption text-gray-600">{stat.title}</p>
+                      <p className="text-stat text-gray-900">{stat.value}</p>
                     </div>
                     <div className={`${stat.color} text-white p-3 rounded-lg`}>
                       {stat.icon}
@@ -123,10 +123,10 @@ const AdminDashboard: React.FC = () => {
                     {action.icon}
                   </div>
                   <div>
-                    <CardTitle className="text-lg">{action.title}</CardTitle>
+                    <CardTitle className="subtitle-small">{action.title}</CardTitle>
                   </div>
                 </div>
-                <p className="text-gray-600 text-sm mt-2">{action.description}</p>
+                <p className="text-small text-gray-600">{action.description}</p>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-2">

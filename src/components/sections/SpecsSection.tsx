@@ -1,7 +1,6 @@
 
 import React from "react";
 import novaImagem from "@/assets/41NYhR0lTlSlGvmRpFyhKQ.webp";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 
 const SpecsSection = () => {
@@ -16,13 +15,17 @@ const SpecsSection = () => {
             </GlassChip>
           </div>
           
-          <div className="mb-1">
-            <TextReveal className="py-0" highlightWords={["movimento", "transforma"]}>
-              Acreditamos que o movimento transforma.
-            </TextReveal>
+          <div className="mb-3">
+            <h2 className="title-section font-display font-extrabold leading-none text-center">
+              <span className="text-[#0a2856]">Acreditamos que o </span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
+              <span className="text-[#0a2856]"> </span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transforma</span>
+              <span className="text-[#0a2856]">.</span>
+            </h2>
           </div>
           
-          <p className="text-lg md:text-xl text-gray-700 leading-snug max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+          <p className="text-lead text-gray-700 leading-snug max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
             animationDelay: "0.5s"
           }}>
             Saúde vai além do físico... é atitude, é escolha, é comunidade.
@@ -49,16 +52,16 @@ const SpecsSection = () => {
               
               {/* Manifesto à direita */}
               <div className="p-6 sm:p-8 md:p-10 flex flex-col justify-center">
-                <div className="space-y-4 text-base sm:text-lg leading-snug text-gray-700">
-                  <p className="relative pl-4 sm:pl-6 border-l-4 border-[#00d856]">
-                    <span className="text-lg sm:text-xl md:text-2xl font-semibold text-[#0a2856]">Movimento que transforma</span> é mais do que um slogan — é o coração da FESPIN. Ele representa a ideia de que toda mudança significativa começa com uma ação, por menor que seja.
+                <div className="space-y-4 text-body leading-relaxed text-gray-700 text-center lg:text-left">
+                  <p>
+                    <span className="subtitle-medium font-semibold text-[#0a2856]">Movimento que transforma</span> é mais do que um slogan — é o coração da FESPIN. Ele representa a ideia de que toda mudança significativa começa com uma ação, por menor que seja.
                   </p>
                   
                   <p>
                     Ao incentivar o corpo a se mover, também despertamos a mente, criamos conexões e abrimos espaço para novas possibilidades. Esse movimento não se limita ao esporte: ele inspira escolhas mais saudáveis, relações mais fortes e uma comunidade mais ativa e unida.
                   </p>
                   
-                  <p className="text-lg sm:text-xl md:text-2xl font-display font-bold text-[#0a2856] pt-2">
+                  <p className="subtitle-medium font-display font-bold text-[#0a2856] pt-2">
                     É sobre transformar vidas, uma experiência de cada vez.
                   </p>
                 </div>
@@ -69,20 +72,20 @@ const SpecsSection = () => {
             <div className="border-t border-gray-100">
               <div className="grid grid-cols-2 sm:grid-cols-4">
                 <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">+15mil</div>
-                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">visitantes</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856]">+15mil</div>
+                  <div className="text-caption text-gray-500">visitantes</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6 border-r sm:border-r border-gray-100">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">3</div>
-                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">dias de evento</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856]">3</div>
+                  <div className="text-caption text-gray-500">dias de evento</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">4</div>
-                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">segmentos</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856]">4</div>
+                  <div className="text-caption text-gray-500">segmentos</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6">
-                  <div className="text-xl sm:text-2xl md:text-3xl font-display font-extrabold text-[#00d856]">∞</div>
-                  <div className="text-[10px] sm:text-xs md:text-sm text-gray-500">conexões</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856]">∞</div>
+                  <div className="text-caption text-gray-500">conexões</div>
                 </div>
               </div>
             </div>

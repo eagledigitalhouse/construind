@@ -4,7 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
 import { GlassChip } from "@/components/ui/glass-chip";
-import { TextReveal } from "@/components/ui/text-reveal";
+
 import { AnimatedList } from "@/components/ui/animated-list";
 import TabelaComparativa from "@/components/pages/TabelaComparativa";
 
@@ -145,14 +145,14 @@ const PatrocinioPage = () => {
               <span className="font-semibold">Patrocínio FESPIN 2025</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[0.9] mb-4">
+            <h1 className="title-hero font-display font-extrabold leading-[0.9] spacing-title">
               <span className="block text-white mb-2">Sua marca no</span>
               <span className="block bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent animate-pulse-slow">
                 centro do movimento
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-white/90 mb-6 max-w-3xl mx-auto leading-tight font-light">
+            <p className="text-lead text-white/90 spacing-text max-w-3xl mx-auto leading-tight font-light">
               Conecte sua marca com mais de <span className="font-bold text-[#b1f727]">12 mil pessoas</span> apaixonadas por esporte, bem-estar e qualidade de vida na maior feira do interior.
             </p>
             
@@ -193,7 +193,7 @@ const PatrocinioPage = () => {
               </div>
               
               <div className="space-y-4 text-left">
-                <h2 className="text-5xl sm:text-6xl md:text-7xl font-display font-extrabold text-gray-900 leading-tight">
+                <h2 className="title-section font-display font-extrabold text-gray-900 leading-tight">
                   <span className="block text-left">
                     Benefícios <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">exclusivos</span>
                   </span>

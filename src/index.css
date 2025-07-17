@@ -271,6 +271,92 @@
   h1, h2, h3 {
     font-weight: 900 !important;
     font-family: 'Brockmann', 'Inter', sans-serif !important;
+    line-height: 0.9 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* === SISTEMA DE PADRONIZAÇÃO DE TEXTOS === */
+  
+  /* Títulos Principais */
+  .title-hero {
+    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-[0.9] mb-4;
+  }
+  
+  .title-section {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none mb-3;
+  }
+  
+  .title-page {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-tight mb-3;
+  }
+  
+  /* Subtítulos */
+  .subtitle-large {
+    @apply text-xl sm:text-2xl md:text-3xl font-display font-bold leading-tight mb-4;
+  }
+  
+  .subtitle-medium {
+    @apply text-lg sm:text-xl md:text-2xl font-display font-bold leading-tight mb-3;
+  }
+  
+  .subtitle-small {
+    @apply text-base sm:text-lg md:text-xl font-display font-semibold leading-tight mb-3;
+  }
+  
+  /* Textos Corporais */
+  .text-lead {
+    @apply text-lg md:text-xl text-gray-600 leading-relaxed mb-6;
+  }
+  
+  .text-body {
+    @apply text-base md:text-lg text-gray-700 leading-relaxed mb-4;
+  }
+  
+  .text-small {
+    @apply text-sm md:text-base text-gray-600 leading-normal mb-3;
+  }
+  
+  .text-caption {
+    @apply text-xs sm:text-sm text-gray-500 leading-normal mb-2;
+  }
+  
+  /* Textos Especiais */
+  .text-button {
+    @apply text-sm md:text-base font-medium;
+  }
+  
+  .text-badge {
+    @apply text-xs font-semibold uppercase tracking-wide;
+  }
+  
+  .text-stat {
+    @apply text-2xl sm:text-3xl md:text-4xl font-display font-extrabold leading-none;
+  }
+  
+  /* Espaçamentos Padronizados */
+  .spacing-title {
+    @apply mb-3;
+  }
+  
+  .spacing-subtitle {
+    @apply mb-4;
+  }
+  
+  .spacing-text {
+    @apply mb-6;
+  }
+  
+  .spacing-section {
+    @apply py-12 md:py-16;
+  }
+  
+  /* Classes de compatibilidade (manter por enquanto) */
+  .section-title {
+    @apply title-section text-center;
+  }
+  
+  .section-subtitle {
+    @apply text-lead max-w-3xl mx-auto;
   }
 
   .font-extrabold {
@@ -454,7 +540,82 @@
 /* Ajuste para o navbar transparente */
 .resizable-navbar-transparent {
   background: transparent;
-  backdrop-filter: blur(5px);
+  backdrop-filter: none;
+}
+
+/* Melhorias para quebras de linha em mobile */
+.text-balance {
+  text-wrap: balance;
+}
+
+.prevent-orphans {
+  text-wrap: pretty;
+  orphans: 2;
+  widows: 2;
+}
+
+.mobile-no-break {
+  @apply whitespace-nowrap sm:whitespace-normal;
+}
+
+.mobile-break-words {
+  @apply break-words sm:break-normal;
+}
+
+/* Ajustes para títulos */
+h1, h2, h3 {
+  @apply prevent-orphans;
+  hyphens: auto;
+  line-height: 1.2;
+}
+
+/* Melhor espaçamento de palavras em textos pequenos */
+.text-sm, .text-xs {
+  word-spacing: 0.05em;
+}
+
+/* Controle de quebras para gradientes */
+.gradient-text {
+  @apply bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent;
+  display: inline;
+}
+
+/* Evitar quebras inadequadas em spans */
+span.text-\[\#0a2856\], span.gradient-text {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .prevent-orphans {
+    text-wrap: pretty;
+  }
+  
+  .mobile-no-break {
+    white-space: nowrap;
+  }
+  
+  .mobile-break-words {
+    word-break: break-word;
+    hyphens: auto;
+  }
+  
+  /* Evitar quebras inadequadas em títulos */
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  
+  /* Melhor espaçamento entre palavras em textos pequenos */
+  .text-sm, .text-xs {
+    word-spacing: 0.05em;
+  }
+  
+  span.text-\[\#0a2856\], span.gradient-text {
+    white-space: normal;
+  }
 }
 
 /* Ajuste para os links no navbar */

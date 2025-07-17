@@ -1,7 +1,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Dumbbell, Heart, ShoppingBag, Apple, Zap } from "lucide-react";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -112,9 +111,11 @@ const SegmentosSection = () => {
           </div>
           
           <div className="mb-4">
-            <TextReveal className="py-0" highlightWords={["Presentes"]}>
-              Segmentos Presentes na Feira
-            </TextReveal>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-tight text-center">
+              <span className="text-[#0a2856]">Segmentos </span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">Presentes</span>
+              <span className="text-[#0a2856]"> na Feira</span>
+            </h2>
           </div>
           
           <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
@@ -181,45 +182,46 @@ const SegmentosSection = () => {
                   </div>
 
                   {/* Conteúdo */}
-                  <div className="relative h-full flex flex-col p-8 z-10">
-                    {/* Espaço vazio superior - maior para empurrar o conteúdo para baixo */}
-                    <div className="flex-grow-[3]"></div>
+                  <div className="relative h-full flex flex-col p-6 md:p-8 z-10">
+                    {/* Espaço vazio superior */}
+                    <div className="flex-grow-[1.5]"></div>
                     
-                    {/* Conteúdo centralizado (título, descrição) */}
-                    <div className="text-center w-full mb-6">
-                      <h3 className="text-5xl font-extrabold text-white mb-4 tracking-tight leading-tight">
+                    {/* Conteúdo centralizado (título, descrição e modalidades) */}
+                    <div className="text-center w-full">
+                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
                         {segmento.titulo}
                       </h3>
 
-                      <p className="text-white/80 max-w-lg mx-auto text-sm md:text-base">
+                      <p className="text-white/80 max-w-lg mx-auto text-sm md:text-base leading-relaxed mb-6">
                         {segmento.descricao}
                       </p>
-                    </div>
-                    
-                    {/* Espaço mínimo entre o conteúdo e as modalidades */}
-                    <div className="flex-grow-[0.5]"></div>
 
-                    {/* Parte de modalidades na parte inferior */}
-                    <div className="text-center w-full">
-                      <div className="text-white/70 text-xs uppercase tracking-wider mb-2 md:mb-3 font-semibold">
-                        Modalidades incluídas
-                      </div>
-                      <div className="flex flex-wrap gap-1 md:gap-2 justify-center">
-                        {segmento.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className={`
-                              px-2 py-1 md:px-3 md:py-1.5 
-                              bg-white/20 rounded-full 
-                              text-xs md:text-sm text-white 
-                              backdrop-blur-sm border border-[#00d856]/30
-                            `}
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                      {/* Modalidades logo abaixo da descrição */}
+                       <div>
+                         <div className="text-white/70 text-xs uppercase tracking-wider mb-3 font-semibold">
+                           Modalidades incluídas
+                         </div>
+                         <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center">
+                           {segmento.tags.map((tag) => (
+                             <span
+                               key={tag}
+                               className={`
+                                 px-2.5 py-1 md:px-3 md:py-1.5 
+                                 bg-white/20 rounded-full 
+                                 text-xs md:text-sm text-white 
+                                 backdrop-blur-sm border border-[#00d856]/30
+                                 font-medium
+                               `}
+                             >
+                               {tag}
+                             </span>
+                           ))}
+                         </div>
+                       </div>
+                     </div>
+                     
+                     {/* Espaço vazio inferior - reduzido */}
+                     <div className="flex-grow-[0.5]"></div>
                   </div>
                 </div>
               );

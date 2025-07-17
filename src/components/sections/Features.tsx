@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Dumbbell, Store, Mic, Zap, Heart, Utensils } from "lucide-react";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -98,10 +97,12 @@ const Features = () => {
               </GlassChip>
             </div>
             
-            <div className="mb-1">
-              <TextReveal className="whitespace-nowrap" highlightWords={["transformam"]}>
-                Experiências que transformam.
-              </TextReveal>
+            <div className="mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
+                <span className="text-[#0a2856]">Experiências que </span>
+                <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformam</span>
+                <span className="text-[#0a2856]">.</span>
+              </h2>
             </div>
             
             <p className="text-lg md:text-xl text-gray-700 leading-relaxed opacity-0 animate-fade-in max-w-2xl mx-auto" style={{

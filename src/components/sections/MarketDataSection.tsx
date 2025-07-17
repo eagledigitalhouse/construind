@@ -263,33 +263,35 @@ const MarketDataSection = () => {
           </div>
         </div>
 
-        {/* Animated Character - ACIMA DA FONTE GLOBAL WELLNESS */}
+      </div>
+      
+      {/* Imagem da mulher fazendo ioga - surgindo de baixo para cima - CENTRALIZADA NA TELA */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50">
         <motion.div
-          className="absolute left-1/2 w-[25rem] h-[25rem] md:w-[55rem] md:h-[55rem] z-30"
-          style={{
-            top: '30%',
-            transform: `translate(-50%, -50%)`,
+          className="w-96 h-96 sm:w-[32rem] sm:h-[32rem] md:w-[40rem] md:h-[40rem] lg:w-[50rem] lg:h-[50rem] xl:w-[60rem] xl:h-[60rem]"
+          initial={{ y: 200, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{
+            type: "spring",
+            stiffness: 60,
+            damping: 15,
+            duration: 1.2,
           }}
-          initial={{ x: 0, y: 0 }}
-          animate={{ 
-            x: scrollY * -0.1,
-            y: 0
+          animate={{
+            y: scrollY * 0.02,
+            x: scrollY * 0.01,
           }}
-          transition={{ type: "spring", stiffness: 100, damping: 30 }}
         >
           <img 
             src="/woman-yoga-position-isolated.png"
             alt="Mulher fazendo yoga"
-            className="w-full h-full object-contain drop-shadow-2xl"
+            className="w-full h-full object-contain opacity-100"
             style={{
-              filter: "drop-shadow(0 12px 24px rgba(0,0,0,0.3))"
+              filter: "drop-shadow(0 15px 40px rgba(0,0,0,0.4))"
             }}
           />
         </motion.div>
-
-
-
-
       </div>
     </section>
   );

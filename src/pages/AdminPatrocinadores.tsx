@@ -431,8 +431,8 @@ const AdminPatrocinadores: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Gerenciar Patrocinadores</h1>
-              <p className="text-gray-600 mt-2 text-lg">
+              <h1 className="title-page text-gray-900">Gerenciar Patrocinadores</h1>
+              <p className="text-lead text-gray-600">
                 {patrocinadores.length} patrocinador{patrocinadores.length !== 1 ? 'es' : ''} cadastrado{patrocinadores.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -457,8 +457,8 @@ const AdminPatrocinadores: React.FC = () => {
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-red-600" />
               <div>
-                <h3 className="text-red-800 font-medium">Erro ao carregar dados</h3>
-                <p className="text-red-600 text-sm mt-1">{error || errorCotas}</p>
+                <h3 className="subtitle-small text-red-800">Erro ao carregar dados</h3>
+                <p className="text-small text-red-600">{error || errorCotas}</p>
               </div>
             </div>
           </div>
@@ -520,7 +520,7 @@ const AdminPatrocinadores: React.FC = () => {
                           </div>
                         ) : (
                           <div className="flex items-center gap-3 group">
-                            <h2 className="text-xl font-bold text-gray-900">{cota.nome}</h2>
+                            <h2 className="subtitle-medium text-gray-900">{cota.nome}</h2>
                             <button
                               onClick={() => iniciarEdicaoNomeCota(cota.id, cota.nome)}
                               className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all duration-200"
@@ -540,11 +540,11 @@ const AdminPatrocinadores: React.FC = () => {
                           </div>
                         )}
                         <div className="flex items-center gap-3 mt-2">
-                          <p className="text-gray-600">
+                          <p className="text-small text-gray-600">
                             {patrocinadoresdaCota.length} patrocinador{patrocinadoresdaCota.length !== 1 ? 'es' : ''}
                           </p>
                           {isDragOver && (
-                            <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
+                            <span className="text-small bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">
                               Solte aqui para mover
                             </span>
                           )}
@@ -569,12 +569,12 @@ const AdminPatrocinadores: React.FC = () => {
                 {/* Formulário para Novo Patrocinador */}
                 {mostrarFormulario === cota.id && (
                   <div className="p-6 bg-blue-50 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    <h3 className="subtitle-small text-gray-900 spacing-subtitle">
                       Novo Patrocinador - {cota.nome}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-caption text-gray-700">
                           Nome da Empresa *
                         </label>
                         <input
@@ -586,7 +586,7 @@ const AdminPatrocinadores: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-caption text-gray-700">
                           Categoria
                         </label>
                         <input
@@ -598,7 +598,7 @@ const AdminPatrocinadores: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-caption text-gray-700">
                           Website
                         </label>
                         <input
@@ -610,7 +610,7 @@ const AdminPatrocinadores: React.FC = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-caption text-gray-700">
                           Tamanho do Logo
                         </label>
                         <select
@@ -624,7 +624,7 @@ const AdminPatrocinadores: React.FC = () => {
                         </select>
                       </div>
                       <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <label className="block text-caption text-gray-700">
                           Descrição da Empresa
                         </label>
                         <textarea

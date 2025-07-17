@@ -101,8 +101,8 @@ const CTASection: React.FC<CTASectionProps> = ({
               
               {/* Título */}
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-extrabold mb-3 leading-tight">
-                <span className="block text-white mb-1">{title}</span>
-                <span className="block text-[#b1f727]">{subtitle}</span>
+                <span className="block text-white mb-1 whitespace-nowrap sm:whitespace-normal">{title}</span>
+                <span className="block text-[#b1f727] whitespace-nowrap">{subtitle}</span>
               </h2>
               
               {/* Descrição */}
@@ -114,9 +114,9 @@ const CTASection: React.FC<CTASectionProps> = ({
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
                 <a 
                   href={finalPrimaryButton.href}
-                  className="group bg-[#b1f727] hover:bg-[#b1f727]/90 text-[#0a2856] font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl min-w-[240px]"
+                  className="group bg-[#b1f727] hover:bg-[#b1f727]/90 text-[#0a2856] font-bold py-4 px-8 rounded-xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl min-w-[240px] w-full sm:w-auto"
                 >
-                  <span className="flex items-center justify-center">
+                  <span className="flex items-center justify-center whitespace-nowrap">
                     {finalPrimaryButton.icon}
                     {finalPrimaryButton.text}
                     <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -124,9 +124,9 @@ const CTASection: React.FC<CTASectionProps> = ({
                 </a>
                 <a 
                   href={finalSecondaryButton.href}
-                  className="group bg-transparent border-2 border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold py-4 px-8 rounded-xl transition-all duration-300 backdrop-blur-sm min-w-[240px]"
+                  className="group bg-transparent border-2 border-white/40 text-white hover:bg-white/10 hover:border-white/60 font-bold py-4 px-8 rounded-xl transition-all duration-300 backdrop-blur-sm min-w-[240px] w-full sm:w-auto"
                 >
-                  <span className="flex items-center justify-center">
+                  <span className="flex items-center justify-center whitespace-nowrap">
                     {finalSecondaryButton.icon}
                     {finalSecondaryButton.text}
                     <Phone className="ml-3 w-5 h-5 transition-transform group-hover:scale-110" />
@@ -151,4 +151,4 @@ const CTASection: React.FC<CTASectionProps> = ({
   );
 };
 
-export default CTASection; 
+export default CTASection;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Crown, Star, Award, Heart, ArrowRight, X, ExternalLink } from "lucide-react";
-import { TextReveal } from "@/components/ui/text-reveal";
+
 import { GlassChip } from "@/components/ui/glass-chip";
 import { usePatrocinadores } from '@/hooks/usePatrocinadores';
 import { useCotasPatrocinio } from '@/hooks/useCotasPatrocinio';
@@ -47,24 +47,17 @@ const PatrocinadoresSection = () => {
               Nossos Parceiros
             </GlassChip>
           </div>
-          <div className="mb-4 text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] leading-tight">
+          <h2 className="spacing-title title-section font-display font-extrabold text-[#0a2856] leading-none">
             <div className="mb-2">
-              <TextReveal className="py-0">
-                Patrocinadores que
-              </TextReveal>
+              Patrocinadores que
             </div>
             <div>
-              <TextReveal className="py-0" highlightWords={["transformam", "movimento"]}>
-                transformam o movimento
-              </TextReveal>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformam</span> o <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
             </div>
-          </div>
-          <div className="text-base md:text-lg text-gray-600 leading-tight opacity-0 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: "0.5s" }}>
+          </h2>
+          <div className="text-body text-gray-600 leading-tight opacity-0 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: "0.5s" }}>
             <p>
-              Empresas que acreditam no poder do esporte e do bem-estar
-            </p>
-            <p>
-              para transformar vidas e comunidades.
+              Empresas que acreditam no poder do esporte e do bem-estar para transformar vidas e comunidades.
             </p>
           </div>
         </div>
@@ -86,7 +79,7 @@ const PatrocinadoresSection = () => {
                   <div className="flex items-center justify-center mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
                     <div className="flex items-center px-6">
-                      <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900">
+                      <h3 className="subtitle-large font-display font-bold text-gray-900">
                         {cota.nome}
                       </h3>
                     </div>
@@ -140,7 +133,7 @@ const PatrocinadoresSection = () => {
             >
               {/* Header do Modal */}
               <div className="flex items-center justify-between p-6 border-b border-gray-100">
-                <h2 className="text-xl font-display font-bold text-gray-900">
+                <h2 className="subtitle-medium font-display font-bold text-gray-900">
                   Detalhes do Patrocinador
                 </h2>
                 <button
@@ -182,19 +175,19 @@ const PatrocinadoresSection = () => {
                 {/* Informações */}
                 <div className="text-center space-y-4">
                   {/* Nome da empresa */}
-                  <h3 className="text-2xl font-display font-bold text-gray-900">
+                  <h3 className="subtitle-large font-display font-bold text-gray-900">
                     {patrocinadorSelecionado.nome}
                   </h3>
                   
                   {/* Categoria */}
-                  <p className="text-base text-gray-600">
+                  <p className="text-body text-gray-600">
                     {patrocinadorSelecionado.categoria}
                   </p>
                   
                   {/* Descrição */}
                   {patrocinadorSelecionado.descricao && (
                     <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mt-6">
-                      <p className="text-gray-700 leading-relaxed">
+                      <p className="text-body text-gray-700 leading-relaxed">
                         {patrocinadorSelecionado.descricao}
                       </p>
                     </div>

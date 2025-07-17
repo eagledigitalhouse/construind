@@ -1,6 +1,5 @@
 import React from "react";
 import { ArrowRight, Store, Star } from "lucide-react";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { Link } from "react-router-dom";
 
@@ -16,10 +15,12 @@ const ExpositorPatrocinioSection = () => {
             </GlassChip>
           </div>
           
-          <div className="mb-1">
-            <TextReveal className="py-0" highlightWords={["movimento"]}>
-              Sua marca no centro do movimento.
-            </TextReveal>
+          <div className="mb-3">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
+              <span className="text-[#0a2856]">Sua marca no centro do </span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
+              <span className="text-[#0a2856]">.</span>
+            </h2>
           </div>
         </div>
 

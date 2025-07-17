@@ -172,14 +172,14 @@ const AdminExpositores = () => {
         <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-display font-bold text-gray-900 mb-2">
+              <h1 className="title-page text-gray-900">
                 Administração de Expositores
               </h1>
-              <p className="text-gray-600">
+              <p className="text-lead text-gray-600">
                 Gerencie os expositores do evento FESPIN
               </p>
               <div className="flex items-center gap-4 mt-3">
-                <div className="text-sm text-gray-500">
+                <div className="text-small text-gray-500">
                   Total de expositores: <span className="font-medium text-gray-900">{expositores.length}</span>
                 </div>
               </div>
@@ -200,7 +200,7 @@ const AdminExpositores = () => {
         {mostrarFormulario && (
           <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">Adicionar Novo Expositor</h2>
+              <h2 className="subtitle-medium text-gray-900">Adicionar Novo Expositor</h2>
               <button
                 onClick={() => {
                   setMostrarFormulario(false);
@@ -214,7 +214,7 @@ const AdminExpositores = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Nome do Expositor *
                 </label>
                 <input
@@ -227,7 +227,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Localização *
                 </label>
                 <input
@@ -240,7 +240,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Categoria *
                 </label>
                 <select
@@ -256,7 +256,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Website
                 </label>
                 <input
@@ -269,7 +269,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Telefone
                 </label>
                 <input
@@ -282,7 +282,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Email
                 </label>
                 <input
@@ -295,7 +295,7 @@ const AdminExpositores = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Descrição *
                 </label>
                 <textarea
@@ -308,7 +308,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Cor Primária
                 </label>
                 <input
@@ -320,7 +320,7 @@ const AdminExpositores = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Cor Secundária
                 </label>
                 <input
@@ -332,7 +332,7 @@ const AdminExpositores = () => {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-caption text-gray-700">
                   Logo *
                 </label>
                 <div className="space-y-4">
@@ -406,8 +406,8 @@ const AdminExpositores = () => {
                     >
                       <Store className="w-4 h-4" />
                     </div>
-                    <h2 className="text-lg font-bold text-gray-900">{categoria.nome}</h2>
-                    <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">
+                    <h2 className="subtitle-small text-gray-900">{categoria.nome}</h2>
+                    <span className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-badge">
                       {expositoresCategoria.length}
                     </span>
                   </div>
@@ -432,7 +432,7 @@ const AdminExpositores = () => {
                               />
                               <div>
                                 <h3 className="font-semibold text-gray-900">{expositor.nome}</h3>
-                                <p className="text-sm text-gray-600 flex items-center gap-1">
+                                <p className="text-small text-gray-600 flex items-center gap-1">
                                   <MapPin className="w-3 h-3" />
                                   {expositor.localizacao}
                                 </p>
@@ -454,9 +454,9 @@ const AdminExpositores = () => {
                             </div>
                           </div>
                           
-                          <p className="text-sm text-gray-600 mb-3">{expositor.descricao}</p>
+                          <p className="text-small text-gray-600 mb-3">{expositor.descricao}</p>
                           
-                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                          <div className="flex items-center gap-2 text-caption text-gray-500">
                             <div className="flex items-center gap-1">
                               <Palette className="w-3 h-3" />
                               <div 
@@ -496,7 +496,7 @@ const AdminExpositores = () => {
             <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Editar Expositor</h2>
+                  <h2 className="subtitle-medium text-gray-900">Editar Expositor</h2>
                   <button
                     onClick={() => setEditandoExpositor(null)}
                     className="text-gray-500 hover:text-gray-700"
@@ -507,7 +507,7 @@ const AdminExpositores = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Nome do Expositor
                     </label>
                     <input
@@ -519,7 +519,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Localização
                     </label>
                     <input
@@ -531,7 +531,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Categoria
                     </label>
                     <select
@@ -546,7 +546,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Website
                     </label>
                     <input
@@ -558,7 +558,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Telefone
                     </label>
                     <input
@@ -570,7 +570,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Email
                     </label>
                     <input
@@ -582,7 +582,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Descrição
                     </label>
                     <textarea
@@ -594,7 +594,7 @@ const AdminExpositores = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-caption text-gray-700">
                       Cor Primária
                     </label>
                     <input

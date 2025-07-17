@@ -74,8 +74,8 @@ const Hero = () => {
             className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl hero-title text-white text-center lg:text-left opacity-0 animate-fade-in" 
             style={{ animationDelay: "0.3s", fontWeight: "900" }}
           >
-            FESPIN 2025<br />
-            <span className="text-accent">Movimento que Transforma</span>
+            <span className="block">FESPIN 2025</span>
+            <span className="text-accent block">Movimento que Transforma</span>
           </h1>
           
           <div 

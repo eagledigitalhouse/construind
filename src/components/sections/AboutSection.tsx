@@ -1,6 +1,5 @@
 import React from "react";
 import { Users, Store, Dumbbell, Utensils } from "lucide-react";
-import { TextReveal } from "@/components/ui/text-reveal";
 import { GlassChip } from "@/components/ui/glass-chip";
 
 const AboutSection = () => {
@@ -39,19 +38,21 @@ const AboutSection = () => {
               </GlassChip>
             </div>
             
-            <div className="mb-8">
-              <div className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] mb-2 leading-tight">
+            <div className="mb-3">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
                 <div className="mb-2">
-                  <TextReveal className="py-0" highlightWords={["feira"]}>
-                    Muito mais do que uma feira.
-                  </TextReveal>
+                  <span className="text-[#0a2856]">Muito mais do que uma </span>
+                  <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">feira</span>
+                  <span className="text-[#0a2856]">.</span>
                 </div>
                 <div>
-                  <TextReveal className="py-0" highlightWords={["movimento", "transformação"]}>
-                    Um movimento de transformação.
-                  </TextReveal>
+                  <span className="text-[#0a2856]">Um </span>
+                  <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
+                  <span className="text-[#0a2856]"> de </span>
+                  <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformação</span>
+                  <span className="text-[#0a2856]">.</span>
                 </div>
-              </div>
+              </h2>
             </div>
             
             <div className="max-w-3xl mx-auto">
@@ -96,4 +97,4 @@ const AboutSection = () => {
   );
 };
 
-export default AboutSection; 
+export default AboutSection;
