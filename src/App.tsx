@@ -6,9 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import PatrocinioPage from "./pages/PatrocinioPage";
 import ExpositorPage from "./pages/ExpositorPage";
+import AdminDashboard from "./pages/AdminDashboard";
 import AdminPatrocinadores from "./pages/AdminPatrocinadores";
 import AdminExpositores from "./pages/AdminExpositores";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminCRM from "./pages/AdminCRM";
 import NotFound from "./pages/NotFound";
 
 import ExpositoresPage from "./pages/ExpositoresPage";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/admin/patrocinadores" element={<AdminPatrocinadores />} />
         <Route path="/admin/expositores" element={<AdminExpositores />} />
+        <Route path="/admin/crm" element={<AdminCRM />} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

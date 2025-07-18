@@ -1,0 +1,91 @@
+/* Padronização de Subtítulos - FESPIN */
+
+/* Classe base para subtítulos de seções */
+.subtitle-section {
+  @apply text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6;
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Variação para subtítulos em fundo escuro */
+.subtitle-section-dark {
+  @apply text-base md:text-lg text-white/80 max-w-3xl mx-auto leading-relaxed mb-6;
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Container para títulos e subtítulos */
+.section-header {
+  @apply text-center mb-8 md:mb-12;
+}
+
+.section-header .section-chip {
+  @apply flex items-center justify-center gap-4 mb-6;
+}
+
+.section-header .section-title {
+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3;
+}
+
+.section-header .section-subtitle {
+  @apply subtitle-section;
+}
+
+/* Responsividade específica para mobile */
+@media (max-width: 640px) {
+  .subtitle-section,
+  .subtitle-section-dark {
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.5;
+    max-width: 90%;
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-header {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Responsividade para tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .subtitle-section,
+  .subtitle-section-dark {
+    font-size: 1rem; /* 16px */
+    line-height: 1.6;
+    max-width: 85%;
+  }
+}
+
+/* Responsividade para desktop */
+@media (min-width: 1025px) {
+  .subtitle-section,
+  .subtitle-section-dark {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.7;
+    max-width: 48rem; /* 768px */
+  }
+}
+
+/* Garantir que o texto nunca quebre de forma inadequada */
+.subtitle-section,
+.subtitle-section-dark {
+  word-wrap: break-word;
+  hyphens: auto;
+  text-wrap: balance;
+}
+
+/* Espaçamento consistente entre elementos */
+.section-spacing {
+  @apply py-8 sm:py-12 md:py-16;
+}
+
+/* Utilitário para centralização perfeita */
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
