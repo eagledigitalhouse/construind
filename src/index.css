@@ -640,3 +640,22 @@ span.text-\[\#0a2856\], span.gradient-text {
   background-position: left bottom;
   background-size: contain;
 }
+
+/* Animação para o border beam */
+@keyframes border-beam {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.border-beam-card {
+  position: relative;
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              conic-gradient(from 0deg, transparent 60%, #00d856 80%, #b1f727 90%, transparent 100%) border-box;
+  animation: border-beam 6s linear infinite;
+  animation-delay: var(--beam-delay, 0s);
+}

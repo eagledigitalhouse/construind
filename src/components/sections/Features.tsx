@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { Dumbbell, Store, Mic, Zap, Heart, Utensils } from "lucide-react";
 import { GlassChip } from "@/components/ui/glass-chip";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { BorderBeam } from "@/components/magicui/border-beam";
+
 
 interface FeatureCardProps {
   icon: React.ReactNode;
@@ -43,14 +45,25 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, ind
   return (
     <div 
       ref={cardRef}
-      className="group p-5 bg-white rounded-2xl border border-gray-100 hover:border-[#00d856]/30 hover:shadow-lg transition-all duration-300 opacity-0 text-center max-w-[230px] md:max-w-[260px] mx-auto w-full"
-      style={{ animationDelay: `${0.1 * index}s` }}
+      className="group relative p-5 bg-white rounded-2xl border border-gray-200 hover:border-[#00d856]/30 hover:shadow-lg transition-all duration-300 opacity-0 text-center max-w-[230px] md:max-w-[260px] mx-auto w-full overflow-hidden"
+      style={{ 
+        animationDelay: `${0.1 * index}s`
+      }}
     >
-      <div className="w-12 h-12 mx-auto mb-3 bg-[#00d856]/10 rounded-xl flex items-center justify-center text-[#00d856] group-hover:bg-[#00d856] group-hover:text-white transition-all duration-300">
-        {icon}
+      <div className="relative z-10">
+        <div className="w-12 h-12 mx-auto mb-3 bg-[#00d856]/10 rounded-xl flex items-center justify-center text-[#00d856] group-hover:bg-[#00d856] group-hover:text-white transition-all duration-300">
+          {icon}
+        </div>
+        <h3 className="text-lg font-display font-bold text-[#0a2856] mb-2">{title}</h3>
+        <p className="text-gray-600 text-xs md:text-sm leading-relaxed">{description}</p>
       </div>
-      <h3 className="text-lg font-display font-bold text-[#0a2856] mb-2">{title}</h3>
-      <p className="text-gray-600 text-xs md:text-sm leading-relaxed">{description}</p>
+      <BorderBeam 
+        duration={8} 
+        size={80} 
+        delay={index * 0.5}
+        colorFrom="#00d856"
+        colorTo="#b1f727"
+      />
     </div>
   );
 };
