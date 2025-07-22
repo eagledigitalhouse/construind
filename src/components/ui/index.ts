@@ -56,6 +56,7 @@ export * from './shimmer-button';
 export * from './animated-beam';
 export * from './animated-list';
 export * from './dynamic-form';
+export * from './email-autocomplete';
 export * from './resizable-navbar';
 export { default as PhoneContact } from './phone-contact';
 export { default as FloatingContact } from './floating-contact';

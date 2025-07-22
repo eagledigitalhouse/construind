@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNewsletter } from "@/hooks/useNewsletter";
+import { EmailAutocomplete } from "@/components/ui/email-autocomplete";
 import { toast } from "sonner";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
   const [nome, setNome] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { addNewsletter } = useNewsletter();
+  const { cadastrarEmail } = useNewsletter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +21,9 @@ const Newsletter = () => {
     setIsSubmitting(true);
     
     try {
-      const success = await addNewsletter(email, nome);
+      const result = await cadastrarEmail(email, nome);
       
-      if (success) {
+      if (!result.error) {
         toast.success("Obrigado por se inscrever na newsletter da FESPIN!");
         setEmail("");
         setNome("");
@@ -64,12 +65,10 @@ const Newsletter = () => {
                     placeholder="Seu nome (opcional)"
                     className="w-full px-4 py-3 text-base rounded-xl bg-white/95 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-3 focus:ring-white/50 focus:bg-white transition-all shadow-lg"
                   />
-                  <input
-                    type="email"
+                  <EmailAutocomplete
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={setEmail}
                     placeholder="Seu email"
-                    required
                     className="w-full px-4 py-3 text-base rounded-xl bg-white/95 text-gray-800 placeholder-gray-600 focus:outline-none focus:ring-3 focus:ring-white/50 focus:bg-white transition-all shadow-lg"
                   />
                 </div>

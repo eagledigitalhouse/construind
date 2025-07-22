@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { EmailAutocomplete } from '@/components/ui/email-autocomplete';
 import { Upload, FileText, Building2, User, Phone, Mail, CreditCard, MapPin, Calendar, CheckCircle, Search, Loader2, Users, Target, Info } from 'lucide-react';
 import { toast } from 'sonner';
 import MapViewer from '@/components/pages/MapViewer';
@@ -1122,14 +1123,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         <Mail className="w-4 h-4 mr-2" />
                       E-MAIL *
                       </Label>
-                      <Input
+                      <EmailAutocomplete
                         id="emailPF"
-                        type="email"
                         value={formData.emailPF}
-                        onChange={(e) => handleInputChange('emailPF', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
-                        placeholder="seu@email.com"
-                        required
+                        onChange={(value) => handleInputChange('emailPF', value)}
+                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        placeholder="Digite seu email..."
                       />
                     </div>
                     
