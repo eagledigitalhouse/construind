@@ -27,7 +27,17 @@
   ],
   "functions": {
     "app/api/**/*.js": {
-      "memory": 1024
+      "memory": 1024,
+      "maxDuration": 30
     }
-  }
+  },
+  "builds": [
+    { 
+      "src": "package.json", 
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ]
 }
