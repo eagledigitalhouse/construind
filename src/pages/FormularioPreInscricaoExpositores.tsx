@@ -298,7 +298,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     {
       value: 'sinal_saldo',
       label: '20% sinal + saldo restante',
-      description: '20% na assinatura + saldo restante até 20/10/2025'
+      description: '20% na assinatura + saldo restante até 10/10/2025'
     }
   ];
 
