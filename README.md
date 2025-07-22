@@ -179,4 +179,7 @@ Este projeto é desenvolvido para a FESPIN - Feira de Saúde e Prevenção.
 
 ---
 
-**🎉 Aplicação pronta para produção! Deploy com confiança!** 
+**🎉 Aplicação pronta para produção! Deploy com confiança!**
+
+---
+*Última atualização: 22/01/2025 - Deploy automático ativo* 
