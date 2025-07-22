@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, Star, Eye, Users, Zap, Store, Target, Handshake, TrendingUp, Award, Crown, Sparkles, Heart, Calendar, MapPin, Phone, Mail, CheckCircle, Trophy, Activity, Dumbbell, Building2, UserCheck, Clock } from "lucide-react";
+import { FloatingContact } from "@/components/ui";
 import Navbar from "@/components/layout/Navbar";
 import CTASection from "@/components/sections/CTASection";
 import Footer from "@/components/layout/Footer";
@@ -8,6 +9,7 @@ import { GlassChip } from "@/components/ui/glass-chip";
 
 import { AnimatedList } from "@/components/ui/animated-list";
 import TabelaComparativa from "@/components/pages/TabelaComparativa";
+
 
 
 const PatrocinioPage = () => {
@@ -46,10 +48,10 @@ const PatrocinioPage = () => {
 
   const cotasPatrocinio = [
     {
-      nome: "DIAMANTE",
+      nome: "OURO",
       icone: <Crown className="w-8 h-8" />,
-      cor: "from-[#40E0D0] to-[#00CED1]",
-      corTexto: "text-[#008B8B]",
+      cor: "from-[#FFD700] to-[#DAA520]",
+      corTexto: "text-[#B8860B]",
       destaque: true,
       beneficios: [
         "Estande no evento: 12m²",
@@ -64,10 +66,10 @@ const PatrocinioPage = () => {
       ]
     },
     {
-      nome: "OURO",
+      nome: "PRATA",
       icone: <Trophy className="w-8 h-8" />,
-      cor: "from-[#FFD700] to-[#DAA520]",
-      corTexto: "text-[#B8860B]",
+      cor: "from-[#C0C0C0] to-[#A9A9A9]",
+      corTexto: "text-[#696969]",
       destaque: false,
       beneficios: [
         "Estande no evento: 9m²",
@@ -82,15 +84,13 @@ const PatrocinioPage = () => {
       ]
     },
     {
-      nome: "PRATA",
+      nome: "BRONZE",
       icone: <Sparkles className="w-8 h-8" />,
-      cor: "from-[#C0C0C0] to-[#A9A9A9]",
-      corTexto: "text-[#696969]",
+      cor: "from-[#CD7F32] to-[#A0522D]",
+      corTexto: "text-[#8B4513]",
       destaque: false,
       beneficios: [
         "Estande no evento: 9m²",
-        "1h na arena esportiva",
-        "30min no palco principal",
         "Logo PEQUENO no site oficial da FESPIN",
         "Logo no telão LED estático (15s)",
         "Logo em grupo nos criativos oficiais",
@@ -186,24 +186,22 @@ const PatrocinioPage = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Coluna Esquerda - Conteúdo */}
-            <div className="lg:sticky lg:top-8">
-              <div className="mb-6">
+            <div className="lg:sticky lg:top-8 flex flex-col items-center text-center md:items-start md:text-left">
+              <div className="mb-6 w-full flex justify-center md:justify-start">
                 <GlassChip icon={<Target className="w-4 h-4" />}>
                   POR QUE PATROCINAR?
                 </GlassChip>
               </div>
-              
-              <div className="space-y-4 text-left">
+              <div className="space-y-4 w-full">
                 <h2 className="title-section font-display font-extrabold text-gray-900 leading-tight">
-                  <span className="block text-left">
+                  <span className="block">
                     Benefícios <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">exclusivos</span>
                   </span>
-                  <span className="block text-left">
+                  <span className="block">
                     para nossos <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">patrocinadores</span>
                   </span>
                 </h2>
-                
-                <p className="text-xl text-gray-600 leading-tight max-w-lg">
+                <p className="text-xl text-gray-600 leading-tight max-w-lg mx-auto md:mx-0">
                   Maximize o alcance da sua marca com benefícios únicos pensados 
                   para gerar resultados reais e conexões valiosas.
                 </p>
@@ -297,10 +295,10 @@ const PatrocinioPage = () => {
           <div className="bg-gray-50 rounded-2xl p-8 md:p-10 mb-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-6">
+                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-6 text-center lg:text-left">
                   Movimento que transforma vidas
                 </h3>
-                <p className="text-lg text-gray-600 leading-tight mb-8">
+                <p className="text-lg text-gray-600 leading-tight mb-8 text-center lg:text-left">
                   A FESPIN reúne academias, profissionais, marcas e entusiastas do esporte 
                   em um ambiente único de conexão, aprendizado e transformação. Três dias 
                   intensos de experiências (8h às 20h), networking e oportunidades de negócios.
@@ -489,7 +487,7 @@ const PatrocinioPage = () => {
             {cotasPatrocinio.map((cota, index) => (
               <div 
                 key={index} 
-                className={`group relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl flex flex-col aspect-square md:aspect-auto`}
+                className={`group relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-105 hover:shadow-3xl flex flex-col min-h-[600px] md:min-h-[680px]`}
                 style={{
                   animation: `fadeInUp 0.6s ease-out forwards`,
                   animationDelay: `${index * 0.15}s`,
@@ -512,8 +510,8 @@ const PatrocinioPage = () => {
                 </div>
                 
                 {/* Conteúdo do card */}
-                <div className="bg-white p-8 flex flex-col h-full">
-                  <ul className="space-y-4 mb-8 flex-1">
+                <div className="bg-white p-8 flex flex-col flex-grow">
+                  <ul className="space-y-4 mb-8 flex-grow">
                     {cota.beneficios.map((beneficio, beneficioIndex) => (
                       <li key={beneficioIndex} className="flex items-start gap-3">
                         <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -594,135 +592,11 @@ const PatrocinioPage = () => {
         </div>
       </section>
 
-      {/* Contato Section */}
-      <section id="contato" className="py-12 md:py-16 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden">
-        {/* Elementos decorativos */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-[#00d856]/5 rounded-full blur-3xl -translate-x-48 -translate-y-48"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#b1f727]/5 rounded-full blur-3xl translate-x-40 translate-y-40"></div>
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center mb-8 md:mb-10">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <GlassChip icon={<Phone className="w-4 h-4" />}>
-                Fale conosco
-              </GlassChip>
-            </div>
-            
-            <div className="mb-3">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
-                Vamos construir uma <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">parceria</span>
-              </h2>
-            </div>
-            
-            <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-tight">
-              Nossa equipe está pronta para criar a proposta ideal para sua empresa. 
-              Entre em contato e descubra como sua marca pode brilhar na FESPIN 2025.
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            {/* Formulário de Contato */}
-            <div className="bg-white rounded-xl p-6 md:p-8 shadow-xl border border-gray-100 mb-8">
-              <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4 flex items-center justify-center">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#00d856] to-[#b1f727] flex items-center justify-center mr-3">
-                  <Mail className="w-5 h-5 text-white" />
-                </div>
-                Solicite uma Proposta
-              </h3>
-              
-              <form className="space-y-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Nome da Empresa
-                    </label>
-                    <input 
-                      type="text" 
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                      placeholder="Digite o nome da sua empresa"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Nome do Responsável
-                    </label>
-                    <input 
-                      type="text" 
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                      placeholder="Seu nome completo"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      E-mail
-                    </label>
-                    <input 
-                      type="email" 
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                      placeholder="seu@email.com"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Telefone
-                    </label>
-                    <input 
-                      type="tel" 
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                      placeholder="(19) 9 9999-9999"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Cota de Interesse
-                  </label>
-                                      <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50">
-                      <option>Selecione uma cota</option>
-                      <option>Diamante</option>
-                      <option>Ouro</option>
-                      <option>Prata</option>
-                      <option>Proposta Personalizada</option>
-                    </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Mensagem
-                  </label>
-                  <textarea 
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50 resize-none"
-                    placeholder="Conte-nos mais sobre seus objetivos..."
-                  ></textarea>
-                </div>
-                
-                <button 
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-[#00d856] to-[#b1f727] hover:from-[#00d856]/90 hover:to-[#b1f727]/90 text-[#0a2856] font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-                >
-                  <span className="flex items-center justify-center">
-                    <Mail className="mr-2 w-5 h-5" />
-                    Solicitar Proposta
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </span>
-                </button>
-              </form>
-            </div>
-            
 
-          </div>
-        </div>
-      </section>
 
       <Newsletter />
       <Footer variant="patrocinio" />
+      <FloatingContact />
     </div>
   );
 };

@@ -6,12 +6,16 @@ interface MapViewerProps {
   mapImage: string;
   title?: string;
   description?: string;
+  showDownloadButton?: boolean;
+  showFullscreenButton?: boolean;
 }
 
 const MapViewer: React.FC<MapViewerProps> = ({ 
   mapImage, 
   title = "Mapa do Evento",
-  description = "Clique e arraste para navegar. Use os botões para zoom." 
+  description = "Clique e arraste para navegar. Use os botões para zoom.",
+  showDownloadButton = true,
+  showFullscreenButton = true
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -71,13 +75,19 @@ const MapViewer: React.FC<MapViewerProps> = ({
         {/* Fullscreen Map Container */}
         <div className="relative h-[calc(100vh-80px)] bg-gray-100 overflow-hidden">
           <TransformWrapper
-            initialScale={1}
-            minScale={0.3}
-            maxScale={4}
+            initialScale={1.1}
+            minScale={1.05}
+            maxScale={3}
             centerOnInit={true}
+            limitToBounds={true}
+            centerZoomedOut={false}
             wheel={{ step: 0.1 }}
             doubleClick={{ disabled: false }}
             pinch={{ step: 5 }}
+            panning={{ 
+              disabled: false,
+              velocityDisabled: true
+            }}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
@@ -131,37 +141,49 @@ const MapViewer: React.FC<MapViewerProps> = ({
 
   return (
     <div className="w-full max-w-7xl mx-auto">
-      {/* Header com apenas os botões */}
-      <div className="bg-white rounded-t-2xl border-x border-t border-gray-200 p-4 sm:p-6">
-        <div className="flex gap-2 sm:gap-3 justify-center">
-          <button
-            onClick={downloadMap}
-            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all text-gray-700 font-medium text-sm"
-          >
-            <Download className="w-4 h-4" />
-            <span className="hidden sm:inline">Baixar</span>
-          </button>
-          <button
-            onClick={toggleFullscreen}
-            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#0a2856] to-[#00d856] hover:from-[#0a2856]/90 hover:to-[#00d856]/90 rounded-lg transition-all text-white font-medium text-sm"
-          >
-            <Maximize2 className="w-4 h-4" />
-            <span className="hidden sm:inline">Tela Cheia</span>
-          </button>
+      {/* Header com botões (só renderizar se pelo menos um botão deve aparecer) */}
+      {(showDownloadButton || showFullscreenButton) && (
+        <div className="bg-white rounded-t-2xl border-x border-t border-gray-200 p-4 sm:p-6">
+          <div className="flex gap-2 sm:gap-3 justify-center">
+            {showDownloadButton && (
+              <button
+                onClick={downloadMap}
+                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all text-gray-700 font-medium text-sm"
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">Baixar</span>
+              </button>
+            )}
+            {showFullscreenButton && (
+              <button
+                onClick={toggleFullscreen}
+                className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-[#0a2856] to-[#00d856] hover:from-[#0a2856]/90 hover:to-[#00d856]/90 rounded-lg transition-all text-white font-medium text-sm"
+              >
+                <Maximize2 className="w-4 h-4" />
+                <span className="hidden sm:inline">Tela Cheia</span>
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Container do Mapa - Responsivo */}
-      <div className="relative bg-gray-50 border-x border-gray-200">
+      <div className={`relative bg-gray-50 border-x border-gray-200 ${!(showDownloadButton || showFullscreenButton) ? 'rounded-t-2xl border-t' : ''}`}>
         <div className="aspect-[16/10] w-full">
           <TransformWrapper
-            initialScale={1}
-            minScale={0.5}
+            initialScale={1.1}
+            minScale={1.05}
             maxScale={3}
             centerOnInit={true}
+            limitToBounds={true}
+            centerZoomedOut={false}
             wheel={{ step: 0.1 }}
             doubleClick={{ disabled: false }}
             pinch={{ step: 5 }}
+            panning={{ 
+              disabled: false,
+              velocityDisabled: true
+            }}
           >
             {({ zoomIn, zoomOut, resetTransform }) => (
               <>
@@ -207,29 +229,37 @@ const MapViewer: React.FC<MapViewerProps> = ({
         </div>
       </div>
 
-       {/* Segmentos por Cores */}
-       <div className="bg-white rounded-b-2xl border-x border-b border-gray-200 p-4 sm:p-6">
-         <h4 className="text-lg font-semibold text-gray-800 mb-4 text-center">Segmentos por Cores</h4>
-         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 text-sm">
-           <div className="flex items-center gap-2">
-             <div className="w-4 h-4 rounded-full flex-shrink-0" style={{backgroundColor: '#b1f727'}}></div>
-             <span className="text-gray-700">Academia (3x3m)</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-4 h-4 rounded-full flex-shrink-0" style={{backgroundColor: '#ff6d4d'}}></div>
-             <span className="text-gray-700">Bem-estar (3x3m)</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-4 h-4 rounded-full flex-shrink-0" style={{backgroundColor: '#6cace3'}}></div>
-             <span className="text-gray-700">Artigos Esportivos (3x3m)</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-4 h-4 rounded-full flex-shrink-0" style={{backgroundColor: '#4dff8e'}}></div>
-             <span className="text-gray-700">Saúde e Nutrição (3x3m)</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <div className="w-4 h-4 rounded-full flex-shrink-0" style={{backgroundColor: '#f8c954'}}></div>
-             <span className="text-gray-700">Área Livre (5x5m)</span>
+       {/* Legenda dos Segmentos - Layout Horizontal Compacto */}
+       <div className="bg-white rounded-b-2xl border-x border-b border-gray-200 p-4">
+         <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+           <h4 className="text-base font-bold text-gray-800 mb-3 text-center">Segmentos por Cores</h4>
+           
+           {/* Layout responsivo - linha única no desktop, wrap no mobile */}
+           <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-4">
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#B6FF72'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Academia</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#FF776C'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Bem-estar</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#A6CFFF'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Artigos Esportivos</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#38FFB8'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Saúde e Nutrição</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#FFE27F'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Área Livre</span>
+             </div>
            </div>
          </div>
        </div>

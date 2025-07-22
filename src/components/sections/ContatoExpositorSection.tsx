@@ -1,8 +1,159 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Phone, Mail, MessageCircle, ArrowRight, Store } from "lucide-react";
 import { GlassChip } from "@/components/ui/glass-chip";
+import DynamicForm from "@/components/ui/dynamic-form";
+import { supabase } from "@/lib/supabase";
+
+interface FormularioConfig {
+  id: string;
+  titulo: string;
+  descricao?: string;
+  mensagemSucesso: string;
+  redirecionarApos?: string;
+  campos: any[];
+  estiloPersonalizado?: string;
+}
 
 const ContatoExpositorSection = () => {
+  const [formularioConfig, setFormularioConfig] = useState<FormularioConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const carregarFormulario = async () => {
+      try {
+        // Buscar formulário na nova estrutura
+        const { data: formulario, error: formularioError } = await supabase
+          .from('formularios')
+          .select('*')
+          .eq('nome', 'Cadastro de Expositor')
+          .eq('status', 'ativo')
+          .single();
+
+        if (formularioError && formularioError.code !== 'PGRST116') {
+          throw formularioError;
+        }
+
+        if (formulario) {
+          // Buscar campos do formulário
+          const { data: campos, error: camposError } = await supabase
+            .from('formulario_campos')
+            .select('*')
+            .eq('formulario_id', formulario.id)
+            .order('ordem');
+
+          if (camposError) throw camposError;
+
+          const config = formulario.configuracao || {};
+          setFormularioConfig({
+            id: formulario.id,
+            titulo: formulario.nome,
+            descricao: formulario.descricao,
+            mensagemSucesso: config.mensagemSucesso || 'Obrigado pelo seu interesse! Entraremos em contato em breve.',
+            redirecionarApos: config.redirecionarApos,
+            campos: campos || [],
+            estiloPersonalizado: config.estiloPersonalizado
+          });
+        }
+      } catch (err) {
+        console.error('Erro ao carregar formulário:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarFormulario();
+  }, []);
+
+  // Formulário padrão caso não exista configuração no banco
+  const formularioPadrao: FormularioConfig = {
+    id: 'expositor-padrao',
+    titulo: 'Reserve seu Espaço',
+    mensagemSucesso: 'Obrigado pelo seu interesse! Entraremos em contato em breve.',
+    campos: [
+      {
+        id: '1',
+        nome: 'empresa',
+        label: 'Nome da Empresa',
+        tipo: 'text',
+        obrigatorio: true,
+        placeholder: 'Digite o nome da sua empresa',
+        ordem: 1
+      },
+      {
+        id: '2',
+        nome: 'responsavel',
+        label: 'Nome do Responsável',
+        tipo: 'text',
+        obrigatorio: true,
+        placeholder: 'Seu nome completo',
+        ordem: 2
+      },
+      {
+        id: '3',
+        nome: 'email',
+        label: 'E-mail',
+        tipo: 'email',
+        obrigatorio: true,
+        placeholder: 'seu@email.com',
+        ordem: 3
+      },
+      {
+        id: '4',
+        nome: 'telefone',
+        label: 'Telefone',
+        tipo: 'tel',
+        obrigatorio: true,
+        placeholder: '(19) 9 9999-9999',
+        ordem: 4
+      },
+      {
+        id: '5',
+        nome: 'segmento',
+        label: 'Segmento',
+        tipo: 'select',
+        obrigatorio: true,
+        placeholder: 'Selecione seu segmento',
+        opcoes: [
+          'Academia e Fitness',
+          'Nutrição e Suplementos',
+          'Bem-estar e Saúde',
+          'Artigos Esportivos',
+          'Equipamentos de Exercício',
+          'Vestuário Esportivo',
+          'Tecnologia e Apps',
+          'Serviços de Saúde',
+          'Outros'
+        ],
+        ordem: 5
+      },
+      {
+        id: '6',
+        nome: 'stand',
+        label: 'Stand de Interesse',
+        tipo: 'select',
+        obrigatorio: true,
+        placeholder: 'Selecione o tipo de stand',
+        opcoes: [
+          'Stand Simples (3x3m)',
+          'Stand Premium (3x4m)',
+          'Stand Duplo (6x3m)',
+          'Stand Personalizado',
+          'Ainda não sei'
+        ],
+        ordem: 6
+      },
+      {
+        id: '7',
+        nome: 'mensagem',
+        label: 'Mensagem',
+        tipo: 'textarea',
+        obrigatorio: false,
+        placeholder: 'Conte-nos mais sobre sua empresa e objetivos...',
+        ordem: 7
+      }
+    ]
+  };
+
   return (
     <section id="contato" className="py-12 md:py-16 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden">
       {/* Elementos decorativos */}
@@ -30,121 +181,23 @@ const ContatoExpositorSection = () => {
         </div>
         
         <div className="max-w-4xl mx-auto">
-          {/* Formulário de Contato */}
-          <div className="bg-white rounded-xl p-6 md:p-8 shadow-xl border border-gray-100 mb-8">
-            <h3 className="text-2xl md:text-3xl font-display font-bold text-gray-900 mb-4 flex items-center justify-center">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-[#00d856] to-[#b1f727] flex items-center justify-center mr-3">
-                <Store className="w-5 h-5 text-white" />
-              </div>
-              Reserve seu Espaço
-            </h3>
-            
-            <form className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Nome da Empresa
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                    placeholder="Digite o nome da sua empresa"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Nome do Responsável
-                  </label>
-                  <input 
-                    type="text" 
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                    placeholder="Seu nome completo"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    E-mail
-                  </label>
-                  <input 
-                    type="email" 
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                    placeholder="seu@email.com"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Telefone
-                  </label>
-                  <input 
-                    type="tel" 
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50"
-                    placeholder="(19) 9 9999-9999"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Segmento
-                  </label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50">
-                    <option>Selecione seu segmento</option>
-                    <option>Academia e Fitness</option>
-                    <option>Nutrição e Suplementos</option>
-                    <option>Bem-estar e Saúde</option>
-                    <option>Artigos Esportivos</option>
-                    <option>Equipamentos de Exercício</option>
-                    <option>Vestuário Esportivo</option>
-                    <option>Tecnologia e Apps</option>
-                    <option>Serviços de Saúde</option>
-                    <option>Outros</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Stand de Interesse
-                  </label>
-                  <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50">
-                    <option>Selecione o tipo de stand</option>
-                    <option>Stand Simples (3x3m)</option>
-                    <option>Stand Premium (3x4m)</option>
-                    <option>Stand Duplo (6x3m)</option>
-                    <option>Stand Personalizado</option>
-                    <option>Ainda não sei</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Mensagem
-                </label>
-                <textarea 
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d856] focus:border-transparent transition-all duration-300 hover:border-[#00d856]/50 resize-none"
-                  placeholder="Conte-nos mais sobre sua empresa e objetivos..."
-                ></textarea>
-              </div>
-              
-              <button 
-                type="submit"
-                className="w-full bg-gradient-to-r from-[#00d856] to-[#b1f727] hover:from-[#00d856]/90 hover:to-[#b1f727]/90 text-[#0a2856] font-bold py-4 px-6 rounded-lg transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
-              >
-                <span className="flex items-center justify-center">
-                  <Store className="mr-2 w-5 h-5" />
-                  Solicitar Informações
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </span>
-              </button>
-            </form>
-          </div>
+          {/* Formulário de Contato Dinâmico */}
+          {loading ? (
+            <div className="bg-white rounded-xl p-6 md:p-8 shadow-xl border border-gray-100 mb-8 flex justify-center items-center min-h-[300px]">
+              <p>Carregando formulário...</p>
+            </div>
+          ) : (
+            <DynamicForm
+              tipoFormularioId="expositor"
+              config={formularioConfig || formularioPadrao}
+              className="mb-8"
+              buttonText="Solicitar Informações"
+              buttonIcon={<>
+                <Store className="mr-2 w-5 h-5" />
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </>}
+            />
+          )}
         </div>
       </div>
     </section>

@@ -31,15 +31,14 @@ const BeneficiosExpositor = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Coluna Esquerda - Conteúdo */}
-          <div className="lg:sticky lg:top-8">
-            <div className="flex items-start gap-4 mb-8 justify-start">
+          <div className="lg:sticky lg:top-8 flex flex-col items-center text-center md:items-start md:text-left">
+            <div className="flex gap-4 mb-8 w-full justify-center md:justify-start">
               <GlassChip icon={<Target className="w-4 h-4" />}>
                 Oportunidade única
               </GlassChip>
             </div>
-            
-            <div className="space-y-6">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3">
+            <div className="space-y-6 w-full">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3 text-center md:text-left">
                 <span className="block">
                   Por que <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">expor na</span>
                 </span>
@@ -47,8 +46,7 @@ const BeneficiosExpositor = () => {
                   <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">FESPIN</span> 2025?
                 </span>
               </h2>
-              
-              <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
+              <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto md:mx-0 leading-relaxed mb-6 text-center md:text-left">
                 A primeira feira de esporte do interior é sua chance de
                 liderar um mercado em expansão e conectar-se com um
                 público altamente qualificado.

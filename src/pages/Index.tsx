@@ -13,6 +13,7 @@ import PatrocinadoresSection from "@/components/sections/PatrocinadoresSection";
 import LocalDataSection from "@/components/sections/LocalDataSection";
 import Newsletter from "@/components/sections/Newsletter";
 import Footer from "@/components/layout/Footer";
+import { FloatingContact } from "@/components/ui";
 
 const Index = () => {
   // Initialize intersection observer to detect when elements enter viewport
@@ -78,6 +79,7 @@ const Index = () => {
         <Newsletter />
         <Footer variant="home" />
       </div>
+      <FloatingContact />
     </div>
   );
 };

@@ -1,7 +1,6 @@
-// Exportações dos hooks customizados
-export { useExpositores } from './useExpositores';
-export { usePatrocinadores } from './usePatrocinadores';
-export { useCotasPatrocinio } from './useCotasPatrocinio';
-export { useCRM } from './useCRM';
-export { useMobile } from './use-mobile';
-export { useToast } from './use-toast';
+export * from './use-mobile';
+export * from './use-toast';
+export * from './useCotasPatrocinio';
+export * from './useExpositores';
+export * from './usePatrocinadores';
+export * from './useNewsletter';

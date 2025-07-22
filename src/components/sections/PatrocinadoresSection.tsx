@@ -1,21 +1,96 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Crown, Star, Award, Heart, ArrowRight, X, ExternalLink } from "lucide-react";
 
 import { GlassChip } from "@/components/ui/glass-chip";
 import { usePatrocinadores } from '@/hooks/usePatrocinadores';
 import { useCotasPatrocinio } from '@/hooks/useCotasPatrocinio';
-import type { Patrocinador } from '@/lib/supabase';
-
-
+import { supabase, type Patrocinador } from '@/lib/supabase';
 
 const PatrocinadoresSection = () => {
-  const { patrocinadores, loading, patrocinadorPorCategoria } = usePatrocinadores();
+  const { patrocinadores, loading: loadingFromHook, patrocinadorPorCategoria } = usePatrocinadores();
   const { cotas, loading: loadingCotas } = useCotasPatrocinio();
   const [patrocinadorSelecionado, setPatrocinadorSelecionado] = useState<Patrocinador | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [patrocinadoresDireto, setPatrocinadoresDireto] = useState<Patrocinador[]>([]);
+  const [cotasDiretas, setCotasDiretas] = useState<any[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Log para depuração
+  console.log("Estado de carregamento:", { loading, loadingFromHook, loadingCotas });
+  console.log("Dados disponíveis:", { 
+    patrocinadores: patrocinadores.length, 
+    patrocinadoresDireto: patrocinadoresDireto.length,
+    cotas: cotas.length,
+    cotasDiretas: cotasDiretas.length
+  });
+
+  // Carregar patrocinadores diretamente para garantir acesso sem autenticação
+  useEffect(() => {
+    const carregarPatrocinadoresDireto = async () => {
+      try {
+        setLoading(true);
+        console.log("Iniciando carregamento direto de patrocinadores...");
+        
+        const { data, error } = await supabase
+          .from('patrocinadores')
+          .select('*')
+          .order('posicao', { ascending: true });
+
+        if (error) {
+          console.error('Erro ao carregar patrocinadores:', error);
+          setErrorMsg(`Erro: ${error.message}`);
+        } else {
+          console.log(`Carregados ${data?.length || 0} patrocinadores diretamente`);
+          setPatrocinadoresDireto(data || []);
+        }
+        
+        // Também carregar as cotas/categorias diretamente
+        const { data: dataCategorias, error: errorCategorias } = await supabase
+          .from('categorias')
+          .select('*')
+          .eq('tipo', 'patrocinador')
+          .order('ordem', { ascending: true });
+          
+        if (errorCategorias) {
+          console.error('Erro ao carregar categorias:', errorCategorias);
+        } else {
+          console.log(`Carregadas ${dataCategorias?.length || 0} categorias diretamente`);
+          setCotasDiretas(dataCategorias || []);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar patrocinadores direto:', err);
+        setErrorMsg(err instanceof Error ? err.message : 'Erro desconhecido');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarPatrocinadoresDireto();
+  }, []);
+
+  // Usar os patrocinadores do hook se disponíveis, senão usar os carregados diretamente
+  const patrocinadoresFinais = patrocinadores.length > 0 ? patrocinadores : patrocinadoresDireto;
+  const cotasFinais = cotas.length > 0 ? cotas : cotasDiretas.map(cat => ({
+    id: cat.id,
+    nome: cat.nome,
+    key: cat.nome.toLowerCase().replace(/\s+/g, '_'),
+    cor: cat.cor || '#0a2856',
+    icone: cat.icone || 'crown',
+    ordem: cat.ordem || 0,
+    ativo: true,
+    created_at: cat.created_at,
+    updated_at: cat.updated_at
+  }));
+  
+  const loadingFinal = loading && loadingFromHook && patrocinadoresFinais.length === 0;
 
   // Filtrar patrocinadores por categoria ID
   const patrocinadorPorCota = (categoriaId: string) => {
-    return patrocinadorPorCategoria(categoriaId);
+    // Usar a função do hook quando possível, senão filtrar manualmente
+    if (patrocinadores.length > 0) {
+      return patrocinadorPorCategoria(categoriaId);
+    }
+    return patrocinadoresDireto.filter(p => p.categoria_id === categoriaId);
   };
 
   // Obter classe CSS para tamanho do logo
@@ -36,6 +111,10 @@ const PatrocinadoresSection = () => {
   const obterClassesGrid = () => {
     return 'flex flex-wrap justify-center';
   };
+  
+  // Verificar se temos algum conteúdo para mostrar
+  const temConteudo = patrocinadoresFinais.length > 0 && cotasFinais.length > 0;
+  const semDados = !loadingFinal && !temConteudo;
 
   return (
     <section className="py-6 md:py-8 bg-white">
@@ -61,14 +140,33 @@ const PatrocinadoresSection = () => {
             </p>
           </div>
         </div>
+        
+        {/* Debug info - só visível em desenvolvimento */}
+        {process.env.NODE_ENV === 'development' && errorMsg && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+            <p className="font-bold">Erro ao carregar dados:</p>
+            <p>{errorMsg}</p>
+          </div>
+        )}
+        
         {/* Patrocinadores por categoria */}
         <div className="space-y-12">
-          {loading || loadingCotas ? (
+          {loadingFinal ? (
             <div className="text-center py-12">
               <p className="text-gray-500">Carregando patrocinadores...</p>
+              <p className="text-xs text-gray-400 mt-2">
+                Aguarde enquanto buscamos as informações dos nossos parceiros
+              </p>
+            </div>
+          ) : semDados ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Informações sobre patrocinadores em breve!</p>
+              <p className="text-xs text-gray-400 mt-2">
+                Estamos atualizando nossa lista de parceiros
+              </p>
             </div>
           ) : (
-            cotas.map((cota) => {
+            cotasFinais.map((cota) => {
               const patrocinadoresdaCota = patrocinadorPorCota(cota.id);
               if (!patrocinadoresdaCota || patrocinadoresdaCota.length === 0) {
                 return null;
@@ -118,6 +216,49 @@ const PatrocinadoresSection = () => {
               </div>
             );
           })
+          )}
+          
+          {/* Fallback para quando tivermos patrocinadores mas não cotas */}
+          {!loadingFinal && cotasFinais.length === 0 && patrocinadoresFinais.length > 0 && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-center mb-6">
+                <div className="flex-1 h-px bg-gray-200"></div>
+                <div className="flex items-center px-6">
+                  <h3 className="subtitle-large font-display font-bold text-gray-900">
+                    Patrocinadores
+                  </h3>
+                </div>
+                <div className="flex-1 h-px bg-gray-200"></div>
+              </div>
+              <div className="flex flex-wrap justify-center gap-10 max-w-6xl mx-auto">
+                {patrocinadoresFinais.map((patrocinador, index) => (
+                  <img
+                    key={patrocinador.id}
+                    src={patrocinador.logo}
+                    alt={`Logo ${patrocinador.nome}`}
+                    className="h-24 w-40 object-contain cursor-pointer opacity-0 animate-fade-in hover:opacity-100 transition-opacity duration-300 flex-shrink-0"
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => setPatrocinadorSelecionado(patrocinador)}
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        const div = document.createElement('div');
+                        div.className = "h-24 w-40 flex items-center justify-center bg-gray-100 text-gray-500 text-sm cursor-pointer";
+                        div.innerHTML = `
+                          <div class="text-center">
+                            <div class="mb-2">📷</div>
+                            <div>Logo não disponível</div>
+                          </div>
+                        `;
+                        parent.appendChild(div);
+                      }
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
 

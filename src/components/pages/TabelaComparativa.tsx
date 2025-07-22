@@ -1,5 +1,5 @@
 import React from "react";
-import { Crown, Trophy, Sparkles, CheckCircle } from "lucide-react";
+import { Crown, Trophy, Sparkles, CheckCircle, X } from "lucide-react";
 
 const TabelaComparativa = () => {
   return (
@@ -11,28 +11,28 @@ const TabelaComparativa = () => {
               <th className="text-left p-8 font-display font-bold text-xl text-white w-2/5 border-r border-white/10">
                 BENEFÍCIOS
               </th>
-              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 border-r border-white/10 bg-[#40E0D0]">
+              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 border-r border-white/10 bg-[#FFD700]">
                 <div className="flex flex-col items-center">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-2">
                     <Crown className="w-6 h-6 text-white" />
                   </div>
-                  DIAMANTE
+                  OURO
                 </div>
               </th>
-              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 border-r border-white/10 bg-[#FFD700]">
+              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 border-r border-white/10 bg-[#C0C0C0]">
                 <div className="flex flex-col items-center">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-2">
                     <Trophy className="w-6 h-6 text-white" />
                   </div>
-                  OURO
+                  PRATA
                 </div>
               </th>
-              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 bg-[#C0C0C0]">
+              <th className="text-center p-8 font-display font-bold text-xl text-white w-1/5 bg-[#CD7F32]">
                 <div className="flex flex-col items-center">
                   <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-2">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
-                  PRATA
+                  BRONZE
                 </div>
               </th>
             </tr>
@@ -63,18 +63,18 @@ const TabelaComparativa = () => {
                 Tempo na arena esportiva
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  1 HORA
                 </div>
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  1 HORA
                 </div>
               </td>
               <td className="p-6 text-center">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  ❌
                 </div>
               </td>
             </tr>
@@ -83,18 +83,18 @@ const TabelaComparativa = () => {
                 Tempo no palco principal
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  30 MINUTOS
                 </div>
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  30 MINUTOS
                 </div>
               </td>
               <td className="p-6 text-center">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
+                  ❌
                 </div>
               </td>
             </tr>
@@ -183,18 +183,18 @@ const TabelaComparativa = () => {
                 Sorteio de brindes no palco
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#00d856]/20 text-[#00d856] font-semibold text-sm">
+                  SIM
                 </div>
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#00d856]/20 text-[#00d856] font-semibold text-sm">
+                  SIM
                 </div>
               </td>
               <td className="p-6 text-center">
-                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-800 font-semibold text-sm">
-                  ❌
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-500 font-semibold text-sm">
+                  NÃO
                 </div>
               </td>
             </tr>
@@ -203,18 +203,18 @@ const TabelaComparativa = () => {
                 Agradecimento no palco
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#00d856]/20 text-[#00d856] font-semibold text-sm">
+                  SIM
                 </div>
               </td>
               <td className="p-6 text-center border-r border-gray-100">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#00d856]/20 text-[#00d856] font-semibold text-sm">
+                  SIM
                 </div>
               </td>
               <td className="p-6 text-center">
-                <div className="w-10 h-10 rounded-lg bg-[#00d856] flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-5 h-5 text-white" />
+                <div className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-[#00d856]/20 text-[#00d856] font-semibold text-sm">
+                  SIM
                 </div>
               </td>
             </tr>

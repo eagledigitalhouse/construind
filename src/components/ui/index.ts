@@ -1,51 +1,61 @@
-// Exportações dos componentes UI
-export { Button } from './button';
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card';
-export { Input } from './input';
-export { Label } from './label';
-export { Textarea } from './textarea';
-export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
-export { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './dialog';
-export { Badge } from './badge';
-export { Avatar, AvatarFallback, AvatarImage } from './avatar';
-export { Checkbox } from './checkbox';
-export { RadioGroup, RadioGroupItem } from './radio-group';
-export { Switch } from './switch';
-export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip';
-export { Popover, PopoverContent, PopoverTrigger } from './popover';
-export { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './dropdown-menu';
-export { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from './sheet';
-export { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from './table';
-export { Progress } from './progress';
-export { Separator } from './separator';
-export { ScrollArea } from './scroll-area';
-export { Calendar } from './calendar';
-export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from './form';
-export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion';
-export { Alert, AlertDescription, AlertTitle } from './alert';
-export { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from './alert-dialog';
-export { AspectRatio } from './aspect-ratio';
-export { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './breadcrumb';
-export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
-export { Collapsible, CollapsibleContent, CollapsibleTrigger } from './collapsible';
-export { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from './command';
-export { ContextMenu, ContextMenuCheckboxItem, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuRadioGroup, ContextMenuRadioItem, ContextMenuSeparator, ContextMenuShortcut, ContextMenuSub, ContextMenuSubContent, ContextMenuSubTrigger, ContextMenuTrigger } from './context-menu';
-export { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from './drawer';
-export { HoverCard, HoverCardContent, HoverCardTrigger } from './hover-card';
-export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from './input-otp';
-export { Menubar, MenubarCheckboxItem, MenubarContent, MenubarItem, MenubarLabel, MenubarMenu, MenubarRadioGroup, MenubarRadioItem, MenubarSeparator, MenubarShortcut, MenubarSub, MenubarSubContent, MenubarSubTrigger, MenubarTrigger } from './menubar';
-export { NavigationMenu, NavigationMenuContent, NavigationMenuIndicator, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, NavigationMenuViewport } from './navigation-menu';
-export { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from './pagination';
-export { ResizableHandle, ResizablePanel, ResizablePanelGroup } from './resizable';
-export { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarInput, SidebarInset, SidebarMenu, SidebarMenuAction, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarMenuSkeleton, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarRail, SidebarSeparator, SidebarTrigger } from './sidebar';
-export { Slider } from './slider';
-export { Toast, ToastAction, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport } from './toast';
-export { Toggle } from './toggle';
-export { ToggleGroup, ToggleGroupItem } from './toggle-group';
+// Componentes de formulário
+export * from './button';
+export * from './input';
+export * from './label';
+export * from './textarea';
+export * from './checkbox';
+export * from './radio-group';
+export * from './select';
+export * from './switch';
+export * from './form';
+
+// Componentes de layout
+export * from './card';
+export * from './dialog';
+export * from './sheet';
+export * from './tabs';
+export * from './accordion';
+export * from './separator';
+
+// Componentes de feedback
+export * from './alert';
+export * from './alert-dialog';
+export * from './toast';
+export { Toaster } from './toaster';
+export { Toaster as Sonner } from './sonner';
+export * from './progress';
+export * from './skeleton';
+export * from './badge';
+
+// Componentes de navegação
+export * from './navigation-menu';
+export * from './breadcrumb';
+export * from './pagination';
+export * from './dropdown-menu';
+export * from './context-menu';
+export * from './menubar';
+
+// Componentes de entrada
+export * from './calendar';
+export * from './date-range-picker';
+export * from './slider';
+export * from './toggle';
+export * from './toggle-group';
+
+// Componentes de display
+export * from './avatar';
+export * from './table';
+export * from './tooltip';
+export * from './popover';
+export * from './hover-card';
+export * from './collapsible';
 
 // Componentes customizados
-export { ShimmerButton } from './shimmer-button';
-export { GlassChip } from './glass-chip';
-export { AnimatedBeam } from './animated-beam';
-export { AnimatedList } from './animated-list';
+export * from './glass-chip';
+export * from './shimmer-button';
+export * from './animated-beam';
+export * from './animated-list';
+export * from './dynamic-form';
+export * from './resizable-navbar';
+export { default as PhoneContact } from './phone-contact';
+export { default as FloatingContact } from './floating-contact';

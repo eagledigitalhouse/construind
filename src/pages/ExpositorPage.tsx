@@ -9,6 +9,7 @@ import MapaEventoSection from "@/components/sections/MapaEventoSection";
 import TiposEstandesSection from "@/components/sections/TiposEstandesSection";
 import SegmentosEventoSection from "@/components/sections/SegmentosEventoSection";
 import ContatoExpositorSection from "@/components/sections/ContatoExpositorSection";
+import { FloatingContact } from "@/components/ui";
 
 const ExpositorPage = () => {
   return (
@@ -27,6 +28,7 @@ const ExpositorPage = () => {
       
       <Newsletter />
       <Footer />
+      <FloatingContact />
     </div>
   );
 };

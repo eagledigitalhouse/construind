@@ -7,28 +7,36 @@ export const useExpositores = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Carregar expositores
+  // Carregar expositores - FUNÇÃO PÚBLICA, sem necessidade de autenticação
   const fetchExpositores = async () => {
     try {
       setLoading(true)
+      setError(null)
+      
+      // Acesso público aos dados dos expositores
       const { data, error } = await supabase
         .from('expositores')
         .select('*')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
-
-      setExpositores(data || [])
+      if (error) {
+        console.error('Erro ao carregar expositores:', error)
+        setError(error.message)
+        // NÃO mostrar toast de erro para usuários públicos
+      } else {
+        setExpositores(data || [])
+        setError(null)
+      }
     } catch (err) {
       console.error('Erro ao carregar expositores:', err)
       setError(err instanceof Error ? err.message : 'Erro desconhecido')
-      toast.error('Erro ao carregar expositores')
+      // NÃO mostrar toast de erro para usuários públicos
     } finally {
       setLoading(false)
     }
   }
 
-  // Adicionar expositor
+  // Adicionar expositor (requer autenticação - apenas para admin)
   const adicionarExpositor = async (expositor: Omit<Expositor, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       const { data, error } = await supabase
@@ -49,7 +57,7 @@ export const useExpositores = () => {
     }
   }
 
-  // Atualizar expositor
+  // Atualizar expositor (requer autenticação - apenas para admin)
   const atualizarExpositor = async (id: string, updates: Partial<Expositor>) => {
     try {
       const { data, error } = await supabase
@@ -73,7 +81,7 @@ export const useExpositores = () => {
     }
   }
 
-  // Remover expositor
+  // Remover expositor (requer autenticação - apenas para admin)
   const removerExpositor = async (id: string) => {
     try {
       const { error } = await supabase
@@ -92,12 +100,12 @@ export const useExpositores = () => {
     }
   }
 
-  // Filtrar por categoria
+  // Filtrar por categoria - FUNÇÃO PÚBLICA
   const expositoresPorCategoria = (categoria: string) => {
     return expositores.filter(e => e.categoria === categoria)
   }
 
-  // Buscar expositores
+  // Buscar expositores - FUNÇÃO PÚBLICA
   const buscarExpositores = (query: string) => {
     return expositores.filter(e => 
       e.nome.toLowerCase().includes(query.toLowerCase()) ||
@@ -106,6 +114,7 @@ export const useExpositores = () => {
     )
   }
 
+  // Carregar dados automaticamente
   useEffect(() => {
     fetchExpositores()
   }, [])
