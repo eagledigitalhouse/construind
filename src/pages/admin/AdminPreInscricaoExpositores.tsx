@@ -693,8 +693,7 @@ const AdminPreInscricaoExpositores = () => {
     condicaoPagamento: (valor: string) => {
       const mapeamento = {
         'a_vista_desconto': 'À vista com 5% desconto',
-        'sinal_3_parcelas': '20% sinal + 3 parcelas',
-        'sinal_saldo': '20% sinal + saldo restante'
+        'sinal_3_parcelas': '20% sinal + 2 parcelas'
       };
       return mapeamento[valor as keyof typeof mapeamento] || valor;
     },
@@ -1668,7 +1667,7 @@ const AdminPreInscricaoExpositores = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {renderField('Deseja Patrocínio?', getTextoLegivel.desejaPatrocinio(currentData.deseja_patrocinio || ''), 'deseja_patrocinio', 'select', ['sim', 'nao'])}
                   {currentData.deseja_patrocinio === 'sim' && renderField('Categoria Patrocínio', getTextoLegivel.categoriaPatrocinio(currentData.categoria_patrocinio || ''), 'categoria_patrocinio', 'select', ['bronze', 'prata', 'ouro', 'telao_led'])}
-                  {renderField('Condição de Pagamento', getTextoLegivel.condicaoPagamento(currentData.condicao_pagamento || ''), 'condicao_pagamento', 'select', ['a_vista_desconto', 'sinal_3_parcelas', 'sinal_saldo'])}
+                  {renderField('Condição de Pagamento', getTextoLegivel.condicaoPagamento(currentData.condicao_pagamento || ''), 'condicao_pagamento', 'select', ['a_vista_desconto', 'sinal_3_parcelas'])}
                   {renderField('Forma de Pagamento', getTextoLegivel.formaPagamento(currentData.forma_pagamento || ''), 'forma_pagamento', 'select', ['pix', 'boleto'])}
                 </div>
               </div>

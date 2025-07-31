@@ -324,13 +324,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     },
     {
       value: 'sinal_3_parcelas',
-      label: '20% sinal + 3 parcelas',
-      description: '20% na assinatura + parcelas em agosto, setembro e outubro'
-    },
-    {
-      value: 'sinal_saldo',
-      label: '20% sinal + saldo restante',
-      description: '20% na assinatura + saldo restante até 10/10/2025'
+      label: '20% sinal + 2 parcelas',
+      description: '20% na assinatura + parcelas setembro e outubro'
     }
   ];
 
