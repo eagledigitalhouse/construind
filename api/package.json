@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Serverless functions for FESPIN",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "node-fetch": "^2.7.0"
   }
 }
