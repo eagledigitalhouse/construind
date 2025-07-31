@@ -19,7 +19,13 @@ module.exports = async (req, res) => {
     }
 
     // Extract the path after /api/zapsign-proxy/
-    const path = req.url.replace('/api/zapsign-proxy', '') || '/';
+    let path = req.url.replace('/api/zapsign-proxy', '') || '/';
+    
+    // Handle templates endpoint specifically - ZapSign requires trailing slash
+    if (path === '/templates' || path === 'templates') {
+      path = '/templates/';
+    }
+    
     const zapSignUrl = `https://api.zapsign.com.br/api/v1${path}`;
     
     console.log(`Proxying request to: ${zapSignUrl}`);
