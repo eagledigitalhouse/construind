@@ -33,7 +33,7 @@ export interface PreInscricaoExpositor {
   estado?: string;
   telefone_empresa?: string;
   email_empresa?: string;
-  cartao_cnpj_url?: string;
+
   
   // Responsável Legal
   nome_responsavel: string;

@@ -71,7 +71,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     estado: '',
     telefoneEmpresa: '',
     emailEmpresa: '',
-    cartaoCnpj: null as File | null,
+
     
     // Responsável Legal
     nomeResponsavel: '',
@@ -443,9 +443,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
 
 
-  const handleFileUpload = (file: File | null) => {
-    setFormData(prev => ({ ...prev, cartaoCnpj: file }));
-  };
+
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -754,9 +752,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         if (!formData.telefoneEmpresa) {
           throw new Error('Por favor, preencha o telefone da empresa');
         }
-        if (!formData.cartaoCnpj) {
-          throw new Error('Por favor, faça upload do cartão CNPJ');
-        }
+
       }
 
       // Validar responsáveis
@@ -783,15 +779,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       if (!formData.desejaPatrocinio) {
         throw new Error('Por favor, informe se deseja ser patrocinador');
       }
-      // Fazer upload do arquivo CNPJ se existir
-      let cartaoCnpjUrl = null;
-      if (formData.cartaoCnpj) {
-        showToast.info('Fazendo upload do arquivo...');
-        cartaoCnpjUrl = await uploadImage(formData.cartaoCnpj, 'cartao-cnpj');
-        if (!cartaoCnpjUrl) {
-          throw new Error('Erro ao fazer upload do arquivo CNPJ');
-        }
-      }
+
 
       // Obter IP do usuário (opcional)
       let userIP = null;
@@ -835,7 +823,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         estado: formData.estado || null,
         telefone_empresa: formData.telefoneEmpresa || null,
         email_empresa: formData.emailEmpresa || null,
-        cartao_cnpj_url: cartaoCnpjUrl,
+
         
         // Responsável Legal
         nome_responsavel: formData.nomeResponsavel,
@@ -1540,36 +1528,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                     </div>
                   </div>
 
-                {/* Upload Cartão CNPJ */}
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold text-[#0a2856] flex items-center">
-                      <FileText className="w-4 h-4 mr-2" />
-                    CARTÃO CNPJ *
-                    </Label>
-                    <div className="relative">
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                      <div className="inline-flex items-center justify-center w-12 h-12 bg-[#00d856]/10 rounded-xl mb-4">
-                        <Upload className="w-6 h-6 text-[#00d856]" />
-                          </div>
-                      <h3 className="text-lg font-semibold text-[#0a2856] mb-2">Faça upload do Cartão CNPJ</h3>
-                      <p className="text-gray-600 mb-2">Arraste o arquivo aqui ou clique para selecionar</p>
-                      <p className="text-sm text-gray-500">PDF, JPG, PNG • Máx. 5MB</p>
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={(e) => handleFileUpload(e.target.files?.[0] || null)}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                          id="cartaoCnpj"
-                        />
-                        {formData.cartaoCnpj && (
-                        <div className="mt-4 inline-flex items-center px-4 py-2 bg-green-100 border border-green-200 rounded-full">
-                          <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                          <span className="text-green-800 font-medium">{formData.cartaoCnpj.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+
                 </CardContent>
               </Card>
           )}
