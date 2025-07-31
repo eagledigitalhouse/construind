@@ -440,24 +440,24 @@ export const verificarContratoExistente = async (preInscricaoId: string): Promis
       .select('*')
       .eq('pre_inscricao_id', preInscricaoId)
       .neq('status', 'cancelado')
-      .single();
+      .order('created_at', { ascending: false })
+      .limit(1);
 
     console.log('Resultado da consulta:', { data, error });
     
-    // Verificar se o erro é de 'nenhum resultado encontrado'
     if (error) {
-      console.log('Código do erro:', error.code, 'Mensagem:', error.message);
-      if (error.code === 'PGRST116') { // PGRST116 = no rows returned
-        console.log('Nenhum contrato encontrado para esta pré-inscrição');
-        return null;
-      } else {
-        console.error('Erro na consulta:', error);
-        throw error;
-      }
+      console.error('Erro na consulta:', error);
+      throw error;
     }
 
-    console.log('Contrato encontrado:', data);
-    return data || null;
+    // Se não há dados ou array vazio, retornar null
+    if (!data || data.length === 0) {
+      console.log('Nenhum contrato encontrado para esta pré-inscrição');
+      return null;
+    }
+
+    console.log('Contrato encontrado:', data[0]);
+    return data[0];
   } catch (error) {
     console.error('Erro ao verificar contrato existente:', error);
     return null;
