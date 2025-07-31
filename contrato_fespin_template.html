@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contrato de Cessão de Espaço - FESPIN 25</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .page {
+            min-height: 297mm;
+            padding: 30mm 20mm 20mm 20mm;
+            page-break-after: always;
+            position: relative;
+        }
+        
+        .page:last-child {
+            page-break-after: avoid;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #4a90a4;
+            padding-bottom: 20px;
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a90a4, #6bb6d1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+        
+        .logo::before {
+            content: "PE";
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .title-section h1 {
+            color: #4a90a4;
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+        
+        .title-section .subtitle {
+            color: #6c757d;
+            font-size: 16px;
+            font-weight: 300;
+        }
+        
+        .contract-info {
+            text-align: right;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .parties-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4a90a4;
+        }
+        
+        .party {
+            margin-bottom: 20px;
+        }
+        
+        .party:last-child {
+            margin-bottom: 0;
+        }
+        
+        .party-label {
+            font-weight: bold;
+            color: #4a90a4;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .party-details {
+            line-height: 1.6;
+            color: #495057;
+        }
+        
+        .blank-field {
+            border-bottom: 1px solid #333;
+            display: inline-block;
+            min-width: 200px;
+            height: 20px;
+            margin: 0 2px;
+        }
+        
+        .clause {
+            margin-bottom: 25px;
+        }
+        
+        .clause-title {
+            font-weight: bold;
+            color: #4a90a4;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 8px;
+        }
+        
+        .clause-content {
+            line-height: 1.6;
+            color: #495057;
+        }
+        
+        .clause-content p {
+            margin-bottom: 12px;
+        }
+        
+        .clause-content ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        
+        .clause-content li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .signature-block {
+            text-align: center;
+        }
+        
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 60px;
+            margin-bottom: 10px;
+        }
+        
+        .signature-label {
+            font-weight: bold;
+            color: #4a90a4;
+        }
+        
+        .witness-section {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .page-number {
+            position: absolute;
+            bottom: 15mm;
+            right: 20mm;
+            color: #6c757d;
+            font-size: 12px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                max-width: none;
+            }
+            .page {
+                page-break-after: always;
+                min-height: auto;
+            }
+            .page:last-child {
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PÁGINA 1 -->
+        <div class="page">
+            <div class="header">
+                <div class="title-section">
+                    <div class="logo-section">
+                        <div class="logo"></div>
+                        <div>
+                            <h1>Contrato</h1>
+                            <div class="subtitle">Cessão de Espaço - FESPIN 25</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="contract-info">
+                    <div><strong>Data do Contrato</strong></div>
+                    <div>Indaiatuba/SP, 2025</div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="color: #4a90a4; font-size: 20px; font-weight: 500;">
+                    INSTRUMENTO PARTICULAR DE CESSÃO DE ESPAÇO PARA O<br>
+                    EVENTO "<strong>FESPIN - FEIRA DO ESPORTE DE INDAIATUBA, EDIÇÃO 2025</strong>"
+                </h2>
+            </div>
+
+            <div class="parties-section">
+                <div class="party">
+                    <div class="party-label">A) CEDENTE</div>
+                    <div class="party-details">
+                        <strong>A. A. da Silva Eventos ME</strong>, nome fantasia <strong>Polo Eventos</strong>, empresa de constituição individual, inscrita no CNPJ/MF sob o nº: 05.242.056/0001-76, com sede na cidade de Indaiatuba, Estado de São Paulo, na Rua José Arthur Amstalden, nº 184, Vila Suíça, CEP: 13.333-410, neste ato, representada por Adriana Aparecida da Silva, doravante denominada simplesmente <strong>CEDENTE</strong>.
+                    </div>
+                </div>
+
+                <div class="party">
+                    <div class="party-label">B) CESSIONÁRIA</div>
+                    <div class="party-details">
+                        <span class="blank-field"></span>, com sede na cidade de Indaiatuba, Estado de São Paulo, na Rua <span class="blank-field"></span>, por seu(s) representante(s) legal(is), doravante denominado simplesmente <strong>CESSIONÁRIA</strong>.
+                    </div>
+                </div>
+            </div>
+
+            <p style="margin-bottom: 30px; text-align: justify; color: #495057;">
+                Por esta e na melhor forma de direito celebram o presente contrato, que aceitam e reciprocamente se outorgam para fazer cumprir e respeitar.
+            </p>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Primeira - Do Objeto</div>
+                <div class="clause-content">
+                    <p><strong>1.1.</strong> O presente Contrato tem por objeto a cessão de direito de uso temporário e condicional, pelo CEDENTE à CESSIONÁRIA pelo período em que perdurar o Evento "<strong>FESPIN - Feira do Esporte de Indaiatuba</strong>", compreendido entre os dias <span class="highlight">14, 15 e 16 de NOVEMBRO de 2025</span>, das 8h às 20h, a ser realizado no ESPAÇO VIBER, sito Rua Goiás, Cidade Nova II, Indaiatuba/SP, para exposição e comercialização de produtos e serviços do CESSIONÁRIO.</p>
+
+                    <p><strong>1.2.</strong> O CEDENTE na qualidade de Entidade promotora do Evento, cede a CESSIONÁRIA, o uso do estande com montagem básica constante na planta geral, o qual ficará exclusivamente responsável pelo mesmo na área cuja participação se faz, conforme descrito abaixo:</p>
+
+                    <p><strong>a)</strong> Estande tipo padrão, com carpete, estrutura em alumínio anodizado, paredes divisórias em chapa TS branca, sem móveis, iluminação através de arandelas, um ponto de energia (tomada 220V) por estande, com identificação do expositor na testeira com a logomarca da CESSIONÁRIA.</p>
+
+                    <p><strong>1.3.</strong> As condições do espaço para montagem do stand, a data de sua ocupação/desocupação e em que condições, bem como as condições de acesso, horários de funcionamento, trânsito, prazos de montagem e desmontagem, e demais regras, constarão do "MANUAL DO EXPOSITOR", que a CESSIONÁRIA declara ter recebido e estar ciente do seu conteúdo, sendo que o mesmo faz parte integrante deste instrumento.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Segunda - Do Prazo e Extinção do Contrato</div>
+                <div class="clause-content">
+                    <p><strong>2.1.</strong> O presente contrato vigorará da data de sua assinatura até a data do encerramento do Evento no dia 16/11/2025.</p>
+
+                    <p><strong>2.2.</strong> Convencionam as partes, livremente, que a cessão poderá ser denunciada a qualquer momento, por qualquer das partes, desde que mediante prévio aviso de 30 (trinta) dias, hipótese em que ficam restando apenas às partes o cumprimento de suas obrigações recíprocas constituídas até a data da efetiva rescisão.</p>
+
+                    <p><strong>2.3.</strong> Poderá, também, ser rescindido o presente contrato, de imediato, pelo CEDENTE, mediante simples comunicação por escrito, na ocorrência das seguintes circunstâncias:</p>
+
+                    <ul>
+                        <li><strong>a)</strong> Negligência ou não cumprimento de quaisquer das obrigações previstas neste contrato, após manifestação expressa do CEDENTE denunciando tal fato; ou</li>
+                        <li><strong>b)</strong> Ter a CESSIONÁRIA algum título legítimo protestado ou ter decretada sua falência, recuperação judicial e/ou extrajudicial ou liquidação, ou ainda, em caso de insolvência civil dos sócios ou pela inclusão da CESSIONÁRIA ou de seus sócios em órgãos públicos ou privados, notoriamente reconhecidos como restritivos à idoneidade pública.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-number">Página 1 de 4</div>
+        </div>
+
+        <!-- PÁGINA 2 -->
+        <div class="page">
+            <div class="clause">
+                <div class="clause-title">Cláusula Terceira - Da Remuneração</div>
+                <div class="clause-content">
+                    <p><strong>3.1.</strong> Pelo uso do espaço ora cedido, o CESSIONÁRIO pagará ao CEDENTE, a importância <span class="highlight">R$ 3.000,00 (três mil reais)</span> relativo ao estande nº <span class="blank-field" style="min-width: 50px;"></span> com área de <span class="blank-field" style="min-width: 30px;"></span>m x <span class="blank-field" style="min-width: 30px;"></span>m (<span class="blank-field" style="min-width: 50px;"></span> metros quadrados), ser pago da seguinte forma:</p>
+
+                    <p><strong>3.2.</strong> O valor de 20% (xxxxxxxxxx) do valor total do contrato, deverá ser pago como sinal, no ato da reserva do estande/área, a ser pago até 03 dias úteis da reserva, via PIX, na chave: <span class="blank-field"></span></p>
+
+                    <p><strong>3.2.</strong> O valor resultante de 80% (xxxxxxxxxx) de do valor total do contrato, deverá ser pago, em XXXX parcelas, no valor de R$ xxxxxxxxxxxx, nas datas <span class="blank-field"></span>, via PIX, na chave: <span class="blank-field"></span></p>
+
+                    <p><strong>3.3.</strong> Em caso de inadimplência do CESSIONÁRIA, não tomará posse de seu estande.</p>
+
+                    <p><strong>3.4.</strong> A falta de pagamento, ou a inadimplência, implicará no desfazimento do presente contrato, automática e independente de qualquer providência judicial ou extrajudicial, perdendo a CESSIONÁRIA o valor que tiver pagado como sinal e reserva, a título de multa, sem prejuízo do descrito no item acima.</p>
+
+                    <p><strong>3.5.</strong> Somente serão considerados quitados cada pagamento, após verificação por parte da CEDENTE, do efetivo cumprimento da obrigação através da forma prevista no presente instrumento.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Quarta - Das Obrigações do Cedente</div>
+                <div class="clause-content">
+                    <p><strong>4.1.</strong> Compete ao CEDENTE:</p>
+                    <ul>
+                        <li><strong>a)</strong> Realizar o Evento descrito na Cláusula Primeira;</li>
+                        <li><strong>b)</strong> Ceder a CESSIONÁRIA o espaço para a consecução do objeto previsto na Cláusula Primeira;</li>
+                        <li><strong>c)</strong> Fornecer o "MANUAL DO USUÁRIO" à CESSIONÁRIA e prestar os esclarecimentos necessários;</li>
+                        <li><strong>d)</strong> Promover a limpeza geral das áreas de circulação do Evento;</li>
+                        <li><strong>e)</strong> Prestar orientação e assistência permanente de natureza técnica aos expositores e convidados;</li>
+                        <li><strong>f)</strong> Manter durante o Evento uma secretaria com informações e local para o credenciamento;</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Quinta - Das Obrigações das Partes</div>
+                <div class="clause-content">
+                    <p><strong>5.1.</strong> Compete a CESSIONÁRIA:</p>
+                    <ul>
+                        <li><strong>a)</strong> Efetuar o pagamento previsto na Cláusula Terceira;</li>
+                        <li><strong>b)</strong> Observar e cumprir todas as normas e condições previstas neste instrumento e no "MANUAL DO EXPOSITOR";</li>
+                        <li><strong>c)</strong> Manter, às suas expensas, a área disponibilizada pelo CEDENTE em perfeitas condições de conservação, higiene e funcionamento;</li>
+                        <li><strong>d)</strong> Arcar com todos os encargos de natureza fiscal, sanitária, trabalhista e previdenciária, decorrentes de sua atividade no local do Evento;</li>
+                        <li><strong>e)</strong> Emitir a documentação fiscal do produto utilizado na área cedida, bem como recolher encargos e impostos porventura devidos e nas respectivas datas de vencimento;</li>
+                        <li><strong>f)</strong> Nomear pessoa responsável para atuar junto a CEDENTE fornecendo todas as informações necessárias à execução do contrato;</li>
+                        <li><strong>g)</strong> Não incluir nenhuma outra empresa a título de compartilhamento, em seu estande e/ou espaço, sem a autorização por escrito da CEDENTE;</li>
+                    </ul>
+
+                    <p><strong>5.2.</strong> A CESSIONÁRIA compromete-se a não:</p>
+                    <ul>
+                        <li><strong>a)</strong> Instalar aparelho de ar-condicionado; ou que contenha chamas de fogo;</li>
+                        <li><strong>b)</strong> Lixar, cortar e pintar madeira, ferro, massa fina, entres outros, em qualquer dependência do Evento;</li>
+                        <li><strong>c)</strong> Utilizar material tóxico;</li>
+                        <li><strong>d)</strong> Comercialização de qualquer produto que contenha: alimentos perecíveis, álcool ou tabaco ou similares;</li>
+                        <li><strong>e)</strong> <span class="highlight">Atuar fora da área de stand, por meio de recepcionistas circulando nas áreas do Evento, distribuindo qualquer tipo de material.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="page-number">Página 2 de 4</div>
+        </div>
+
+        <!-- PÁGINA 3 -->
+        <div class="page">
+            <div class="clause">
+                <div class="clause-content">
+                    <p><strong>5.3.</strong> A CESSIONÁRIA será responsável, ainda, pela segurança e integridade das pessoas que estejam sob sua responsabilidade executando serviços no estande, isentando o CEDENTE de quaisquer ônus a ele imputados, bem como pela segurança das pessoas que permaneçam ou circulem no local, inclusive com relação a eventual contágio por covid-19 ou outras doenças.</p>
+
+                    <p><strong>5.3.1.</strong> Na hipótese de quaisquer acidentes com os empregados ou subcontratados da CESSIONÁRIA nas dependências do Evento, toda e qualquer responsabilidade, seja civil, criminal, trabalhista ou previdenciária, será única e exclusiva da CESSIONÁRIA.</p>
+
+                    <p><strong>5.3.2.</strong> A CESSIONÁRIA se responsabilizará por qualquer dano causado ao mobiliário e patrimônio do CEDENTE que estiver no local do Evento.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Sexta - Das Condições Gerais</div>
+                <div class="clause-content">
+                    <p><strong>6.1.</strong> As cláusulas e condições estabelecidas neste instrumento somente poderão ser alteradas mediante a celebração de termo aditivo, inclusive, no que concerne à período de vigência, não existindo a renovação automática.</p>
+
+                    <p><strong>6.2.</strong> Fica convencionado entre as partes que, na hipótese de virem a ser acionados em sede judicial por conta de fatos oriundos e/ou relacionados à presente contratação, expressamente previstos ou não, estará a parte acionada autorizada a proceder a denunciação da lide, se cabível, na forma legal.</p>
+
+                    <p><strong>6.3.</strong> Qualquer tolerância admitida deste contrato jamais será considerada como modificação do mesmo, sem ensejo, portanto, a novação.</p>
+
+                    <p><strong>6.4.</strong> As partes não poderão ceder ou transferir os direitos e obrigações relativos ao presente contrato sem a prévia e expressa anuência do CEDENTE.</p>
+
+                    <p><strong>6.5.</strong> O nome e a logomarca do CEDENTE e do Evento somente poderão ser utilizados pela CESSIONÁRIA, mediante autorização prévia e expressa pelo CEDENTE, sob pena de responder pelas perdas e danos decorrentes do seu uso indevido.</p>
+
+                    <p><strong>6.7.</strong> As partes obrigam-se ao fiel e bom cumprimento do presente, sendo certo, todavia, que o presente contrato não poderá ser transferido para terceiros, total ou parcialmente, sem prévio consentimento da outra parte contratante.</p>
+
+                    <p><strong>6.8.</strong> A CESSIONÁRIA se obriga a respeitar e fazer respeitar, por seus funcionários e/ou pessoas contratadas, todas as cláusulas e condições contidas no presente instrumento, bem como, no "MANUAL DO EXPOSITOR".</p>
+
+                    <p><strong>6.9.</strong> A CESSIONÁRIA declara que os produtos e serviços, inclusive a cenografia e/ou a decoração, a ser montados e comercializados é de sua autoria única, ou que possuem autorização por escrito do autor, responsabilizando-se por qualquer demanda ou questionamento quanto aos direitos autorais;</p>
+
+                    <p><strong>6.10.</strong> A CESSIONÁRIA declara que não fará demonstração de máquinas, equipamentos ou qualquer item que possa pôr em risco a segurança dos visitantes.</p>
+
+                    <p><strong>6.11.</strong> A CESSIONÁRIA autorizada o CEDENTE, a filmar e fotografar os produtos objeto expostos no estande, sem qualquer ônus, utilizando os filmes e as fotos para fins de promoção e publicidade, não necessitando para isto de qualquer autorização por escrito do CESSIONÁRIA.</p>
+
+                    <p><strong>6.12.</strong> Ambas as partes, podem divulgar em matérias jornalísticas, redes sociais ou qualquer outro meio de divulgação, ambas se obrigam a fornecer as informações em consonância com o presente instrumento, sendo cada um integralmente responsável pelos efeitos provenientes dessas informações, por atos contrários à lei e violações de direitos autorais.</p>
+
+                    <p><strong>6.13.</strong> Os casos omissos serão resolvidos pela Comissão Organizadora do Evento, comprometendo-se, ora CESSIONÁRIA, a acatar suas determinações em sua integralidade.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Sétima - Desocupação do Espaço e Penalidade</div>
+                <div class="clause-content">
+                    <p><strong>7.</strong> O CESSIONÁRIO obriga-se a desocupar, desmontar e encerrar todas as atividades do estande no prazo máximo de <span class="highlight">1 (uma) hora</span> após o encerramento oficial do evento, conforme cronograma fornecido pela CEDENTE. O descumprimento desta obrigação implicará a incidência de <span class="highlight">multa compensatória equivalente a 30% (trinta por cento)</span> do valor total contratado para a cessão do espaço, a ser paga no prazo de até 5 (cinco) dias úteis após notificação por escrito da CEDENTE, sem prejuízo de outras medidas cabíveis e da cobrança de eventuais perdas e danos.</p>
+
+                    <p><strong>7.1.</strong> A desmontagem geral do estande deve acontecer até dia <span class="highlight">17/11/2025 - segunda-feira as 14h</span> - conforme manual do expositor, o descumprimento desta obrigação implicará a incidência de <span class="highlight">multa compensatória da cláusula 7.</span></p>
+                </div>
+            </div>
+
+            <div class="page-number">Página 3 de 4</div>
+        </div>
+
+        <!-- PÁGINA 4 -->
+        <div class="page">
+            <div class="clause">
+                <div class="clause-title">Cláusula Oitava - Do Sigilo e Confidencialidade</div>
+                <div class="clause-content">
+                    <p><strong>8.1.</strong> Toda e qualquer informação seja de que natureza for decorrente deste contrato, ou que tenha com ele conexão de qualquer espécie, deverá ser tratada de forma confidencial e sigilosa pelas partes, a título gratuito. As partes se obrigam a adotar as medidas necessárias para a manutenção e cumprimento do disposto nesta cláusula, sob pena de ser apurada responsabilidade, devendo orientar, neste sentido, seus empregados e terceiros subcontratados.</p>
+
+                    <p><strong>8.2.</strong> A CESSIONÁRIA declara, neste ato, estar ciente de todos os termos, parâmetros, exigências e sanções contidas na Lei no 13.709/2018 (Lei Geral de Proteção de Dados) e se compromete a garantir o cumprimento integral desta legislação, especialmente na execução dos serviços que contemplam este instrumento, isentando o CEDENTE de qualquer responsabilidade, obrigação ou sanção decorrentes da não observância desta legislação.</p>
+
+                    <p><strong>8.3.</strong> Na hipótese da POLO EVENTOS, ser demandado no âmbito judicial ou administrativo em razão dos serviços prestados pela CESSIONÁRIA, esta obriga-se a intervir no feito, pleiteando a exclusão do CEDENTE da lide, assumindo a responsabilidade integral e exclusiva pelo pagamento de todas as despesas e providências relacionadas.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Nona - Do Compliance</div>
+                <div class="clause-content">
+                    <p><strong>9.1.</strong> A CESSIONÁRIA se obriga a cumprir e fazer respeitar o Código de Conduta, Ética e Integridade e o qual declara conhecer, assim como seus representantes, administradores, diretores, sócios ou acionistas, prepostos e empregados, obrigando-se a observar e cumprir rigorosamente todas as leis cabíveis, incluindo, mas não se limitando a Lei Anticorrupção Brasileira - Lei no 12.846/2013, regulamentada pelo Decreto no 8.420/15.</p>
+                </div>
+            </div>
+
+            <div class="clause">
+                <div class="clause-title">Cláusula Décima - Do Foro</div>
+                <div class="clause-content">
+                    <p><strong>10.1.</strong> Elegem as partes o foro central da cidade de Indaiatuba, com renúncia expressa a qualquer outro, por mais privilegiado que seja, para dirimir quaisquer dúvidas ou questões decorrentes da locação, arcando a parte vencida com todos os ônus decorrentes, inclusive honorários advocatícios.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; margin-bottom: 40px; text-align: justify;">
+                <p>E, por estarem assim justos e contratados, assinam o presente instrumento em duas vias de igual teor, na presença de duas testemunhas circunstanciais.</p>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px; color: #4a90a4; font-weight: 500;">
+                Indaiatuba/SP, 2025
+            </div>
+
+            <div class="signature-section">
+                <div class="signature-grid">
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">CEDENTE</div>
+                        <div style="font-size: 12px; color: #6c757d; margin-top: 5px;">A. A. da Silva Eventos ME<br>Polo Eventos</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">CESSIONÁRIA</div>
+                    </div>
+                </div>
+
+                <div class="witness-section">
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">TESTEMUNHA 01</div>
+                    </div>
+                    <div class="signature-block">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">TESTEMUNHA 02</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-number">Página 4 de 4</div>
+        </div>
+    </div>
+</body>
+</html>

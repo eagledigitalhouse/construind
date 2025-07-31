@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase, type Newsletter } from '@/lib/supabase'
-import { toast } from 'sonner'
+import { showToast } from '@/lib/toast'
 
 export const useNewsletter = () => {
   const [newsletters, setNewsletters] = useState<Newsletter[]>([])
@@ -13,7 +13,7 @@ export const useNewsletter = () => {
       setLoading(true)
       setError(null)
       
-      console.log('🔍 Carregando newsletters...')
+      console.log('Carregando newsletters...')
       
       const { data, error } = await supabase
         .from('newsletters')
@@ -21,21 +21,21 @@ export const useNewsletter = () => {
         .order('created_at', { ascending: false })
 
       if (error) {
-        console.error('❌ Erro Supabase ao carregar newsletters:', error)
+        console.error('Erro Supabase ao carregar newsletters:', error)
         setError(error.message)
-        toast.error(`Erro ao carregar newsletters: ${error.message}`)
+        showToast.error(`Erro ao carregar newsletters: ${error.message}`)
         return
       }
 
-      console.log('✅ Newsletters carregadas:', data?.length || 0)
+      console.log('Newsletters carregadas:', data?.length || 0)
       setNewsletters(data || [])
       setError(null)
 
     } catch (err) {
-      console.error('❌ Erro inesperado ao carregar newsletters:', err)
+      console.error('Erro inesperado ao carregar newsletters:', err)
       const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido'
       setError(errorMessage)
-      toast.error(`Erro inesperado: ${errorMessage}`)
+      showToast.error(`Erro inesperado: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
@@ -44,7 +44,7 @@ export const useNewsletter = () => {
   // Cadastrar email na newsletter - FUNÇÃO PÚBLICA (qualquer usuário pode se cadastrar)
   const cadastrarEmail = async (email: string, nome?: string) => {
     try {
-      console.log('📧 Cadastrando email na newsletter:', email)
+      console.log('Cadastrando email na newsletter:', email)
       
       // Verificar se o email já está cadastrado
       const { data: existingEmail, error: checkError } = await supabase
@@ -54,12 +54,12 @@ export const useNewsletter = () => {
         .maybeSingle() // Usar maybeSingle ao invés de single para evitar erro se não encontrar
 
       if (checkError && checkError.code !== 'PGRST116') { // PGRST116 = no rows returned
-        console.error('❌ Erro ao verificar email existente:', checkError)
+        console.error('Erro ao verificar email existente:', checkError)
         throw checkError
       }
 
       if (existingEmail) {
-        toast.error('Este email já está cadastrado na newsletter!')
+        showToast.error('Este email já está cadastrado na newsletter!')
         return { error: 'Email já cadastrado' }
       }
 
@@ -75,18 +75,18 @@ export const useNewsletter = () => {
         .single()
 
       if (error) {
-        console.error('❌ Erro ao inserir newsletter:', error)
+        console.error('Erro ao inserir newsletter:', error)
         throw error
       }
 
-      console.log('✅ Email cadastrado com sucesso!')
-      toast.success('Email cadastrado com sucesso na newsletter!')
+      console.log('Email cadastrado com sucesso!')
+      showToast.success('Email cadastrado com sucesso na newsletter!')
       return { data, error: null }
       
     } catch (err) {
-      console.error('❌ Erro ao cadastrar email:', err)
+      console.error('Erro ao cadastrar email:', err)
       const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido'
-      toast.error(`Erro ao cadastrar email: ${errorMessage}`)
+      showToast.error(`Erro ao cadastrar email: ${errorMessage}`)
       return { error: errorMessage }
     }
   }
@@ -106,11 +106,11 @@ export const useNewsletter = () => {
       setNewsletters(prev => 
         prev.map(n => n.id === id ? data : n)
       )
-      toast.success('Newsletter atualizada com sucesso!')
+      showToast.success('Newsletter atualizada com sucesso!')
       return data
     } catch (err) {
       console.error('Erro ao atualizar newsletter:', err)
-      toast.error('Erro ao atualizar newsletter')
+      showToast.error('Erro ao atualizar newsletter')
       throw err
     }
   }
@@ -126,10 +126,10 @@ export const useNewsletter = () => {
       if (error) throw error
 
       setNewsletters(prev => prev.filter(n => n.id !== id))
-      toast.success('Email removido da newsletter!')
+      showToast.success('Email removido da newsletter!')
     } catch (err) {
       console.error('Erro ao remover newsletter:', err)
-      toast.error('Erro ao remover newsletter')
+      showToast.error('Erro ao remover newsletter')
       throw err
     }
   }
@@ -151,10 +151,10 @@ export const useNewsletter = () => {
   useEffect(() => {
     // Verificar se estamos em uma página admin
     if (window.location.pathname.includes('/admin')) {
-      console.log('🔧 Página admin detectada, carregando newsletters...')
+      console.log('Página admin detectada, carregando newsletters...')
       fetchNewsletters()
     } else {
-      console.log('🌍 Página pública, não carregando newsletters')
+      console.log('Página pública, não carregando newsletters')
       setLoading(false) // Não carregar em páginas públicas
     }
   }, [])
@@ -170,4 +170,4 @@ export const useNewsletter = () => {
     newslettersPorStatus,
     buscarNewsletters
   }
-} 
+}

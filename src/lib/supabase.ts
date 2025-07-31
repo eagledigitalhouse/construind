@@ -105,3 +105,218 @@ export const getCurrentUserProfile = async (userId: string): Promise<UserProfile
     return null
   }
 }
+
+// Interfaces para contratos
+export interface ModeloContrato {
+  id: string
+  nome: string
+  descricao: string | null
+  conteudo: string
+  status: 'ativo' | 'inativo'
+  tipo: 'padrao' | 'premium'
+  variaveis_disponiveis: string[]
+  created_at: string
+  updated_at: string
+}
+
+export interface ContratoGerado {
+  id: string
+  pre_inscricao_id: string
+  modelo_contrato_id: string
+  numero_contrato: string
+  conteudo_preenchido: string
+  status: 'rascunho' | 'enviado_assinatura' | 'assinado_produtor' | 'totalmente_assinado' | 'cancelado'
+
+  url_assinatura_produtor: string | null
+  url_assinatura_expositor: string | null
+  data_assinatura_produtor: string | null
+  data_assinatura_expositor: string | null
+  url_arquivo_final: string | null
+  dados_preenchimento: any
+  created_at: string
+  updated_at: string
+}
+
+export interface ContratoHistorico {
+  id: string
+  contrato_id: string
+  acao: string
+  status_anterior: string | null
+  status_novo: string | null
+  observacoes: string | null
+  usuario_id: string | null
+  created_at: string
+}
+
+export interface PreInscricaoExpositor {
+  id: string
+  nome_empresa: string
+  nome_responsavel: string
+  email: string
+  telefone: string
+  cnpj: string | null
+  endereco: string | null
+  cidade: string | null
+  estado: string | null
+  cep: string | null
+  categoria_id: string
+  descricao_produtos: string
+  area_desejada: string | null
+  necessidades_especiais: string | null
+  status: 'pendente' | 'aprovado' | 'rejeitado' | 'contrato_enviado' | 'contrato_assinado'
+  observacoes_admin: string | null
+  created_at: string
+  updated_at: string
+}
+
+// Database type definitions
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+
+export interface Database {
+  public: {
+    Tables: {
+      categorias: {
+        Row: Categoria
+        Insert: Omit<Categoria, 'id' | 'created_at'> & {
+          id?: string
+          created_at?: string
+        }
+        Update: Partial<Omit<Categoria, 'id' | 'created_at'>>
+        Relationships: []
+      }
+      contratos_gerados: {
+        Row: ContratoGerado
+        Insert: Omit<ContratoGerado, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          status?: ContratoGerado['status']
+
+          url_assinatura_produtor?: string | null
+          url_assinatura_expositor?: string | null
+          data_assinatura_produtor?: string | null
+          data_assinatura_expositor?: string | null
+          url_arquivo_final?: string | null
+          dados_preenchimento?: Json
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<ContratoGerado, 'id'>>
+        Relationships: [
+          {
+            foreignKeyName: "contratos_gerados_modelo_contrato_id_fkey"
+            columns: ["modelo_contrato_id"]
+            isOneToOne: false
+            referencedRelation: "modelos_contratos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contratos_gerados_pre_inscricao_id_fkey"
+            columns: ["pre_inscricao_id"]
+            isOneToOne: false
+            referencedRelation: "pre_inscricao_expositores"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      contratos_historico: {
+        Row: ContratoHistorico
+        Insert: Omit<ContratoHistorico, 'id' | 'created_at'> & {
+          id?: string
+          created_at?: string
+        }
+        Update: Partial<Omit<ContratoHistorico, 'id'>>
+        Relationships: [
+          {
+            foreignKeyName: "contratos_historico_contrato_id_fkey"
+            columns: ["contrato_id"]
+            isOneToOne: false
+            referencedRelation: "contratos_gerados"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      modelos_contratos: {
+        Row: ModeloContrato
+        Insert: Omit<ModeloContrato, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          status?: ModeloContrato['status']
+          tipo?: ModeloContrato['tipo']
+          variaveis_disponiveis?: string[]
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<ModeloContrato, 'id'>>
+        Relationships: []
+      }
+      pre_inscricao_expositores: {
+        Row: PreInscricaoExpositor
+        Insert: Omit<PreInscricaoExpositor, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          status?: PreInscricaoExpositor['status']
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<PreInscricaoExpositor, 'id'>>
+        Relationships: [
+          {
+            foreignKeyName: "pre_inscricao_expositores_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      expositores: {
+        Row: Expositor
+        Insert: Omit<Expositor, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<Expositor, 'id'>>
+        Relationships: []
+      }
+      patrocinadores: {
+        Row: Patrocinador
+        Insert: Omit<Patrocinador, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<Patrocinador, 'id'>>
+        Relationships: []
+      }
+      newsletters: {
+        Row: Newsletter
+        Insert: Omit<Newsletter, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<Newsletter, 'id'>>
+        Relationships: []
+      }
+      user_profiles: {
+        Row: UserProfile
+        Insert: Omit<UserProfile, 'created_at' | 'updated_at'> & {
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<UserProfile, 'id'>>
+        Relationships: []
+      }
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      [_ in never]: never
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+}

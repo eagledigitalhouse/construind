@@ -126,15 +126,12 @@ const PatrocinadoresSection = () => {
               Nossos Parceiros
             </GlassChip>
           </div>
-          <h2 className="spacing-title title-section font-display font-extrabold text-[#0a2856] leading-none">
+          <h2 className="spacing-title text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-[#0a2856] leading-none">
             <div className="mb-2">
-              Patrocinadores que
-            </div>
-            <div>
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformam</span> o <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
+              Patrocinadores que<br /><span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformam</span> o <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
             </div>
           </h2>
-          <div className="text-body text-gray-600 leading-tight opacity-0 animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: "0.5s" }}>
+          <div className="subtitle-section opacity-0 animate-fade-in" style={{ animationDelay: "0.5s" }}>
             <p>
               Empresas que acreditam no poder do esporte e do bem-estar para transformar vidas e comunidades.
             </p>
@@ -203,7 +200,7 @@ const PatrocinadoresSection = () => {
                           div.className = `${obterTamanhoLogo(patrocinador.tamanho_logo)} flex items-center justify-center bg-gray-100 text-gray-500 text-sm cursor-pointer`;
                           div.innerHTML = `
                             <div class="text-center">
-                              <div class="mb-2">📷</div>
+                              <div class="mb-2">Imagem</div>
                               <div>Logo não disponível</div>
                             </div>
                           `;
@@ -248,7 +245,7 @@ const PatrocinadoresSection = () => {
                         div.className = "h-24 w-40 flex items-center justify-center bg-gray-100 text-gray-500 text-sm cursor-pointer";
                         div.innerHTML = `
                           <div class="text-center">
-                            <div class="mb-2">📷</div>
+                            <div class="mb-2">Imagem</div>
                             <div>Logo não disponível</div>
                           </div>
                         `;
@@ -302,7 +299,7 @@ const PatrocinadoresSection = () => {
                           parent.innerHTML = `
                             <div class="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500 text-sm">
                               <div class="text-center">
-                                <div class="mb-2">📷</div>
+                                <div class="mb-2">Imagem</div>
                                 <div>Logo não disponível</div>
                               </div>
                             </div>

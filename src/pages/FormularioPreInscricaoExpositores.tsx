@@ -9,14 +9,16 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { EmailAutocomplete } from '@/components/ui/email-autocomplete';
+import { PhoneInput } from '@/components/ui/phone-input';
 import { Upload, FileText, Building2, User, Phone, Mail, CreditCard, MapPin, Calendar, CheckCircle, Search, Loader2, Users, Target, Info } from 'lucide-react';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 import MapViewer from '@/components/pages/MapViewer';
 import { supabase } from '@/lib/supabase';
 import { uploadImage } from '@/lib/uploadImage';
+import TimerFlutuante from '@/components/TimerFlutuante';
 
 /*
-🔹 SISTEMA DE RESERVAS TEMPORÁRIAS DE STANDS:
+// SISTEMA DE RESERVAS TEMPORÁRIAS DE STANDS:
 
 1. RESERVA TEMPORÁRIA (ao clicar no stand):
    - Cria registro na tabela com `is_temporary: true`
@@ -32,7 +34,7 @@ import { uploadImage } from '@/lib/uploadImage';
    - Remove reservas temporárias antigas (>30min)
    - Libera stands que não foram finalizados
 
-✅ RESULTADO: O produtor só vê cards quando o formulário é realmente enviado!
+// RESULTADO: O produtor só vê cards quando o formulário é realmente enviado!
 */
 
 const FormularioPreInscricaoExpositores: React.FC = () => {
@@ -102,6 +104,10 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   const [standsDisponiveis, setStandsDisponiveis] = useState<any[]>([]);
   const [standsAgrupados, setStandsAgrupados] = useState<{[key: string]: any[]}>({});
   const [isLoadingStands, setIsLoadingStands] = useState(true);
+  
+  // Estados para cronômetro de expiração
+  const [tempoRestante, setTempoRestante] = useState<number>(0);
+  const [cronometroAtivo, setCronometroAtivo] = useState(false);
 
   const estadosBrasil = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
@@ -143,7 +149,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     }
   };
 
-  // 🚀 SISTEMA TEMPO REAL APRIMORADO - REAÇÃO INSTANTÂNEA
+  // SISTEMA TEMPO REAL APRIMORADO - REAÇÃO INSTANTÂNEA
   useEffect(() => {
     carregarStands();
     
@@ -155,7 +161,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         schema: 'public',
         table: 'pre_inscricao_expositores'
       }, (payload) => {
-        console.log('🔄 Mudança detectada na tabela pre_inscricao_expositores:', payload);
+        console.log('Mudança detectada na tabela pre_inscricao_expositores:', payload);
         carregarStands();
       })
       .on('postgres_changes', {
@@ -163,11 +169,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         schema: 'public',
         table: 'stands_fespin'
       }, (payload) => {
-        console.log('🔄 Mudança detectada na tabela stands_fespin:', payload);
+        console.log('Mudança detectada na tabela stands_fespin:', payload);
         carregarStands();
       })
       .subscribe((status) => {
-        console.log('📡 Status do canal real-time:', status);
+        console.log('Status do canal real-time:', status);
       });
 
     // Limpeza automática apenas de stands realmente expirados (>10min)
@@ -176,16 +182,42 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     }, 5 * 60 * 1000); // 5 minutos
 
     return () => {
-      console.log('🔌 Desconectando canal real-time');
+      console.log('Desconectando canal real-time');
       canalRealtime.unsubscribe();
       clearInterval(cleanupInterval);
     };
   }, []);
 
+  // Cronômetro de expiração
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    
+    if (cronometroAtivo && tempoRestante > 0) {
+      intervalId = setInterval(() => {
+        setTempoRestante(prev => {
+          if (prev <= 1) {
+            setCronometroAtivo(false);
+            // Liberar stand automaticamente quando expirar
+            if (formData.numeroStand) {
+              handleStandSelection(formData.numeroStand);
+              showToast.error('Tempo esgotado! Stand liberado automaticamente.');
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [cronometroAtivo, tempoRestante, formData.numeroStand]);
+
 
 
   const carregarStands = async () => {
-    console.log(`🔄 Carregando stands... ${new Date().toLocaleTimeString('pt-BR')}`);
+    console.log(`Carregando stands... ${new Date().toLocaleTimeString('pt-BR')}`);
     setIsLoadingStands(true);
     
     try {
@@ -195,12 +227,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         .select('numero_stand, categoria, tamanho, preco, disponivel, status, reservado_por, data_reserva, observacoes');
 
       if (!standsData) {
-        console.log('❌ Nenhum dado de stand encontrado');
+        console.log('Nenhum dado de stand encontrado');
         setIsLoadingStands(false);
         return;
       }
 
-      // 🔹 LÓGICA APRIMORADA: Baseada no status com verificação de pré-inscrições
+      // LÓGICA APRIMORADA: Baseada no status com verificação de pré-inscrições
       const standsComStatus = standsData.map(stand => {
         const currentStatus = stand.status || 'disponivel';
         
@@ -274,10 +306,10 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       setStandsDisponiveis(standsComStatus);
       setStandsAgrupados(agrupados);
       
-      console.log(`✅ Stands atualizados em ${new Date().toLocaleTimeString('pt-BR')}`);
+      console.log(`Stands atualizados em ${new Date().toLocaleTimeString('pt-BR')}`);
       
     } catch (error) {
-      console.error('❌ Erro ao carregar stands:', error);
+      console.error('Erro ao carregar stands:', error);
     } finally {
       setIsLoadingStands(false);
     }
@@ -306,11 +338,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // 🎯 LÓGICA ORIGINAL: Apenas permitir deselecionar o próprio stand selecionado
+  // LÓGICA ORIGINAL: Apenas permitir deselecionar o próprio stand selecionado
   const handleStandSelection = async (standNumber: string) => {
     const stand = standsDisponiveis.find(s => s.numero_stand === standNumber);
     
-    // 🔹 SE É O MEU STAND SELECIONADO: Permitir deselecionar
+    // SE É O MEU STAND SELECIONADO: Permitir deselecionar
     if (formData.numeroStand === standNumber) {
       try {
         // Deselecionar meu stand
@@ -327,20 +359,22 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
         if (error) throw error;
 
-        // Limpar seleção local
+        // Limpar seleção local e parar cronômetro
         handleInputChange('numeroStand', '');
-        toast.success(`🟢 Stand ${standNumber} foi liberado!`);
+        setCronometroAtivo(false);
+        setTempoRestante(0);
+        showToast.success(`Stand ${standNumber} foi liberado!`);
         return;
       } catch (error) {
         console.error('Erro ao deselecionar stand:', error);
-        toast.error('Erro ao liberar stand');
+        showToast.error('Erro ao liberar stand');
         return;
       }
     }
     
-    // 🔹 LÓGICA ORIGINAL: Verificar disponibilidade
+    // LÓGICA ORIGINAL: Verificar disponibilidade
     if (!stand || !stand.podeSelecionar) {
-      toast.error(`Stand ${standNumber} não está disponível`);
+      showToast.error(`Stand ${standNumber} não está disponível`);
       return;
     }
 
@@ -376,13 +410,15 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
       if (error) throw error;
 
-      // 3. Atualizar seleção local
+      // 3. Atualizar seleção local e iniciar cronômetro
       handleInputChange('numeroStand', standNumber);
-      toast.success(`🟡 Stand ${standNumber} pré-reservado por 10 minutos!`);
+      setTempoRestante(600); // 10 minutos em segundos
+      setCronometroAtivo(true);
+      showToast.success(`Stand ${standNumber} pré-reservado por 10 minutos!`);
 
     } catch (error) {
       console.error('Erro ao selecionar stand:', error);
-      toast.error('Erro ao selecionar stand');
+      showToast.error('Erro ao selecionar stand');
     }
   };
 
@@ -404,6 +440,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     };
     return cores[categoria] || '#CCCCCC';
   };
+
+
 
   const handleFileUpload = (file: File | null) => {
     setFormData(prev => ({ ...prev, cartaoCnpj: file }));
@@ -437,7 +475,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     const cleanCNPJ = cnpj.replace(/\D/g, '');
     
     if (cleanCNPJ.length !== 14) {
-      toast.error('CNPJ deve ter 14 dígitos');
+      showToast.error('CNPJ deve ter 14 dígitos');
       return;
     }
 
@@ -534,11 +572,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         estado
       }));
       
-      toast.success(`Dados da empresa "${razaoSocial}" preenchidos automaticamente via ${apiUsed}!`);
+      showToast.success(`Dados da empresa "${razaoSocial}" preenchidos automaticamente via ${apiUsed}!`);
       
     } catch (error: any) {
       console.error('Erro ao buscar CNPJ:', error);
-      toast.error(`${error.message || 'Erro ao buscar dados do CNPJ. Verifique o número digitado.'}`);
+      showToast.error(`${error.message || 'Erro ao buscar dados do CNPJ. Verifique o número digitado.'}`);
     } finally {
       setIsSearchingCNPJ(false);
     }
@@ -556,7 +594,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     const cleanCEP = cep.replace(/\D/g, '');
     
     if (cleanCEP.length !== 8) {
-      toast.error('CEP deve ter 8 dígitos');
+      showToast.error('CEP deve ter 8 dígitos');
       return;
     }
 
@@ -585,11 +623,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         estado: data.uf || ''
       }));
       
-      toast.success(`CEP encontrado! Endereço preenchido automaticamente.`);
+      showToast.success(`CEP encontrado! Endereço preenchido automaticamente.`);
       
     } catch (error: any) {
       console.error('Erro ao buscar CEP:', error);
-      toast.error(`${error.message || 'Erro ao buscar CEP. Verifique o número digitado.'}`);
+      showToast.error(`${error.message || 'Erro ao buscar CEP. Verifique o número digitado.'}`);
     } finally {
       setIsSearchingCEP(false);
     }
@@ -607,7 +645,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     const cleanCEP = cep.replace(/\D/g, '');
     
     if (cleanCEP.length !== 8) {
-      toast.error('CEP deve ter 8 dígitos');
+      showToast.error('CEP deve ter 8 dígitos');
       return;
     }
 
@@ -636,11 +674,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         estadoPF: data.uf || ''
       }));
       
-      toast.success(`CEP encontrado! Endereço preenchido automaticamente.`);
+      showToast.success(`CEP encontrado! Endereço preenchido automaticamente.`);
       
     } catch (error: any) {
       console.error('Erro ao buscar CEP:', error);
-      toast.error(`${error.message || 'Erro ao buscar CEP. Verifique o número digitado.'}`);
+      showToast.error(`${error.message || 'Erro ao buscar CEP. Verifique o número digitado.'}`);
     } finally {
       setIsSearchingCEP(false);
     }
@@ -748,7 +786,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       // Fazer upload do arquivo CNPJ se existir
       let cartaoCnpjUrl = null;
       if (formData.cartaoCnpj) {
-        toast.info('Fazendo upload do arquivo...');
+        showToast.info('Fazendo upload do arquivo...');
         cartaoCnpjUrl = await uploadImage(formData.cartaoCnpj, 'cartao-cnpj');
         if (!cartaoCnpjUrl) {
           throw new Error('Erro ao fazer upload do arquivo CNPJ');
@@ -825,13 +863,13 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         ip_address: userIP,
       };
 
-      // 🎯 CRIAR pré-inscrição normal (SEM registros temporários)
+      // CRIAR pré-inscrição normal (SEM registros temporários)
       const { data, error } = await supabase
         .from('pre_inscricao_expositores')
         .insert({
           ...dataToInsert,
           status: 'pendente',
-          is_temporary: false // 🔹 SEMPRE definitivo - APARECE NO PAINEL
+          is_temporary: false // SEMPRE definitivo - APARECE NO PAINEL
         })
         .select();
 
@@ -839,7 +877,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         throw error;
       }
 
-      // 🔹 ATUALIZAR stand para aguardar aprovação (mantém status reservado)
+      // ATUALIZAR stand para aguardar aprovação (mantém status reservado)
       const nomeExpositor = formData.tipoPessoa === 'fisica' 
         ? formData.nomePF 
         : formData.razaoSocial || `${formData.nomeResponsavel} ${formData.sobrenomeResponsavel}`;
@@ -855,17 +893,14 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         })
         .eq('numero_stand', formData.numeroStand);
 
-      // 🎉 Sucesso - pré-inscrição enviada
+      // Sucesso - pré-inscrição enviada
       if (formData.numeroStand) {
-        toast.success(`✅ Pré-inscrição enviada com sucesso!`, {
-          description: `Stand ${formData.numeroStand} pré-reservado. Aguarde aprovação do organizador.`,
-          duration: 5000
-        });
+        showToast.success(`Pré-inscrição enviada com sucesso! Stand ${formData.numeroStand} pré-reservado.`);
       } else {
-        toast.success('Pré-inscrição enviada com sucesso! Entraremos em contato em breve.');
+        showToast.success('Pré-inscrição enviada com sucesso! Entraremos em contato em breve.');
       }
       
-      // 🎯 Formulário enviado com sucesso - Redirecionar para página de confirmação
+      // Formulário enviado com sucesso - Redirecionar para página de confirmação
       
       // Preparar dados para a página de confirmação
       const dadosConfirmacao = {
@@ -892,7 +927,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       });
     } catch (error: any) {
       console.error('Erro ao enviar formulário:', error);
-      toast.error(error.message || 'Erro ao enviar formulário. Tente novamente.');
+      showToast.error(error.message || 'Erro ao enviar formulário. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -977,9 +1012,9 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
             </h1>
             
             <div className="max-w-3xl mx-auto">
-              <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.8s_forwards] text-center">
+              <div className="subtitle-section mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.8s_forwards] text-center">
                 Manifeste seu interesse em participar da maior feira fitness do interior paulista e conecte-se com milhares de visitantes.
-              </p>
+              </div>
               
               <div className="inline-block bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 border border-[#0a2856]/20 rounded-lg px-4 py-3 text-[#0a2856] text-sm max-w-2xl opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1s_forwards]">
                 <div className="flex items-start gap-2">
@@ -1137,12 +1172,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         <Phone className="w-4 h-4 mr-2" />
                       TELEFONE *
                       </Label>
-                      <Input
+                      <PhoneInput
                         id="telefonePF"
                         value={formData.telefonePF}
-                        onChange={(e) => handleInputChange('telefonePF', formatPhone(e.target.value))}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
-                        placeholder="(11) 99999-9999"
+                        onChange={(value) => handleInputChange('telefonePF', value)}
+                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        placeholder="Digite o número"
                         required
                       />
                     </div>
@@ -1478,12 +1513,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         <Phone className="w-4 h-4 mr-2" />
                       TELEFONE *
                       </Label>
-                      <Input
+                      <PhoneInput
                         id="telefoneEmpresa"
                         value={formData.telefoneEmpresa}
-                        onChange={(e) => handleInputChange('telefoneEmpresa', formatPhone(e.target.value))}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
-                        placeholder="(11) 99999-9999"
+                        onChange={(value) => handleInputChange('telefoneEmpresa', value)}
+                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        placeholder="Digite o número"
                         required
                       />
                     </div>
@@ -1610,11 +1645,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                       <Label htmlFor="contatoResponsavel" className="text-sm font-semibold text-[#0a2856]">
                         TELEFONE DO RESPONSÁVEL *
                         </Label>
-                        <Input
+                        <PhoneInput
                           id="contatoResponsavel"
                           value={formData.contatoResponsavel}
-                          onChange={(e) => handleInputChange('contatoResponsavel', formatPhone(e.target.value))}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                          onChange={(value) => handleInputChange('contatoResponsavel', value)}
+                          className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
                           placeholder="De preferência WhatsApp"
                           required
                         />
@@ -1799,7 +1834,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         </Label>
                         {!isLoadingStands && standsDisponiveis.length === 0 && (
                           <div className="text-xs text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
-                            ⚠️ Execute o SQL no Supabase para ativar o sistema
+                            Execute o SQL no Supabase para ativar o sistema
                           </div>
                         )}
                       </div>
@@ -1807,7 +1842,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                       
                                               {formData.numeroStand && (
-                        <div className="bg-[#00d856]/10 border border-[#00d856]/20 rounded-lg p-3">
+                        <div className="bg-[#00d856]/10 border border-[#00d856]/20 rounded-lg p-4">
                           <div className="flex items-center gap-2 text-sm">
                             <div className="w-3 h-3 rounded-full bg-[#00d856]"></div>
                             <span className="font-medium text-[#0a2856]">
@@ -1819,6 +1854,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                           </div>
                         </div>
                       )}
+
+
                       
                       <div className="space-y-6">
                         {/* SEÇÃO DINÂMICA - Alimentada pelo banco de dados */}
@@ -1884,7 +1921,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                                             : 'cursor-pointer hover:scale-105 active:scale-95'
                                         } ${
                                           isSelected 
-                                            ? 'ring-2 ring-blue-400 scale-110 shadow-lg' 
+                                            ? 'ring-2 ring-yellow-400 scale-110 shadow-lg bg-yellow-400' 
                                             : ''
                                         }`}
                                         style={{ 
@@ -1895,7 +1932,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                                         {stand.numero_stand}
                                       </button>
                                       {isSelected && (
-                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
                                       )}
                                     </div>
                                   );
@@ -2117,8 +2154,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         </form>
         </div>
       </div>
+      
+      {/* Timer flutuante global da página */}
+      <TimerFlutuante tempoRestante={tempoRestante} ativo={cronometroAtivo} />
     </div>
   );
 };
 
-export default FormularioPreInscricaoExpositores; 
+export default FormularioPreInscricaoExpositores;

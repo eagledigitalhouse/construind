@@ -100,15 +100,15 @@ const CTASection: React.FC<CTASectionProps> = ({
               </div>
               
               {/* Título */}
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-extrabold mb-3 leading-tight">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold mb-3 leading-tight">
                 <span className="block text-white mb-1 whitespace-nowrap sm:whitespace-normal">{title}</span>
                 <span className="block text-[#b1f727] whitespace-nowrap">{subtitle}</span>
               </h2>
               
               {/* Descrição */}
-              <p className="text-base md:text-lg text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-                {description}
-              </p>
+              <div className="subtitle-section text-white/90 mb-8 max-w-2xl mx-auto">
+                Junte-se ao movimento que transforma vidas<br />e participe da maior feira de esporte do interior.
+              </div>
               
               {/* Botões */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">

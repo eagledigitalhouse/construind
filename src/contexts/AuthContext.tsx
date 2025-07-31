@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 
 interface AuthContextType {
   user: User | null;
@@ -67,10 +67,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           // Apenas mostrar toast em eventos específicos de login/logout
           if (event === 'SIGNED_IN' && !hasShownLoginToast) {
-            toast.success('Login realizado com sucesso!');
+            showToast.success('Login realizado com sucesso!');
             setHasShownLoginToast(true);
           } else if (event === 'SIGNED_OUT') {
-            toast.success('Logout realizado com sucesso!');
+            showToast.success('Logout realizado com sucesso!');
             setHasShownLoginToast(false);
           }
         }
@@ -127,11 +127,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Erro ao fazer logout:', error);
-        toast.error('Erro ao fazer logout');
+        showToast.error('Erro ao fazer logout');
       }
     } catch (error) {
       console.error('Erro inesperado no logout:', error);
-      toast.error('Erro inesperado ao fazer logout');
+      showToast.error('Erro inesperado ao fazer logout');
     }
   };
 

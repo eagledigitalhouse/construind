@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase, type Expositor } from '@/lib/supabase'
-import { toast } from 'sonner'
+import { showToast } from '@/lib/toast'
 
 export const useExpositores = () => {
   const [expositores, setExpositores] = useState<Expositor[]>([])
@@ -48,11 +48,11 @@ export const useExpositores = () => {
       if (error) throw error
 
       setExpositores(prev => [data, ...prev])
-      toast.success('Expositor adicionado com sucesso!')
+      showToast.success('Expositor adicionado com sucesso!')
       return data
     } catch (err) {
       console.error('Erro ao adicionar expositor:', err)
-      toast.error('Erro ao adicionar expositor')
+      showToast.error('Erro ao adicionar expositor')
       throw err
     }
   }
@@ -72,11 +72,11 @@ export const useExpositores = () => {
       setExpositores(prev => 
         prev.map(e => e.id === id ? data : e)
       )
-      toast.success('Expositor atualizado com sucesso!')
+      showToast.success('Expositor atualizado com sucesso!')
       return data
     } catch (err) {
       console.error('Erro ao atualizar expositor:', err)
-      toast.error('Erro ao atualizar expositor')
+      showToast.error('Erro ao atualizar expositor')
       throw err
     }
   }
@@ -92,10 +92,10 @@ export const useExpositores = () => {
       if (error) throw error
 
       setExpositores(prev => prev.filter(e => e.id !== id))
-      toast.success('Expositor removido com sucesso!')
+      showToast.success('Expositor removido com sucesso!')
     } catch (err) {
       console.error('Erro ao remover expositor:', err)
-      toast.error('Erro ao remover expositor')
+      showToast.error('Erro ao remover expositor')
       throw err
     }
   }

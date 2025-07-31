@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Eye, EyeOff, Loader2, Lock, Mail, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -63,7 +63,7 @@ const AdminLogin: React.FC = () => {
       if (result.error) {
         setError(result.error);
       } else {
-        toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
+        showToast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
         setShowForgotPassword(false);
         setResetEmail('');
       }

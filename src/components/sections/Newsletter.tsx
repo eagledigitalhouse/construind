@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNewsletter } from "@/hooks/useNewsletter";
 import { EmailAutocomplete } from "@/components/ui/email-autocomplete";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 
 const Newsletter = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ const Newsletter = () => {
     e.preventDefault();
     
     if (!email || !email.includes('@')) {
-      toast.error("Por favor, insira um e-mail válido");
+      showToast.error("Por favor, insira um e-mail válido");
       return;
     }
 
@@ -24,12 +24,12 @@ const Newsletter = () => {
       const result = await cadastrarEmail(email, nome);
       
       if (!result.error) {
-        toast.success("Obrigado por se inscrever na newsletter da FESPIN!");
+        showToast.success("Obrigado por se inscrever na newsletter!");
         setEmail("");
         setNome("");
       }
     } catch (error) {
-      toast.error("Ocorreu um erro ao processar sua inscrição. Tente novamente.");
+      showToast.error("Ocorreu um erro ao processar sua inscrição. Tente novamente.");
       console.error("Erro ao adicionar email na newsletter:", error);
     } finally {
       setIsSubmitting(false);
@@ -46,12 +46,12 @@ const Newsletter = () => {
           <div className="flex flex-col items-center justify-center text-center py-8 px-6 md:py-10 md:px-8">
             {/* Título */}
             <h2 className="text-3xl md:text-3xl lg:text-4xl font-bold text-white leading-tight">
-              Fique por dentro do movimento
+              Fique por dentro<br />do movimento
             </h2>
             
             {/* Subtexto */}
             <p className="text-white/95 text-sm md:text-base lg:text-lg leading-relaxed max-w-2xl mt-2 mb-6">
-              Receba as últimas novidades sobre a FESPIN 2025, programação e oportunidades exclusivas.
+              Receba as últimas novidades sobre a FESPIN 2025,<br />programação e oportunidades exclusivas.
             </p>
             
             {/* Formulário */}

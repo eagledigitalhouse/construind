@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, MapPin, Phone, Mail, Calendar } from "lucide-react";
+import { Activity, MapPin, Phone, Mail, Calendar, Instagram } from "lucide-react";
 import { Link } from "react-router-dom";
 import { PhoneContact } from "@/components/ui";
 
@@ -33,7 +33,7 @@ const Footer: React.FC<FooterProps> = ({
     <footer className="bg-[#0a2856] text-white relative overflow-visible min-h-[400px] z-[5] border-t-4 border-[#00d856]">
       {/* Círculo decorativo sutil */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#00d856]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="container mx-auto px-6 pt-64 md:pt-48 pb-16 relative z-10">
+      <div className="container mx-auto px-6 pt-32 md:pt-48 pb-16 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 lg:gap-20 text-center md:text-left">
           {/* Logo e Descrição */}
           <div className="flex flex-col items-center md:items-start">
@@ -53,7 +53,7 @@ const Footer: React.FC<FooterProps> = ({
           </div>
           
           {/* Serviços */}
-          <div>
+          <div className="hidden md:block">
             <h4 className="font-bold mb-5 text-white text-lg text-center md:text-left">Serviços</h4>
             <ul className="space-y-3 text-base flex flex-col items-center md:items-start">
               <li><Link to="/expositores" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Expositores</Link></li>
@@ -64,7 +64,7 @@ const Footer: React.FC<FooterProps> = ({
           </div>
           
           {/* Ajuda */}
-          <div>
+          <div className="hidden md:block">
             <h4 className="font-bold mb-5 text-white text-lg text-center md:text-left">Ajuda</h4>
             <ul className="space-y-3 text-base flex flex-col items-center md:items-start">
               <li><a href="#recursos" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Recursos</a></li>
@@ -75,31 +75,34 @@ const Footer: React.FC<FooterProps> = ({
           </div>
           
           {/* Contato */}
-          <div className="md:pl-6">
-            <h4 className="font-bold mb-5 text-white text-lg text-center md:text-left">Contato</h4>
-            <div className="space-y-4">
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <div className="bg-[#00d856]/20 p-2 rounded-full">
-                  <MapPin className="w-5 h-5 text-[#00d856]" />
-                </div>
-                <span className="text-white/90 text-base">Espaço Viber - Indaiatuba/SP</span>
+          <div className="md:pl-6 flex flex-col items-center md:items-start">
+            <h4 className="font-bold mb-5 text-white text-lg">Contato</h4>
+            <div className="flex flex-row justify-center md:flex-col md:justify-start gap-8 md:gap-4 flex-wrap">
+              <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
+                <a href="https://instagram.com/fespin_25" target="_blank" rel="noopener noreferrer" className="bg-[#00d856]/20 p-3 rounded-full hover:bg-[#00d856]/30 transition-colors">
+                  <Instagram className="w-6 h-6 text-[#00d856]" />
+                </a>
+                <a href="https://instagram.com/fespin_25" target="_blank" rel="noopener noreferrer" className="hidden md:block text-white/90 text-sm md:text-base hover:text-white transition-colors">@fespin_25</a>
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <div className="bg-[#00d856]/20 p-2 rounded-full">
-                  <Phone className="w-5 h-5 text-[#00d856]" />
-                </div>
+              <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
                 <PhoneContact
                   phone={finalPhone}
-                  className="text-white/90 text-base hover:text-white transition-colors"
+                  className="bg-[#00d856]/20 p-3 rounded-full hover:bg-[#00d856]/30 transition-colors"
+                >
+                  <Phone className="w-6 h-6 text-[#00d856]" />
+                </PhoneContact>
+                <PhoneContact
+                  phone={finalPhone}
+                  className="hidden md:block text-white/90 text-sm md:text-base hover:text-white transition-colors"
                 >
                   {finalPhone}
                 </PhoneContact>
               </div>
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <div className="bg-[#00d856]/20 p-2 rounded-full">
-                  <Mail className="w-5 h-5 text-[#00d856]" />
-                </div>
-                <a href={`mailto:${finalEmail}`} className="text-white/90 text-base hover:text-white transition-colors">{finalEmail}</a>
+              <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
+                <a href={`mailto:${finalEmail}`} className="bg-[#00d856]/20 p-3 rounded-full hover:bg-[#00d856]/30 transition-colors">
+                  <Mail className="w-6 h-6 text-[#00d856]" />
+                </a>
+                <a href={`mailto:${finalEmail}`} className="hidden md:block text-white/90 text-sm md:text-base hover:text-white transition-colors">{finalEmail}</a>
               </div>
             </div>
           </div>

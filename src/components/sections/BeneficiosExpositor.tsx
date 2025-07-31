@@ -27,7 +27,7 @@ const BeneficiosExpositor = () => {
   ];
 
   return (
-    <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-white relative overflow-hidden">
+    <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-gray-100 relative overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Coluna Esquerda - Conteúdo */}
@@ -38,7 +38,7 @@ const BeneficiosExpositor = () => {
               </GlassChip>
             </div>
             <div className="space-y-6 w-full">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3 text-center md:text-left">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-gray-900 leading-none mb-3 text-center md:text-left">
                 <span className="block">
                   Por que <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">expor na</span>
                 </span>
@@ -46,11 +46,11 @@ const BeneficiosExpositor = () => {
                   <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">FESPIN</span> 2025?
                 </span>
               </h2>
-              <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto md:mx-0 leading-relaxed mb-6 text-center md:text-left">
+              <div className="subtitle-section mb-6 text-center md:text-left">
                 A primeira feira de esporte do interior é sua chance de
                 liderar um mercado em expansão e conectar-se com um
                 público altamente qualificado.
-              </p>
+              </div>
             </div>
           </div>
           

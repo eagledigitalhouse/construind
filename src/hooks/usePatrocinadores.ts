@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase, type Patrocinador } from '@/lib/supabase'
-import { toast } from 'sonner'
+import { showToast } from '@/lib/toast'
 
 export const usePatrocinadores = () => {
   const [patrocinadores, setPatrocinadores] = useState<Patrocinador[]>([])
@@ -48,11 +48,11 @@ export const usePatrocinadores = () => {
       if (error) throw error
 
       setPatrocinadores(prev => [...prev, data])
-      toast.success('Patrocinador adicionado com sucesso!')
+      showToast.success('Patrocinador adicionado com sucesso!')
       return data
     } catch (err) {
       console.error('Erro ao adicionar patrocinador:', err)
-      toast.error('Erro ao adicionar patrocinador')
+      showToast.error('Erro ao adicionar patrocinador')
       throw err
     }
   }
@@ -72,11 +72,11 @@ export const usePatrocinadores = () => {
       setPatrocinadores(prev => 
         prev.map(p => p.id === id ? data : p)
       )
-      toast.success('Patrocinador atualizado com sucesso!')
+      showToast.success('Patrocinador atualizado com sucesso!')
       return data
     } catch (err) {
       console.error('Erro ao atualizar patrocinador:', err)
-      toast.error('Erro ao atualizar patrocinador')
+      showToast.error('Erro ao atualizar patrocinador')
       throw err
     }
   }
@@ -92,10 +92,10 @@ export const usePatrocinadores = () => {
       if (error) throw error
 
       setPatrocinadores(prev => prev.filter(p => p.id !== id))
-      toast.success('Patrocinador removido com sucesso!')
+      showToast.success('Patrocinador removido com sucesso!')
     } catch (err) {
       console.error('Erro ao remover patrocinador:', err)
-      toast.error('Erro ao remover patrocinador')
+      showToast.error('Erro ao remover patrocinador')
       throw err
     }
   }

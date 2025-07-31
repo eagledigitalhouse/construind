@@ -39,7 +39,7 @@ const AboutSection = () => {
             </div>
             
             <div className="mb-3">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-none text-center">
                 <div className="mb-2">
                   <span className="text-[#0a2856]">Muito mais do que uma </span>
                   <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">feira</span>
@@ -55,13 +55,13 @@ const AboutSection = () => {
               </h2>
             </div>
             
-            <div className="max-w-3xl mx-auto">
-              <p className="text-base md:text-lg text-gray-600 leading-relaxed opacity-0 animate-fade-in" style={{
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed mb-6 opacity-0 animate-fade-in" style={{
                 animationDelay: "0.5s"
               }}>
                 A FESPIN – Feira do Esporte de Indaiatuba – reúne marcas, profissionais e apaixonados por saúde, esporte, nutrição e bem-estar em um ambiente de experiências, conexões e evolução.
               </p>
-              <p className="text-base md:text-lg text-gray-600 leading-relaxed opacity-0 animate-fade-in mt-3" style={{
+              <p className="text-lg md:text-xl text-gray-600 leading-relaxed opacity-0 animate-fade-in" style={{
                 animationDelay: "0.7s"
               }}>
                 Em 2025, esperamos mais de 15 mil pessoas para vivenciar três dias intensos de movimento, performance e qualidade de vida.
@@ -82,7 +82,7 @@ const AboutSection = () => {
                 <div className="flex justify-center mb-4 text-[#00d856]">
                   {highlight.icon}
                 </div>
-                <div className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] mb-3">
+                <div className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-[#0a2856] mb-1">
                   {highlight.number}
                 </div>
                 <div className="text-sm md:text-base text-gray-600 leading-snug font-medium">

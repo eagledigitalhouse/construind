@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { toast } from 'sonner'
+import { showToast } from '@/lib/toast'
 
 export interface CotaPatrocinio {
   id: string
@@ -96,12 +96,12 @@ export const useCotasPatrocinio = () => {
       }));
 
       setCotas(prev => [...prev, ...novasCategorias]);
-      toast.success('Categoria adicionada com sucesso!');
+      showToast.success('Categoria adicionada com sucesso!');
       
       return novasCategorias[0];
     } catch (err) {
       console.error('Erro ao adicionar categoria:', err);
-      toast.error('Erro ao adicionar categoria');
+      showToast.error('Erro ao adicionar categoria');
       throw err;
     }
   };
@@ -139,13 +139,13 @@ export const useCotasPatrocinio = () => {
         setCotas(prev => 
           prev.map(cota => cota.id === id ? categoriaAtualizada : cota)
         );
-        toast.success('Categoria atualizada com sucesso!');
+        showToast.success('Categoria atualizada com sucesso!');
         return categoriaAtualizada;
       }
       return null;
     } catch (err) {
       console.error('Erro ao atualizar categoria:', err);
-      toast.error('Erro ao atualizar categoria');
+      showToast.error('Erro ao atualizar categoria');
       throw err;
     }
   };
@@ -161,10 +161,10 @@ export const useCotasPatrocinio = () => {
       if (error) throw error;
 
       setCotas(prev => prev.filter(cota => cota.id !== id));
-      toast.success('Categoria removida com sucesso!');
+      showToast.success('Categoria removida com sucesso!');
     } catch (err) {
       console.error('Erro ao remover categoria:', err);
-      toast.error('Erro ao remover categoria');
+      showToast.error('Erro ao remover categoria');
       throw err;
     }
   };

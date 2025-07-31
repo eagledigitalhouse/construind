@@ -27,9 +27,7 @@ const SegmentosEventoSection = () => {
   ];
 
   return (
-    <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-96 h-96 bg-[#00d856]/5 rounded-full blur-3xl -translate-x-48 -translate-y-48"></div>
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#b1f727]/5 rounded-full blur-3xl translate-x-40 translate-y-40"></div>
+    <section className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-gray-100 relative overflow-hidden">
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-12 md:mb-16 flex flex-col items-center">
@@ -40,19 +38,18 @@ const SegmentosEventoSection = () => {
           </div>
           
           <div className="mb-3 w-full">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3 text-center">
-              <span className="text-[#00d856]">Áreas</span> <span className="text-[#00d856]">exclusivas</span> por <span className="text-[#00d856]">segmento</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-gray-900 leading-none mb-3 text-center">
+              <span className="text-[#00d856]">Áreas exclusivas<br />por segmento</span>
             </h2>
           </div>
           <div className="max-w-3xl mx-auto w-full">
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6 text-center">
-              Cada segmento tem sua área exclusiva para maximizar o networking 
-              e as oportunidades de negócios entre empresas do mesmo setor.
-            </p>
+            <div className="subtitle-section">
+              Cada segmento tem sua área exclusiva para maximizar o networking e as oportunidades de negócios entre empresas do mesmo setor.
+            </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-2xl px-8 mb-8">
+        <div className="bg-gray-50 rounded-2xl px-8 py-8 mb-8">
           <div className="flex justify-center items-center">
             <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto">
               <div className="flex items-start gap-4">

@@ -171,7 +171,7 @@ export const EmailAutocomplete: React.FC<EmailAutocompleteProps> = ({
               onMouseEnter={() => setActiveSuggestion(index)}
             >
               <div className="flex items-center">
-                <span className="text-gray-600 mr-1">📧</span>
+                <span className="text-gray-600 mr-1">@</span>
                 <span className="font-medium">{suggestion.split('@')[0]}</span>
                 <span className="text-gray-400">@{suggestion.split('@')[1]}</span>
               </div>
@@ -188,8 +188,8 @@ export const EmailAutocomplete: React.FC<EmailAutocompleteProps> = ({
       
       {/* Ícone de email */}
       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-        📧
+        @
       </div>
     </div>
   );
-}; 
+};

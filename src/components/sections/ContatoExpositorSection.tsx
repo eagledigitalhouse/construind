@@ -155,10 +155,7 @@ const ContatoExpositorSection = () => {
   };
 
   return (
-    <section id="contato" className="py-12 md:py-16 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden">
-      {/* Elementos decorativos */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-[#00d856]/5 rounded-full blur-3xl -translate-x-48 -translate-y-48"></div>
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#b1f727]/5 rounded-full blur-3xl translate-x-40 translate-y-40"></div>
+    <section id="contato" className="py-12 md:py-16 bg-gray-100 relative overflow-hidden">
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-8 md:mb-10">
@@ -169,15 +166,15 @@ const ContatoExpositorSection = () => {
           </div>
           
           <div className="mb-3">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-gray-900 leading-tight">
               Vamos construir seu <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">sucesso</span>
             </h2>
           </div>
           
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-tight">
+          <div className="subtitle-section">
             Nossa equipe está pronta para ajudar você a escolher o melhor espaço para sua empresa. 
             Entre em contato e garanta sua participação na FESPIN 2025.
-          </p>
+          </div>
         </div>
         
         <div className="max-w-4xl mx-auto">

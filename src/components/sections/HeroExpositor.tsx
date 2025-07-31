@@ -14,12 +14,9 @@ const HeroExpositor = () => {
       
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="max-w-5xl mx-auto flex flex-col items-center text-center">
-          <div className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white mb-4 shadow-xl">
-            <Crown className="w-5 h-5 mr-2 text-[#b1f727]" />
-            <span className="font-semibold">Seja um Expositor FESPIN 2025</span>
-          </div>
+
           
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none mb-6 text-center">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-extrabold leading-none mb-6 text-center">
             <span className="block text-white mb-1">Seja pioneiro na</span>
             <span className="block bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent animate-pulse-slow">
               primeira feira do segmento

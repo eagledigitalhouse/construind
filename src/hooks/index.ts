@@ -4,3 +4,4 @@ export * from './useCotasPatrocinio';
 export * from './useExpositores';
 export * from './usePatrocinadores';
 export * from './useNewsletter';
+export * from './useEntidades';

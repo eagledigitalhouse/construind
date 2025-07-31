@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Users, Download, Search, Filter, Send, Edit2, Trash2, Eye, RefreshCw, Plus, Check, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
+import { Mail, Users, Download, Search, Filter, Send, Edit2, Trash2, Eye, RefreshCw, Plus, Check, X, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useNewsletter } from '@/hooks/useNewsletter';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 
 const AdminNewsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState('todos');
@@ -34,7 +35,7 @@ const AdminNewsletter: React.FC = () => {
   const exportNewslettersCSV = () => {
     try {
       if (newsletters.length === 0) {
-        toast.info('Não há dados para exportar');
+        showToast.info('Não há dados para exportar');
         return;
       }
 
@@ -57,10 +58,10 @@ const AdminNewsletter: React.FC = () => {
       link.click();
       document.body.removeChild(link);
       
-      toast.success('Arquivo CSV gerado com sucesso');
+      showToast.success('Arquivo CSV gerado com sucesso');
     } catch (error) {
       console.error('Erro ao exportar dados:', error);
-      toast.error('Erro ao exportar dados');
+      showToast.error('Erro ao exportar dados');
     }
   };
 
@@ -97,7 +98,7 @@ const AdminNewsletter: React.FC = () => {
   // Adicionar novo email
   const handleAdicionarEmail = async () => {
     if (!novoEmail || !novoEmail.includes('@')) {
-      toast.error('Por favor, informe um email válido');
+      showToast.error('Por favor, informe um email válido');
       return;
     }
 
@@ -138,22 +139,27 @@ const AdminNewsletter: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Newsletter
-          </h1>
-          <p className="text-gray-600">
-            Gerencie os emails cadastrados na newsletter
-          </p>
-        </div>
+    <div className="container mx-auto p-6 admin-page">
+      <div className="space-y-4">
+        <PageHeader
+          title="Newsletter"
+          description="Gerencie os emails cadastrados na newsletter"
+          icon={Mail}
+          actions={[
+            {
+              label: "Atualizar",
+              icon: RefreshCw,
+              onClick: atualizarDados,
+              disabled: isRefreshing,
+              variant: "outline"
+            }
+          ]}
+        />
 
       {/* Menu de navegação */}
       <div className="flex justify-between items-center">
         <div className="space-x-1">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
               <TabsTrigger value="todos" className="data-[state=active]:bg-blue-100">
                 Todos
@@ -194,7 +200,7 @@ const AdminNewsletter: React.FC = () => {
                   Insira os dados para adicionar um novo contato à newsletter.
                 </DialogDescription>
               </DialogHeader>
-              <div className="space-y-4 py-4">
+              <div className="space-y-3 py-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Email</label>
                   <Input 

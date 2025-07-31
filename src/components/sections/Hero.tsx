@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ArrowRight, Calendar, MapPin } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, Clock, Ticket, Heart } from "lucide-react";
 
 const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -56,56 +56,56 @@ const Hero = () => {
             className="inline-flex items-center px-6 py-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white font-medium text-sm mb-8 opacity-0 animate-fade-in" 
             style={{ animationDelay: "0.1s" }}
           >
-            <Calendar className="w-4 h-4 mr-2" />
-            <span>2025</span>
+            <Heart className="w-4 h-4 mr-2" />
+            <span>Feira do Esporte de Indaiatuba</span>
           </div>
           
           <h1 
-            className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black text-white text-center leading-tight mb-6 opacity-0 animate-fade-in" 
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-black text-white text-center leading-snug mb-6 opacity-0 animate-fade-in" 
             style={{ animationDelay: "0.3s" }}
           >
             <span className="block mb-2">FESPIN 2025</span>
-            <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent block">Movimento que</span>
-            <span className="bg-gradient-to-r from-[#b1f727] to-[#00d856] bg-clip-text text-transparent block">Transforma</span>
+            <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent block">Movimento que<br />Transforma</span>
           </h1>
           
           <p 
-            className="text-xl sm:text-2xl text-white/80 text-center max-w-3xl mb-8 opacity-0 animate-fade-in leading-relaxed" 
+            className="text-lg md:text-xl lg:text-2xl text-white/80 text-center max-w-4xl mb-8 opacity-0 animate-fade-in leading-relaxed" 
             style={{ animationDelay: "0.5s" }}
           >
             A maior feira de esporte, fitness e bem-estar do interior paulista. Conectando pessoas, marcas e oportunidades em um só lugar.
           </p>
           
           <div 
-            className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-10 opacity-0 animate-fade-in text-white/90" 
+            className="grid grid-cols-2 lg:flex lg:flex-row items-center justify-center gap-3 lg:gap-4 mb-10 opacity-0 animate-fade-in text-white/90 max-w-2xl lg:max-w-none mx-auto" 
             style={{ animationDelay: "0.6s" }}
           >
-            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
-              <Calendar className="w-5 h-5 mr-3 text-[#00d856]" />
-              <span className="text-lg font-medium">14 a 16 de novembro</span>
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 border border-white/20 text-center justify-center">
+              <Calendar className="w-4 h-4 mr-2 text-[#00d856] flex-shrink-0" />
+              <span className="text-xs lg:text-sm font-medium">14 a 16 de novembro</span>
             </div>
-            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-3 border border-white/20">
-              <MapPin className="w-5 h-5 mr-3 text-[#b1f727]" />
-              <span className="text-lg font-medium">Espaço Viber, Indaiatuba/SP</span>
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 border border-white/20 text-center justify-center">
+              <MapPin className="w-4 h-4 mr-2 text-[#b1f727] flex-shrink-0" />
+              <span className="text-xs lg:text-sm font-medium">Espaço Viber, Indaiatuba/SP</span>
+            </div>
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 border border-white/20 text-center justify-center">
+              <Clock className="w-4 h-4 mr-2 text-[#00d856] flex-shrink-0" />
+              <span className="text-xs lg:text-sm font-medium">08 às 20h</span>
+            </div>
+            <div className="flex items-center bg-white/10 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 border border-white/20 text-center justify-center">
+              <Ticket className="w-4 h-4 mr-2 text-[#b1f727] flex-shrink-0" />
+              <span className="text-xs lg:text-sm font-medium">Entrada Gratuita</span>
             </div>
           </div>
           
           <div 
-            className="flex flex-col sm:flex-row gap-6 opacity-0 animate-fade-in" 
+            className="flex justify-center opacity-0 animate-fade-in" 
             style={{ animationDelay: "0.8s" }}
           >
             <a 
-              href="#participar" 
+              href="#expositor" 
               className="flex items-center justify-center group bg-gradient-to-r from-[#00d856] to-[#b1f727] text-[#0a2856] font-bold py-4 px-10 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl transform text-lg" 
             >
-              Quero Participar
-              <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
-            </a>
-            <a 
-              href="#expositor" 
-              className="flex items-center justify-center group bg-transparent border-2 border-white/30 backdrop-blur-sm text-white font-bold py-4 px-10 rounded-full transition-all duration-300 hover:bg-white/10 hover:border-white hover:scale-105 transform text-lg" 
-            >
-              Seja um Expositor
+              Quero Ser Expositor
               <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
             </a>
           </div>

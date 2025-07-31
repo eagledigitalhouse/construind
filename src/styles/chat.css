@@ -1,0 +1,26 @@
+/* Chat specific styles */
+.chat-height {
+  height: calc(var(--vh, 1vh) * 100 - 12.1rem);
+}
+
+@media (max-width: 768px) {
+  .chat-height {
+    height: calc(var(--vh, 1vh) * 100 - 10.5rem);
+  }
+}
+
+.contact-height {
+  height: calc(100% - 138px);
+}
+
+.msg-height {
+  height: calc(100% - 0px);
+}
+
+.parent-height {
+  height: calc(100% - 145px);
+}
+
+.msg-icon-btn {
+  @apply md:h-8 md:w-8 h-6 w-6 cursor-pointer bg-gray-100 dark:bg-gray-900 dark:text-gray-400 text-gray-900 flex flex-col justify-center items-center md:text-xl text-sm rounded-full;
+}

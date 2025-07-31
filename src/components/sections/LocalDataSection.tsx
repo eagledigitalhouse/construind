@@ -11,12 +11,12 @@ const LocalDataSection = () => {
              <MapPin className="w-4 h-4 text-[#0a2856]" />
              <span className="text-sm font-semibold text-[#0a2856]">Local e Data</span>
            </div>
-           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0a2856] mb-1 leading-tight">
-              Encontre-nos em <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">Indaiatuba</span>
+           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#0a2856] mb-1 leading-tight">
+              Encontre-nos <br /><span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent"> em Indaiatuba</span>
             </h2>
-            <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-              Três dias de movimento, transformação e conexões no coração de Indaiatuba
-            </p>
+            <div className="subtitle-section">
+              Três dias de movimento, transformação<br />e conexões no coração de Indaiatuba
+            </div>
          </div>
 
         {/* Layout centralizado */}

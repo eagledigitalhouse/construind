@@ -201,10 +201,9 @@ const PatrocinioPage = () => {
                     para nossos <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">patrocinadores</span>
                   </span>
                 </h2>
-                <p className="text-xl text-gray-600 leading-tight max-w-lg mx-auto md:mx-0">
-                  Maximize o alcance da sua marca com benefícios únicos pensados 
-                  para gerar resultados reais e conexões valiosas.
-                </p>
+                <div className="subtitle-section max-w-lg mx-auto md:mx-0">
+                  Maximize o alcance da sua marca com benefícios únicos pensados para gerar resultados reais e conexões valiosas.
+                </div>
               </div>
             </div>
             
@@ -281,15 +280,14 @@ const PatrocinioPage = () => {
             </div>
             
             <div className="mb-4">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-gray-900 leading-tight">
                 A maior feira de <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">esporte</span> do interior
               </h2>
             </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
-              A FESPIN é mais que uma feira - é um movimento que transforma vidas 
-              através do esporte e da conexão entre pessoas.
-            </p>
+            <div className="subtitle-section">
+              A FESPIN é mais que uma feira - é um movimento que transforma vidas através do esporte e da conexão entre pessoas.
+            </div>
           </div>
           
           <div className="bg-gray-50 rounded-2xl p-8 md:p-10 mb-12">
@@ -298,11 +296,9 @@ const PatrocinioPage = () => {
                 <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-900 mb-6 text-center lg:text-left">
                   Movimento que transforma vidas
                 </h3>
-                <p className="text-lg text-gray-600 leading-tight mb-8 text-center lg:text-left">
-                  A FESPIN reúne academias, profissionais, marcas e entusiastas do esporte 
-                  em um ambiente único de conexão, aprendizado e transformação. Três dias 
-                  intensos de experiências (8h às 20h), networking e oportunidades de negócios.
-                </p>
+                <div className="subtitle-section mb-8 text-center lg:text-left">
+                  
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-start gap-4">
@@ -472,15 +468,14 @@ const PatrocinioPage = () => {
             </div>
             
             <div className="mb-3">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-gray-900 leading-tight">
                 Escolha a <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">cota</span> ideal para sua empresa
               </h2>
             </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
-              Diferentes níveis de patrocínio para atender às necessidades 
-              e objetivos da sua marca.
-            </p>
+            <div className="subtitle-section">
+              Diferentes níveis de patrocínio para atender às necessidades e objetivos da sua marca.
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-7xl mx-auto">
@@ -575,16 +570,16 @@ const PatrocinioPage = () => {
             </div>
             
             <div className="mb-3">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-gray-900 leading-tight">
                 Compare os <span className="bg-gradient-to-r from-[#00d856] via-[#b1f727] to-[#00d856] bg-clip-text text-transparent">benefícios</span>
               </h2>
             </div>
             
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-tight">
+            <div className="subtitle-section">
               Veja em detalhes tudo o que cada cota de patrocínio oferece para sua marca
-            </p>
+            </div>
             <p className="text-sm text-gray-500 mt-2 md:hidden bg-yellow-50 border border-yellow-200 rounded-lg p-2 mx-auto max-w-sm">
-              💡 Deslize horizontalmente para ver todos os benefícios
+              Deslize horizontalmente para ver todos os benefícios
             </p>
           </div>
           

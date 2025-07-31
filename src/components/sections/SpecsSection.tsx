@@ -16,20 +16,18 @@ const SpecsSection = () => {
           </div>
           
           <div className="mb-3">
-            <h2 className="title-section font-display font-extrabold leading-none text-center">
-              <span className="text-[#0a2856]">Acreditamos que o </span>
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
-              <span className="text-[#0a2856]"> </span>
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transforma</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-none text-center">
+              <span className="text-[#0a2856]">Acreditamos que o<br /></span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento transforma</span>
               <span className="text-[#0a2856]">.</span>
             </h2>
           </div>
           
-          <p className="text-lead text-gray-700 leading-snug max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+          <div className="subtitle-section text-gray-700 max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
             animationDelay: "0.5s"
           }}>
-            Saúde vai além do físico... é atitude, é escolha, é comunidade.
-          </p>
+            Saúde vai além do físico...é atitude, é escolha, é comunidade.
+          </div>
         </div>
 
         {/* Layout principal */}
@@ -72,20 +70,20 @@ const SpecsSection = () => {
             <div className="border-t border-gray-100">
               <div className="grid grid-cols-2 sm:grid-cols-4">
                 <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
-                  <div className="text-stat font-display font-extrabold text-[#00d856]">+15mil</div>
-                  <div className="text-caption text-gray-500">visitantes</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856] mb-0">+15mil</div>
+                  <div className="text-caption text-gray-500 mt-0">visitantes</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6 border-r sm:border-r border-gray-100">
-                  <div className="text-stat font-display font-extrabold text-[#00d856]">3</div>
-                  <div className="text-caption text-gray-500">dias de evento</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856] mb-0">3</div>
+                  <div className="text-caption text-gray-500 mt-0">dias de evento</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6 border-r border-gray-100">
-                  <div className="text-stat font-display font-extrabold text-[#00d856]">4</div>
-                  <div className="text-caption text-gray-500">segmentos</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856] mb-0">4</div>
+                  <div className="text-caption text-gray-500 mt-0">segmentos</div>
                 </div>
                 <div className="text-center py-4 px-2 sm:p-6">
-                  <div className="text-stat font-display font-extrabold text-[#00d856]">∞</div>
-                  <div className="text-caption text-gray-500">conexões</div>
+                  <div className="text-stat font-display font-extrabold text-[#00d856] mb-0">∞</div>
+                  <div className="text-caption text-gray-500 mt-0">conexões</div>
                 </div>
               </div>
             </div>

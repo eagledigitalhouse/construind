@@ -111,19 +111,17 @@ const SegmentosSection = () => {
           </div>
           
           <div className="mb-4">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-tight text-center">
-              <span className="text-[#0a2856]">Segmentos </span>
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">Presentes</span>
-              <span className="text-[#0a2856]"> na Feira</span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-tight text-center">
+              <span className="text-[#0a2856]">Segmentos<br /></span>
+              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">Presentes na Feira</span>
             </h2>
           </div>
           
-          <p className="text-base md:text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto opacity-0 animate-fade-in" style={{
+          <div className="subtitle-section opacity-0 animate-fade-in" style={{
             animationDelay: "0.3s"
           }}>
-            A FESPIN reúne os principais segmentos do esporte e bem-estar em um só lugar,
-            criando uma experiência completa para todos os visitantes.
-          </p>
+            A FESPIN reúne os principais segmentos do esporte e bem-estar em um só lugar, criando uma experiência completa para todos os visitantes.
+          </div>
         </div>
 
         <div className="w-full max-w-4xl mx-auto px-4 relative min-h-[500px]">
@@ -188,7 +186,7 @@ const SegmentosSection = () => {
                     
                     {/* Conteúdo centralizado (título, descrição e modalidades) */}
                     <div className="text-center w-full">
-                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-3 tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
+                      <h3 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight leading-tight whitespace-nowrap sm:whitespace-normal">
                         {segmento.titulo}
                       </h3>
 

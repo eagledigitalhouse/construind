@@ -35,8 +35,7 @@ const TiposEstandesSection = () => {
   ];
 
   return (
-    <section id="tipos-estandes" className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-white relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-[#00d856]/3 to-transparent"></div>
+    <section id="tipos-estandes" className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-gray-100 relative overflow-hidden">
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="text-center mb-12 md:mb-16">
@@ -47,7 +46,7 @@ const TiposEstandesSection = () => {
           </div>
           
           <div className="mb-3">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-none text-center">
               <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">Tipos</span>
               <span className="text-[#0a2856]"> de </span>
               <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">estandes</span>
@@ -56,9 +55,9 @@ const TiposEstandesSection = () => {
           </div>
           
           <div className="max-w-3xl mx-auto">
-            <p className="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
+            <div className="subtitle-section mb-6">
               Escolha o formato ideal para apresentar sua marca e produtos no evento.
-            </p>
+            </div>
           </div>
         </div>
         

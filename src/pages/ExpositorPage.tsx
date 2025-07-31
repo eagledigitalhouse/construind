@@ -13,7 +13,7 @@ import { FloatingContact } from "@/components/ui";
 
 const ExpositorPage = () => {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       <main>

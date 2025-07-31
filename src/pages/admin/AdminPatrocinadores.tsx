@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 import { 
   Plus, 
   Edit2, 
@@ -12,12 +12,14 @@ import {
   GripVertical, 
   Building2,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  ArrowLeft
 } from 'lucide-react';
 import { usePatrocinadores } from '../../hooks/usePatrocinadores';
 import { useCotasPatrocinio, type CotaPatrocinio } from '../../hooks/useCotasPatrocinio';
 import { uploadImage } from '../../lib/uploadImage';
 import { type Patrocinador } from '../../lib/supabase';
+import PageHeader from '@/components/layout/PageHeader';
 
 const AdminPatrocinadores: React.FC = () => {
   const { 
@@ -92,9 +94,9 @@ const AdminPatrocinadores: React.FC = () => {
         setNovoPatrocinador(prev => ({ ...prev, logo: imageUrl }));
       }
       
-      toast.success('Logo carregado com sucesso!');
+      showToast.success('Logo carregado com sucesso!');
     } catch (error) {
-      toast.error('Erro ao fazer upload da imagem');
+      showToast.error('Erro ao fazer upload da imagem');
     }
   };
 
@@ -107,13 +109,13 @@ const AdminPatrocinadores: React.FC = () => {
       setNovoPatrocinador(prev => ({ ...prev, logo: url }));
     }
     
-    toast.success('Logo adicionado!');
+    showToast.success('Logo adicionado!');
   };
 
   // Handlers para patrocinadores
   const adicionarPatrocinadorHandler = async (cotaId: string) => {
     if (!novoPatrocinador.nome || !novoPatrocinador.logo) {
-      toast.error('Nome e logo são obrigatórios');
+      showToast.error('Nome e logo são obrigatórios');
       return;
     }
 
@@ -126,9 +128,9 @@ const AdminPatrocinadores: React.FC = () => {
       
       setNovoPatrocinador({});
       setMostrarFormulario(null);
-      toast.success('Patrocinador adicionado com sucesso!');
+      showToast.success('Patrocinador adicionado!');
     } catch (error) {
-      toast.error('Erro ao adicionar patrocinador');
+      showToast.error('Erro ao adicionar patrocinador');
     }
   };
 
@@ -138,9 +140,9 @@ const AdminPatrocinadores: React.FC = () => {
     try {
       await atualizarPatrocinador(editandoPatrocinador.id, editandoPatrocinador);
       setEditandoPatrocinador(null);
-      toast.success('Patrocinador atualizado com sucesso!');
+      showToast.success('Patrocinador atualizado!');
     } catch (error) {
-      toast.error('Erro ao atualizar patrocinador');
+      showToast.error('Erro ao atualizar patrocinador');
     }
   };
 
@@ -149,16 +151,16 @@ const AdminPatrocinadores: React.FC = () => {
 
     try {
       await removerPatrocinador(id);
-      toast.success('Patrocinador removido com sucesso!');
+      showToast.success('Patrocinador removido!');
     } catch (error) {
-      toast.error('Erro ao remover patrocinador');
+      showToast.error('Erro ao remover patrocinador');
     }
   };
 
   // Handlers para categorias
   const adicionarNovaCota = async () => {
     if (!novaCota.nome.trim()) {
-      toast.error('O nome da categoria é obrigatório');
+      showToast.error('O nome da categoria é obrigatório');
       return;
     }
 
@@ -173,10 +175,10 @@ const AdminPatrocinadores: React.FC = () => {
       
       setNovaCota({ nome: '', cor: '#3B82F6', icone: 'Star' });
       setMostrandoFormularioNovaCota(false);
-      toast.success('Nova categoria adicionada!');
+      showToast.success('Nova categoria adicionada!');
     } catch (error) {
       console.error('Erro ao adicionar categoria:', error);
-      toast.error('Erro ao adicionar categoria');
+      showToast.error('Erro ao adicionar categoria');
     }
   };
 
@@ -192,10 +194,10 @@ const AdminPatrocinadores: React.FC = () => {
       const cota = cotas.find(c => c.id === cotaId);
       if (cota) {
         await atualizarCategoria(cotaId, { ...cota, nome: novoNomeCota });
-        toast.success('Nome da categoria atualizado!');
+        showToast.success('Nome da categoria atualizado!');
       }
     } catch (error) {
-      toast.error('Erro ao atualizar categoria');
+      showToast.error('Erro ao atualizar categoria');
     }
     
     setEditandoNomeCota(null);
@@ -211,7 +213,7 @@ const AdminPatrocinadores: React.FC = () => {
     const patrocinadoresdaCota = filtrarPatrocinadores(cotaId);
     
     if (patrocinadoresdaCota.length > 0) {
-      toast.error('Não é possível remover uma categoria que possui patrocinadores');
+      showToast.error('Não é possível remover uma categoria que possui patrocinadores');
       return;
     }
 
@@ -219,9 +221,9 @@ const AdminPatrocinadores: React.FC = () => {
 
     try {
       await removerCategoria(cotaId);
-      toast.success('Categoria removida com sucesso!');
+      showToast.success('Categoria removida com sucesso!');
     } catch (error) {
-      toast.error('Erro ao remover categoria');
+      showToast.error('Erro ao remover categoria');
     }
   };
 
@@ -285,7 +287,7 @@ const AdminPatrocinadores: React.FC = () => {
 
     if (draggedPatrocinador.categoria_id === novaCotaId) {
        setDraggedPatrocinador(null);
-       toast.success(`${draggedPatrocinador.nome} já está nesta categoria.`);
+       showToast.success(`${draggedPatrocinador.nome} já está nesta categoria.`);
        return;
      }
 
@@ -299,11 +301,11 @@ const AdminPatrocinadores: React.FC = () => {
       
       // Estado local já é atualizado pela função atualizarPatrocinador
       
-      toast.success(`${draggedPatrocinador.nome} movido com sucesso!`);
+      showToast.success(`${draggedPatrocinador.nome} movido com sucesso!`);
       // Patrocinador movido com sucesso
     } catch (error) {
       console.error('Erro ao mover patrocinador:', error);
-      toast.error('Erro ao mover patrocinador');
+      showToast.error('Erro ao mover patrocinador');
     }
     
     setDraggedPatrocinador(null);
@@ -313,10 +315,10 @@ const AdminPatrocinadores: React.FC = () => {
   const handleDropOnPatrocinador = async (e: React.DragEvent, targetPatrocinador: Patrocinador) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🎯 Drop sobre patrocinador:', targetPatrocinador.nome);
+    console.log('Drop sobre patrocinador:', targetPatrocinador.nome);
     
     if (!draggedPatrocinador || draggedPatrocinador.id === targetPatrocinador.id) {
-      console.log('❌ Não é possível mover para si mesmo');
+      console.log('Não é possível mover para si mesmo');
       return;
     }
 
@@ -326,7 +328,7 @@ const AdminPatrocinadores: React.FC = () => {
       
       // Mudança de categoria
       if (draggedPatrocinador.categoria_id !== targetPatrocinador.categoria_id) {
-        console.log('🔄 Movendo patrocinador para nova categoria:', {
+        console.log('Movendo patrocinador para nova categoria:', {
           patrocinador: draggedPatrocinador.nome,
           categoriaOrigem: draggedPatrocinador.categoria_id,
           categoriaDestino: targetPatrocinador.categoria_id,
@@ -348,10 +350,10 @@ const AdminPatrocinadores: React.FC = () => {
           await atualizarPatrocinador(patrocinador.id, { posicao: patrocinador.posicao });
         }
         
-        toast.success(`${draggedPatrocinador.nome} foi movido para a categoria de ${targetPatrocinador.nome}`);
+        showToast.success(`${draggedPatrocinador.nome} foi movido para a categoria de ${targetPatrocinador.nome}`);
       } else {
         // Reordenação na mesma categoria
-        console.log('🔄 Reordenando na mesma categoria:', {
+        console.log('Reordenando na mesma categoria:', {
           patrocinador: draggedPatrocinador.nome,
           posicaoOrigem: draggedPatrocinador.posicao,
           posicaoDestino: targetPatrocinador.posicao
@@ -380,17 +382,17 @@ const AdminPatrocinadores: React.FC = () => {
             await atualizarPatrocinador(patrocinador.id, { posicao: newPos });
           }
           
-          toast.success(`${draggedPatrocinador.nome} reordenado com sucesso!`);
+          showToast.success(`${draggedPatrocinador.nome} reordenado com sucesso!`);
         } else {
-          toast.info(`${draggedPatrocinador.nome} já está na posição correta`);
+          showToast.info(`${draggedPatrocinador.nome} já está na posição correta`);
         }
       }
 
       // Estado local já é atualizado pela função atualizarPatrocinador
-      console.log('✅ Operação concluída com sucesso!');
+      console.log('Operação concluída com sucesso!');
     } catch (error) {
-      console.error('❌ Erro ao processar drag and drop:', error);
-      toast.error('Erro ao reordenar patrocinador');
+      console.error('Erro ao processar drag and drop:', error);
+      showToast.error('Erro ao reordenar patrocinador');
     }
     
     setDraggedPatrocinador(null);
@@ -425,33 +427,25 @@ const AdminPatrocinadores: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gerenciar Patrocinadores</h1>
-            <p className="text-gray-600">
-              {patrocinadores.length} patrocinador{patrocinadores.length !== 1 ? 'es' : ''} cadastrado{patrocinadores.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setMostrandoFormularioNovaCota(true)}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center gap-2 shadow-sm"
-            >
-              <Plus className="w-5 h-5" />
-              Nova Categoria
-            </button>
-          </div>
-        </div>
-      </div>
-
+    <div className="container mx-auto p-6 admin-page">
       <div className="space-y-6">
+      <PageHeader
+        title="Gerenciar Patrocinadores"
+        description="Gerencie os patrocinadores do evento"
+        icon={Building2}
+        actions={[
+          {
+            label: "Nova Categoria",
+            icon: Plus,
+            onClick: () => setMostrandoFormularioNovaCota(true)
+          }
+        ]}
+      />
+      
+      <div className="space-y-4">
         {/* Estados de erro */}
         {(error || errorCotas) && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-red-600" />
               <div>
@@ -465,7 +459,7 @@ const AdminPatrocinadores: React.FC = () => {
 
 
         {/* Lista de Categorias */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {cotas.map((cota) => {
             const patrocinadoresdaCota = filtrarPatrocinadores(cota.id);
             const isDragOver = dragOverCota === cota.id;
@@ -518,7 +512,7 @@ const AdminPatrocinadores: React.FC = () => {
                           </div>
                         ) : (
                           <div className="flex items-center gap-3 group">
-                            <h2 className="subtitle-medium text-gray-900">{cota.nome}</h2>
+                            <h2 className="subtitle-medium text-gray-900 mb-0">{cota.nome}</h2>
                             <button
                               onClick={() => iniciarEdicaoNomeCota(cota.id, cota.nome)}
                               className="opacity-0 group-hover:opacity-100 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all duration-200"
@@ -537,8 +531,8 @@ const AdminPatrocinadores: React.FC = () => {
                             )}
                           </div>
                         )}
-                        <div className="flex items-center gap-3 mt-2">
-                          <p className="text-small text-gray-600">
+                        <div className="flex items-center gap-3 -mt-1">
+                          <p className="text-small text-gray-600 mb-0">
                             {patrocinadoresdaCota.length} patrocinador{patrocinadoresdaCota.length !== 1 ? 'es' : ''}
                           </p>
                           {isDragOver && (
@@ -567,7 +561,7 @@ const AdminPatrocinadores: React.FC = () => {
                 {/* Formulário para Novo Patrocinador */}
                 {mostrarFormulario === cota.id && (
                   <div className="p-6 bg-blue-50 border-b border-gray-200">
-                    <h3 className="subtitle-small text-gray-900 spacing-subtitle">
+                    <h3 className="subtitle-small text-gray-900 mb-1">
                       Novo Patrocinador - {cota.nome}
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -700,7 +694,7 @@ const AdminPatrocinadores: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 mt-6">
+                    <div className="flex items-center gap-3 mt-4">
                       <button
                         onClick={() => adicionarPatrocinadorHandler(cota.id)}
                         disabled={!novoPatrocinador.nome || !novoPatrocinador.logo}
@@ -750,12 +744,12 @@ const AdminPatrocinadores: React.FC = () => {
                           }`}
                           draggable={true}
                           onDragStart={(e) => {
-                            console.log('🎯 DragStart chamado para:', patrocinador.nome);
+                            console.log('DragStart chamado para:', patrocinador.nome);
                             e.stopPropagation();
                             handleDragStart(e, patrocinador);
                           }}
                           onDragEnd={(e) => {
-                            console.log('🏁 DragEnd chamado para:', patrocinador.nome);
+                            console.log('DragEnd chamado para:', patrocinador.nome);
                             e.stopPropagation();
                             setDraggedPatrocinador(null);
                             setDragOverCota(null);
@@ -765,7 +759,7 @@ const AdminPatrocinadores: React.FC = () => {
                           onDragLeave={(e) => handleDragLeavePatrocinador(e, patrocinador.id)}
                           onDrop={(e) => handleDropOnPatrocinador(e, patrocinador)}
                           onMouseDown={(e) => {
-                            console.log('🖱️ MouseDown em:', patrocinador.nome);
+                            console.log('MouseDown em:', patrocinador.nome);
                           }}
                           style={{ touchAction: 'none' }}
                         >
@@ -941,7 +935,7 @@ const AdminPatrocinadores: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mt-6">
+              <div className="flex items-center gap-3 mt-4">
                 <button
                   onClick={adicionarNovaCota}
                   disabled={!novaCota.nome.trim()}
@@ -1117,7 +1111,7 @@ const AdminPatrocinadores: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 mt-6">
+              <div className="flex items-center gap-3 mt-4">
                 <button
                   onClick={salvarEdicaoPatrocinador}
                   disabled={!editandoPatrocinador.nome || !editandoPatrocinador.logo}
@@ -1136,6 +1130,7 @@ const AdminPatrocinadores: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };

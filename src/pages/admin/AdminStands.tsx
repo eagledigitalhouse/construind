@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import MetricCard from '@/components/ui/metric-card';
+import PageHeader from '@/components/layout/PageHeader';
 import { 
   Building2, 
   RefreshCw,
@@ -21,10 +23,11 @@ import {
   Link,
   Settings,
   User,
-  Mail
+  Mail,
+  ArrowLeft
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 // AdminLayout removido
 
 interface Stand {
@@ -85,7 +88,7 @@ const AdminStands: React.FC = () => {
   const [creatingNewCategory, setCreatingNewCategory] = useState(false);
   const [newCategory, setNewCategory] = useState({ nome: '' });
 
-  // 🎯 FUNÇÃO: Normalizar status para apenas 3 estados
+  // FUNÇÃO: Normalizar status para apenas 3 estados
   const normalizeStatus = (stand: Stand): 'disponivel' | 'reservado' | 'ocupado' => {
     const currentStatus = stand.status || 'disponivel';
     
@@ -106,11 +109,11 @@ const AdminStands: React.FC = () => {
     return 'disponivel';
   };
 
-  // 🔧 CARREGAR STANDS COM PRÉ-INSCRIÇÕES (CORRIGIDO)
+  // CARREGAR STANDS COM PRÉ-INSCRIÇÕES (CORRIGIDO)
   const loadStands = async () => {
     setLoading(true);
     try {
-      console.log('🔄 Carregando stands...');
+      console.log('Carregando stands...');
 
       // 1. Carregar stands
       const { data: standsData, error: standsError } = await supabase
@@ -149,7 +152,7 @@ const AdminStands: React.FC = () => {
 
       setStands(standsComPreInscricoes);
 
-      // 5. 🎯 Calcular estatísticas com os 3 status simplificados
+      // 5. Calcular estatísticas com os 3 status simplificados
       const newStats = {
         total: standsComPreInscricoes.length,
         disponiveis: standsComPreInscricoes.filter(s => normalizeStatus(s) === 'disponivel').length,
@@ -158,16 +161,16 @@ const AdminStands: React.FC = () => {
       };
       setStats(newStats);
 
-      console.log(`✅ ${standsComPreInscricoes.length} stands carregados`);
+      console.log(`${standsComPreInscricoes.length} stands carregados`);
     } catch (error) {
       console.error('Erro ao carregar stands:', error);
-      toast.error('Erro ao carregar stands');
+      showToast.error('Erro ao carregar stands');
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔄 RENOMEAR CATEGORIA
+  // RENOMEAR CATEGORIA
   const updateCategoryName = async (oldName: string, newName: string) => {
     if (!newName.trim() || oldName === newName) {
       setEditingCategory(null);
@@ -182,17 +185,17 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(`Categoria "${oldName}" renomeada para "${newName}"`);
+      showToast.success(`Categoria "${oldName}" renomeada para "${newName}"`);
       setEditingCategory(null);
       setNewCategoryName('');
       loadStands();
     } catch (error: any) {
       console.error('Erro ao renomear categoria:', error);
-      toast.error('Erro ao renomear categoria: ' + error.message);
+      showToast.error('Erro ao renomear categoria: ' + error.message);
     }
   };
 
-  // ➕ ADICIONAR NOVO STAND EM CATEGORIA EXISTENTE (COM NÚMERO MANUAL)
+  // ADICIONAR NOVO STAND EM CATEGORIA EXISTENTE (COM NÚMERO MANUAL)
   const addStandToCategory = (categoria: string) => {
     // Resetar formulário e abrir modal
     setStandForm({
@@ -207,10 +210,10 @@ const AdminStands: React.FC = () => {
     setEditingStand({} as Stand); // Modal para criação
   };
 
-  // 💾 SALVAR STAND (CRIAR OU EDITAR)
+  // SALVAR STAND (CRIAR OU EDITAR)
   const saveStand = async () => {
     if (!standForm.numero_stand || !standForm.categoria) {
-      toast.error('Número do stand e categoria são obrigatórios');
+      showToast.error('Número do stand e categoria são obrigatórios');
       return;
     }
 
@@ -223,7 +226,7 @@ const AdminStands: React.FC = () => {
           .eq('numero_stand', standForm.numero_stand);
 
         if (existing && existing.length > 0) {
-          toast.error(`Stand ${standForm.numero_stand} já existe!`);
+          showToast.error(`Stand ${standForm.numero_stand} já existe!`);
           return;
         }
       }
@@ -245,7 +248,7 @@ const AdminStands: React.FC = () => {
           .eq('id', editingStand.id);
 
         if (error) throw error;
-        toast.success('Stand atualizado com sucesso!');
+        showToast.success('Stand atualizado!');
       } else {
         // Criar
         const { error } = await supabase
@@ -253,7 +256,7 @@ const AdminStands: React.FC = () => {
           .insert(standData);
 
         if (error) throw error;
-        toast.success(`Stand ${standForm.numero_stand} criado com sucesso!`);
+        showToast.success(`Stand ${standForm.numero_stand} criado!`);
       }
 
       // Vincular pré-inscrição se selecionada
@@ -265,20 +268,20 @@ const AdminStands: React.FC = () => {
       loadStands();
     } catch (error: any) {
       console.error('Erro ao salvar stand:', error);
-      toast.error('Erro ao salvar: ' + error.message);
+      showToast.error('Erro ao salvar: ' + error.message);
     }
   };
 
   // 🆕 CRIAR NOVA CATEGORIA
   const createNewCategory = async () => {
     if (!newCategory.nome.trim()) {
-      toast.error('Por favor, digite o nome da categoria');
+      showToast.error('Por favor, digite o nome da categoria');
       return;
     }
 
     const categories = [...new Set(stands.map(s => s.categoria).filter(Boolean))];
     if (categories.includes(newCategory.nome)) {
-      toast.error('Esta categoria já existe');
+      showToast.error('Esta categoria já existe');
       return;
     }
 
@@ -305,18 +308,18 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(`Nova categoria "${newCategory.nome}" criada com sucesso!`);
+      showToast.success(`Nova categoria "${newCategory.nome}" criada!`);
       setNewCategory({ nome: '' });
       loadStands();
     } catch (error: any) {
       console.error('Erro ao criar categoria:', error);
-      toast.error('Erro ao criar categoria: ' + error.message);
+      showToast.error('Erro ao criar categoria: ' + error.message);
     } finally {
       setCreatingNewCategory(false);
     }
   };
 
-  // 🎯 APROVAR/REJEITAR PRÉ-INSCRIÇÃO - NOVA LÓGICA COM STATUS
+  // APROVAR/REJEITAR PRÉ-INSCRIÇÃO - NOVA LÓGICA COM STATUS
   const updatePreInscricaoStatus = async (preInscricaoId: string, newStatus: 'aprovado' | 'rejeitado', standNumero: string) => {
     try {
       // 1. Buscar dados da pré-inscrição
@@ -336,18 +339,18 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      // 3. 🔹 NOVA LÓGICA: Atualizar STATUS da tabela stands_fespin
+      // 3. NOVA LÓGICA: Atualizar STATUS da tabela stands_fespin
       const nomeExpositor = preInscricao.tipo_pessoa === 'fisica' 
         ? preInscricao.nome_pf 
         : preInscricao.razao_social || `${preInscricao.nome_responsavel} ${preInscricao.sobrenome_responsavel}`;
 
       if (newStatus === 'aprovado') {
-        // 🎯 APROVADO: status = 'ocupado' + vincular expositor_id
+        // APROVADO: status = 'ocupado' + vincular expositor_id
         await supabase
           .from('stands_fespin')
           .update({
             status: 'ocupado',
-            expositor_id: preInscricaoId, // 🔹 VINCULAR EXPOSITOR
+            expositor_id: preInscricaoId, // VINCULAR EXPOSITOR
             reservado_por: nomeExpositor,
             data_reserva: new Date().toISOString(),
             observacoes: `APROVADO - ${nomeExpositor}`,
@@ -355,7 +358,7 @@ const AdminStands: React.FC = () => {
           })
           .eq('numero_stand', standNumero);
       } else {
-        // 🎯 REJEITADO: status = 'disponivel' + limpar vinculação
+        // REJEITADO: status = 'disponivel' + limpar vinculação
         await supabase
           .from('stands_fespin')
           .update({
@@ -369,18 +372,18 @@ const AdminStands: React.FC = () => {
           .eq('numero_stand', standNumero);
       }
 
-      toast.success(`Pré-inscrição do stand ${standNumero} ${newStatus === 'aprovado' ? 'aprovada' : 'rejeitada'}!`);
+      showToast.success(`Pré-inscrição do stand ${standNumero} ${newStatus === 'aprovado' ? 'aprovada' : 'rejeitada'}!`);
       
-      // 🚀 Forçar atualização e disparar real-time
-      console.log(`✅ [ADMIN] Pré-inscrição ${newStatus} - Stand ${standNumero} atualizado`);
+      // Forçar atualização e disparar real-time
+      console.log(`[ADMIN] Pré-inscrição ${newStatus} - Stand ${standNumero} atualizado`);
       loadStands();
     } catch (error: any) {
       console.error('Erro ao atualizar status:', error);
-      toast.error('Erro: ' + error.message);
+      showToast.error('Erro: ' + error.message);
     }
   };
 
-  // 🔗 VINCULAR PRÉ-INSCRIÇÃO AO STAND
+  // VINCULAR PRÉ-INSCRIÇÃO AO STAND
   const vincularPreInscricao = async (numeroStand: string, preInscricaoId: string) => {
     try {
       const { error } = await supabase
@@ -389,19 +392,19 @@ const AdminStands: React.FC = () => {
         .eq('id', preInscricaoId);
 
       if (error) throw error;
-      toast.success('Pré-inscrição vinculada ao stand!');
+      showToast.success('Pré-inscrição vinculada ao stand!');
     } catch (error: any) {
       console.error('Erro ao vincular:', error);
-      toast.error('Erro ao vincular: ' + error.message);
+      showToast.error('Erro ao vincular: ' + error.message);
     }
   };
 
-  // 🗑️ EXCLUIR STAND
+  // EXCLUIR STAND
   const deleteStand = async (stand: Stand) => {
     try {
       // Verificar se tem pré-inscrição vinculada
       if (stand.pre_inscricao) {
-        toast.error('Não é possível excluir stand com pré-inscrição vinculada!');
+        showToast.error('Não é possível excluir stand com pré-inscrição vinculada!');
         return;
       }
 
@@ -412,16 +415,16 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(`Stand ${stand.numero_stand} excluído com sucesso!`);
+      showToast.success(`Stand ${stand.numero_stand} excluído!`);
       setDeletingStand(null);
       loadStands();
     } catch (error: any) {
       console.error('Erro ao excluir stand:', error);
-      toast.error('Erro ao excluir: ' + error.message);
+      showToast.error('Erro ao excluir: ' + error.message);
     }
   };
 
-  // ✏️ ABRIR MODAL DE EDIÇÃO
+  // ABRIR MODAL DE EDIÇÃO
   const openEditStand = (stand: Stand) => {
     setStandForm({
       numero_stand: stand.numero_stand,
@@ -435,7 +438,7 @@ const AdminStands: React.FC = () => {
     setEditingStand(stand);
   };
 
-  // 🔄 DESVINCULAR PRÉ-INSCRIÇÃO
+  // DESVINCULAR PRÉ-INSCRIÇÃO
   const desvincularPreInscricao = async (preInscricaoId: string, standNumero: string) => {
     try {
       const { error } = await supabase
@@ -448,7 +451,7 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      // 🔹 NOVO: Liberar stand na tabela stands_fespin
+      // NOVO: Liberar stand na tabela stands_fespin
       await supabase
         .from('stands_fespin')
         .update({
@@ -461,18 +464,18 @@ const AdminStands: React.FC = () => {
         })
         .eq('numero_stand', standNumero);
 
-      toast.success(`Expositor desvinculado do stand ${standNumero}!`);
+      showToast.success(`Expositor desvinculado do stand ${standNumero}!`);
       loadStands();
     } catch (error: any) {
       console.error('Erro ao desvincular:', error);
-      toast.error('Erro ao desvincular: ' + error.message);
+      showToast.error('Erro ao desvincular: ' + error.message);
     }
   };
 
   // 🟡 RESERVAR STAND (USANDO COLUNA STATUS)
   const preReservarStand = async (numeroStand: string) => {
     try {
-      // 🎯 ATUALIZAR status = 'reservado' (SEM timeout)
+      // ATUALIZAR status = 'reservado' (SEM timeout)
       const { error } = await supabase
         .from('stands_fespin')
         .update({
@@ -487,18 +490,18 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(`🟡 Stand ${numeroStand} reservado pelo produtor!`);
+      showToast.success(`Stand ${numeroStand} reservado pelo produtor!`);
       loadStands();
     } catch (error: any) {
       console.error('Erro ao pré-reservar:', error);
-      toast.error('Erro ao pré-reservar: ' + error.message);
+      showToast.error('Erro ao pré-reservar: ' + error.message);
     }
   };
 
   // 🟢 LIBERAR STAND (USANDO COLUNA STATUS)
   const liberarStand = async (numeroStand: string) => {
     try {
-      // 🎯 ATUALIZAR status = 'disponivel' para liberar stand
+      // ATUALIZAR status = 'disponivel' para liberar stand
       const { error } = await supabase
         .from('stands_fespin')
         .update({
@@ -513,15 +516,15 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      toast.success(`Stand ${numeroStand} liberado!`);
+      showToast.success(`Stand ${numeroStand} liberado!`);
       loadStands();
     } catch (error: any) {
       console.error('Erro ao liberar:', error);
-      toast.error('Erro ao liberar: ' + error.message);
+      showToast.error('Erro ao liberar: ' + error.message);
     }
   };
 
-  // 🚀 SISTEMA REAL-TIME COMPLETO
+  // SISTEMA REAL-TIME COMPLETO
   useEffect(() => {
     loadStands();
 
@@ -533,7 +536,7 @@ const AdminStands: React.FC = () => {
         schema: 'public',
         table: 'stands_fespin'
       }, (payload) => {
-        console.log('🔄 [ADMIN] Mudança detectada na tabela stands_fespin:', payload);
+        console.log('[ADMIN] Mudança detectada na tabela stands_fespin:', payload);
         loadStands();
       })
       .on('postgres_changes', {
@@ -541,11 +544,11 @@ const AdminStands: React.FC = () => {
         schema: 'public',
         table: 'pre_inscricao_expositores'
       }, (payload) => {
-        console.log('🔄 [ADMIN] Mudança detectada na tabela pre_inscricao_expositores:', payload);
+        console.log('[ADMIN] Mudança detectada na tabela pre_inscricao_expositores:', payload);
         loadStands();
       })
       .subscribe((status) => {
-        console.log('📡 [ADMIN] Status do canal real-time:', status);
+        console.log('[ADMIN] Status do canal real-time:', status);
       });
 
     return () => {
@@ -570,84 +573,51 @@ const AdminStands: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-[#0a2856] mb-2">
-              Gerenciamento de Stands
-            </h1>
-            <p className="text-gray-600">
-              Gerencie os stands do evento FESPIN 2025
-            </p>
-          </div>
-          <Button 
-            onClick={loadStands} 
-            disabled={loading}
-            className="bg-[#00d856] hover:bg-[#00d856]/90"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-            Atualizar
-          </Button>
-        </div>
+    <div className="container mx-auto p-6 admin-page">
+      <div className="space-y-4">
+        <PageHeader
+          title="Gerenciamento de Stands"
+          description={`Gerencie os stands do evento FESPIN 2025 (Total: ${stats.total})`}
+          icon={Building2}
+          actions={[
+            {
+              label: "Atualizar",
+              icon: RefreshCw,
+              onClick: loadStands,
+              isDisabled: loading
+            }
+          ]}
+        />
 
       {/* Estatísticas integradas */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Building2 className="w-8 h-8 text-blue-600 mr-3" />
-              <div>
-                <p className="text-sm text-gray-600">Total de Stands</p>
-                <p className="text-2xl font-bold text-[#0a2856]">{stats.total}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <CheckCircle className="w-8 h-8 text-green-600 mr-3" />
-              <div>
-                <p className="text-sm text-gray-600">Disponíveis</p>
-                <p className="text-2xl font-bold text-green-600">{stats.disponiveis}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center mr-3">
-                <XCircle className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Reservados</p>
-                <p className="text-2xl font-bold text-yellow-600">{stats.reservados}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center mr-3">
-                <CheckCircle className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Ocupados</p>
-                <p className="text-2xl font-bold text-gray-600">{stats.ocupados}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <MetricCard
+          title="Total de Stands"
+          value={stats.total}
+          icon={<Building2 className="h-6 w-6" />}
+          color="blue"
+        />
+        <MetricCard
+          title="Disponíveis"
+          value={stats.disponiveis}
+          icon={<CheckCircle className="h-6 w-6" />}
+          color="green"
+        />
+        <MetricCard
+          title="Reservados"
+          value={stats.reservados}
+          icon={<XCircle className="h-6 w-6" />}
+          color="yellow"
+        />
+        <MetricCard
+          title="Ocupados"
+          value={stats.ocupados}
+          icon={<CheckCircle className="h-6 w-6" />}
+          color="gray"
+        />
       </div>
 
-      {/* 🔧 GERENCIAMENTO DE CATEGORIAS */}
+      {/* GERENCIAMENTO DE CATEGORIAS */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -686,7 +656,7 @@ const AdminStands: React.FC = () => {
 
               return (
                 <div key={categoria} className="border rounded-lg p-4 bg-gray-50">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-1">
                     {isEditing ? (
                       <div className="flex-1 flex gap-2">
                         <Input
@@ -766,7 +736,7 @@ const AdminStands: React.FC = () => {
                         tipo: stand.pre_inscricao.tipo_pessoa
                       } : null;
 
-                      // 🎯 NOVA LÓGICA: Baseada na coluna status normalizada
+                      // NOVA LÓGICA: Baseada na coluna status normalizada
                       const getStatusColor = () => {
                         const standStatus = normalizeStatus(stand);
                         
@@ -920,8 +890,8 @@ const AdminStands: React.FC = () => {
                                           : 'bg-red-50 text-red-700 border-red-200'
                                       }`}
                                     >
-                                      {expositor.status === 'aprovado' ? '✅ Aprovado' :
-                                       expositor.status === 'pendente' ? '⏳ Pendente' : '❌ Rejeitado'}
+                                      {expositor.status === 'aprovado' ? 'Aprovado' :
+                expositor.status === 'pendente' ? 'Pendente' : 'Rejeitado'}
                                     </Badge>
                                     
                                     {/* Ações para status pendente */}
@@ -1043,13 +1013,13 @@ const AdminStands: React.FC = () => {
             <div className="space-y-4">
               {/* CONTROLE DO STATUS */}
               <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-4 border-2 border-blue-200">
-                <h3 className="font-bold text-[#0a2856] mb-4 flex items-center gap-2">
+                <h3 className="font-bold text-[#0a2856] mb-2 flex items-center gap-2">
                   <Settings className="h-5 w-5" />
                   Status no Formulário
                 </h3>
                 
                 {/* Status Atual */}
-                <div className="mb-4">
+                <div className="mb-2">
                   <div className="flex items-center gap-2">
                     {editingStand && normalizeStatus(editingStand) === 'ocupado' ? (
                       <>
@@ -1098,7 +1068,7 @@ const AdminStands: React.FC = () => {
               {/* EXPOSITOR VINCULADO */}
               {editingStand?.pre_inscricao && (
                 <div className="bg-white rounded-xl p-4 border-2 border-green-200">
-                  <h3 className="font-bold text-[#0a2856] mb-3 flex items-center gap-2">
+                  <h3 className="font-bold text-[#0a2856] mb-1.5 flex items-center gap-2">
                     <User className="h-5 w-5" />
                     Expositor Vinculado
                   </h3>
@@ -1128,7 +1098,7 @@ const AdminStands: React.FC = () => {
                       </div>
                       
                       {editingStand.pre_inscricao.status === 'pendente' && (
-                        <div className="flex gap-2 mt-3 pt-3 border-t border-green-200">
+                        <div className="flex gap-2 mt-2 pt-2 border-t border-green-200">
                           <Button
                             size="sm"
                             className="flex-1 bg-green-600 hover:bg-green-700"

@@ -5,7 +5,7 @@ import MapViewer from "@/components/pages/MapViewer";
 
 const MapaEventoSection = () => {
   return (
-    <section id="mapa-evento" className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-white">
+    <section id="mapa-evento" className="w-full pt-16 pb-8 md:pt-24 md:pb-12 bg-gray-100">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12 md:mb-16">
           <div className="flex items-center justify-center gap-4 mb-6">
@@ -15,15 +15,15 @@ const MapaEventoSection = () => {
           </div>
           
           <div className="mb-3">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold text-gray-900 leading-none mb-3">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold text-gray-900 leading-none mb-3">
               Confira o <span className="text-[#00d856]">Mapa</span> do <span className="text-[#00d856]">evento</span>
             </h2>
           </div>
           
           <div className="max-w-3xl mx-auto">
-            <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
+            <div className="subtitle-section mb-6">
               Veja a distribuição dos estandes e escolha a localização ideal para sua marca.
-            </p>
+            </div>
           </div>
         </div>
         

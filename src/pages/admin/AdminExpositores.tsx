@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Store, Upload, Edit2, Trash2, Save, X, Plus, Database, ExternalLink, MapPin, Palette } from "lucide-react";
+import { Store, Upload, Edit2, Trash2, Save, X, Plus, Database, ExternalLink, MapPin, Palette, ArrowLeft } from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
 import { useExpositores } from "@/hooks/useExpositores";
-import { toast } from "sonner";
+import { useStandsAprovados } from "@/hooks/useStandsAprovados";
+import { showToast } from '@/lib/toast';
 import { Expositor } from "@/lib/supabase";
 import { uploadImage } from '@/lib/uploadImage';
 
@@ -16,10 +18,19 @@ const AdminExpositores = () => {
     expositoresPorCategoria
   } = useExpositores();
 
+  const {
+    standsAprovados,
+    loading: loadingStands,
+    error: errorStands
+  } = useStandsAprovados();
+
   const [editandoExpositor, setEditandoExpositor] = useState<Expositor | null>(null);
   const [novoExpositor, setNovoExpositor] = useState<Partial<Expositor>>({});
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [salvando, setSalvando] = useState(false);
+  const [standSelecionado, setStandSelecionado] = useState<string>('');
+  const [emailSelecionado, setEmailSelecionado] = useState('');
+  const [telefoneSelecionado, setTelefoneSelecionado] = useState('');
 
   const categorias = [
     { id: "academias", nome: "Academias", cor: "#0a2856" },
@@ -34,18 +45,18 @@ const AdminExpositores = () => {
     if (file) {
       // Validar tipo de arquivo
       if (!file.type.startsWith('image/')) {
-        toast.error('Por favor, selecione apenas arquivos de imagem');
+        showToast.error('Por favor, selecione apenas arquivos de imagem');
         return;
       }
       // Validar tamanho do arquivo (máximo 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('O arquivo deve ter no máximo 5MB');
+        showToast.error('O arquivo deve ter no máximo 5MB');
         return;
       }
       // Fazer upload para o Storage
       const url = await uploadImage(file, 'expositores');
       if (!url) {
-        toast.error('Erro ao fazer upload da imagem.');
+        showToast.error('Erro ao fazer upload da imagem.');
         return;
       }
       if (isEdit && editandoExpositor) {
@@ -63,7 +74,7 @@ const AdminExpositores = () => {
     try {
       new URL(url);
     } catch {
-      toast.error('Por favor, insira uma URL válida');
+      showToast.error('Por favor, insira uma URL válida');
       return;
     }
 
@@ -74,10 +85,65 @@ const AdminExpositores = () => {
     }
   };
 
+  // Carregar dados do expositor baseado no stand selecionado
+  const handleStandSelection = (numeroStand: string) => {
+    setStandSelecionado(numeroStand);
+    
+    if (!numeroStand) {
+      // Limpar dados se nenhum stand for selecionado
+      setNovoExpositor(prev => ({
+        ...prev,
+        nome: '',
+        localizacao: '',
+        categoria: '',
+        email: '',
+        telefone: ''
+      }));
+      setEmailSelecionado('');
+      setTelefoneSelecionado('');
+      return;
+    }
+
+    const standData = standsAprovados.find(stand => stand.numero_stand === numeroStand);
+    
+    if (standData) {
+      // Mapear categoria do stand para categoria do expositor
+      const categoriaMap: { [key: string]: string } = {
+        'Academias': 'academias',
+        'Bem-Estar': 'bem-estar',
+        'Artigos Esportivos': 'artigos',
+        'Saúde e Nutrição': 'nutricao'
+      };
+
+      // Definir email e telefone padrão (primeiro da lista)
+      const emailPadrao = standData.emails.length > 0 ? standData.emails[0] : '';
+      const telefonePadrao = standData.telefones.length > 0 ? standData.telefones[0] : '';
+
+      setNovoExpositor(prev => ({
+        ...prev,
+        nome: standData.nome_expositor,
+        localizacao: `Estande ${numeroStand}`,
+        categoria: categoriaMap[standData.categoria] || 'academias',
+        email: emailPadrao,
+        telefone: telefonePadrao
+      }));
+
+      setEmailSelecionado(emailPadrao);
+      setTelefoneSelecionado(telefonePadrao);
+      
+      showToast.success(`Dados carregados para o ${standData.nome_expositor}`);
+    }
+  };
+
   // Adicionar novo expositor
   const handleAdicionarExpositor = async () => {
+    if (!standSelecionado) {
+      showToast.error('Por favor, selecione um stand aprovado');
+      return;
+    }
+    
     if (!novoExpositor.nome || !novoExpositor.logo || !novoExpositor.localizacao || !novoExpositor.categoria || !novoExpositor.descricao) {
-      toast.error('Por favor, preencha todos os campos obrigatórios');
+      showToast.error('Por favor, preencha todos os campos obrigatórios');
       return;
     }
 
@@ -97,6 +163,9 @@ const AdminExpositores = () => {
       });
       
       setNovoExpositor({});
+      setStandSelecionado('');
+      setEmailSelecionado('');
+      setTelefoneSelecionado('');
       setMostrarFormulario(false);
     } catch (error) {
       console.error('Erro ao adicionar expositor:', error);
@@ -152,44 +221,39 @@ const AdminExpositores = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-6 admin-page">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Administração de Expositores
-            </h1>
-            <p className="text-gray-600">
-              Gerencie os expositores do evento FESPIN
-            </p>
-            <div className="flex items-center gap-4 mt-3">
-              <div className="text-sm text-gray-500">
-                Total de expositores: <span className="font-medium text-gray-900">{expositores.length}</span>
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMostrarFormulario(true)}
-              className="bg-[#0a2856] hover:bg-[#0a2856]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Novo Expositor
-            </button>
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title="Expositores"
+        description="Gerencie os expositores do evento FESPIN"
+        icon={Store}
+        actions={[
+          {
+            label: "Novo Expositor",
+            icon: Plus,
+            onClick: () => setMostrarFormulario(true)
+          }
+        ]}
+      />
 
         {/* Formulário para novo expositor */}
         {mostrarFormulario && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="subtitle-medium text-gray-900">Adicionar Novo Expositor</h2>
+          <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="subtitle-medium text-gray-900 mb-1">Adicionar Novo Expositor</h2>
+                <p className="text-sm text-gray-600">
+                  Selecione um stand aprovado para carregar automaticamente os dados do expositor (nome, localização, categoria, telefone e email).
+                  Você só precisa preencher a descrição e fazer upload do logo.
+                </p>
+              </div>
               <button
                 onClick={() => {
                   setMostrarFormulario(false);
                   setNovoExpositor({});
+                  setStandSelecionado('');
+                  setEmailSelecionado('');
+                  setTelefoneSelecionado('');
                 }}
                 className="text-gray-500 hover:text-gray-700"
               >
@@ -198,6 +262,34 @@ const AdminExpositores = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-2">
+                <label className="block text-caption text-gray-700 mb-2">
+                  Selecionar Stand Aprovado *
+                </label>
+                <select
+                  value={standSelecionado}
+                  onChange={(e) => handleStandSelection(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                  disabled={loadingStands}
+                >
+                  <option value="">Selecione um stand aprovado</option>
+                  {standsAprovados.map(stand => (
+                    <option key={stand.numero_stand} value={stand.numero_stand}>
+                      Estande {stand.numero_stand} - {stand.nome_expositor} ({stand.categoria})
+                    </option>
+                  ))}
+                </select>
+                {loadingStands && (
+                  <p className="text-sm text-gray-500 mt-1">Carregando stands aprovados...</p>
+                )}
+                {errorStands && (
+                  <p className="text-sm text-red-500 mt-1">Erro ao carregar stands: {errorStands}</p>
+                )}
+                {standsAprovados.length === 0 && !loadingStands && (
+                  <p className="text-sm text-yellow-600 mt-1">Nenhum stand aprovado encontrado</p>
+                )}
+              </div>
+
               <div>
                 <label className="block text-caption text-gray-700">
                   Nome do Expositor *
@@ -208,7 +300,11 @@ const AdminExpositores = () => {
                   onChange={(e) => setNovoExpositor(prev => ({ ...prev, nome: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
                   placeholder="Nome da empresa/expositor"
+                  readOnly={!!standSelecionado}
                 />
+                {standSelecionado && (
+                  <p className="text-xs text-blue-600 mt-1">Preenchido automaticamente do stand selecionado</p>
+                )}
               </div>
 
               <div>
@@ -221,7 +317,11 @@ const AdminExpositores = () => {
                   onChange={(e) => setNovoExpositor(prev => ({ ...prev, localizacao: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
                   placeholder="Ex: Estande A12 - Setor Academias"
+                  readOnly={!!standSelecionado}
                 />
+                {standSelecionado && (
+                  <p className="text-xs text-blue-600 mt-1">Preenchido automaticamente do stand selecionado</p>
+                )}
               </div>
 
               <div>
@@ -232,12 +332,16 @@ const AdminExpositores = () => {
                   value={novoExpositor.categoria || ''}
                   onChange={(e) => setNovoExpositor(prev => ({ ...prev, categoria: e.target.value }))}
                   className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                  disabled={!!standSelecionado}
                 >
                   <option value="">Selecione uma categoria</option>
                   {categorias.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.nome}</option>
                   ))}
                 </select>
+                {standSelecionado && (
+                  <p className="text-xs text-blue-600 mt-1">Preenchido automaticamente do stand selecionado</p>
+                )}
               </div>
 
               <div>
@@ -257,26 +361,74 @@ const AdminExpositores = () => {
                 <label className="block text-caption text-gray-700">
                   Telefone
                 </label>
-                <input
-                  type="tel"
-                  value={novoExpositor.telefone || ''}
-                  onChange={(e) => setNovoExpositor(prev => ({ ...prev, telefone: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
-                  placeholder="(11) 99999-9999"
-                />
+                {standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.telefones.length > 1 ? (
+                  <select
+                    value={telefoneSelecionado}
+                    onChange={(e) => {
+                      setTelefoneSelecionado(e.target.value);
+                      setNovoExpositor(prev => ({ ...prev, telefone: e.target.value }));
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                  >
+                    <option value="">Selecione um telefone</option>
+                    {standsAprovados.find(s => s.numero_stand === standSelecionado)?.telefones.map((telefone, index) => (
+                      <option key={index} value={telefone}>{telefone}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="tel"
+                    value={novoExpositor.telefone || ''}
+                    onChange={(e) => setNovoExpositor(prev => ({ ...prev, telefone: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                    placeholder="(11) 99999-9999"
+                    readOnly={!!standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.telefones.length === 1}
+                  />
+                )}
+                {standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.telefones.length > 0 && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    {standsAprovados.find(s => s.numero_stand === standSelecionado)?.telefones.length === 1 
+                      ? 'Preenchido automaticamente do stand selecionado'
+                      : 'Selecione um dos telefones cadastrados'}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="block text-caption text-gray-700">
                   Email
                 </label>
-                <input
-                  type="email"
-                  value={novoExpositor.email || ''}
-                  onChange={(e) => setNovoExpositor(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
-                  placeholder="contato@exemplo.com"
-                />
+                {standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.emails.length > 1 ? (
+                  <select
+                    value={emailSelecionado}
+                    onChange={(e) => {
+                      setEmailSelecionado(e.target.value);
+                      setNovoExpositor(prev => ({ ...prev, email: e.target.value }));
+                    }}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                  >
+                    <option value="">Selecione um email</option>
+                    {standsAprovados.find(s => s.numero_stand === standSelecionado)?.emails.map((email, index) => (
+                      <option key={index} value={email}>{email}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="email"
+                    value={novoExpositor.email || ''}
+                    onChange={(e) => setNovoExpositor(prev => ({ ...prev, email: e.target.value }))}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0a2856] focus:border-transparent"
+                    placeholder="contato@exemplo.com"
+                    readOnly={!!standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.emails.length === 1}
+                  />
+                )}
+                {standSelecionado && standsAprovados.find(s => s.numero_stand === standSelecionado)?.emails.length > 0 && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    {standsAprovados.find(s => s.numero_stand === standSelecionado)?.emails.length === 1 
+                      ? 'Preenchido automaticamente do stand selecionado'
+                      : 'Selecione um dos emails cadastrados'}
+                  </p>
+                )}
               </div>
 
               <div className="md:col-span-2">
@@ -359,6 +511,9 @@ const AdminExpositores = () => {
                 onClick={() => {
                   setMostrarFormulario(false);
                   setNovoExpositor({});
+                  setStandSelecionado('');
+                  setEmailSelecionado('');
+                  setTelefoneSelecionado('');
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
               >
@@ -377,7 +532,7 @@ const AdminExpositores = () => {
         )}
 
         {/* Lista de expositores por categoria */}
-        <div className="space-y-8">
+        <div className="space-y-4">
           {categorias.map((categoria) => {
             const expositoresCategoria = expositoresPorCategoria(categoria.id);
             
@@ -480,7 +635,7 @@ const AdminExpositores = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-4">
                   <h2 className="subtitle-medium text-gray-900">Editar Expositor</h2>
                   <button
                     onClick={() => setEditandoExpositor(null)}
@@ -640,7 +795,7 @@ const AdminExpositores = () => {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-3 mt-6">
+                <div className="flex justify-end gap-3 mt-4">
                   <button
                     onClick={() => setEditandoExpositor(null)}
                     className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"

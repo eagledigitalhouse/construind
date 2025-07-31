@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { toast } from 'sonner';
+import { showToast } from '@/lib/toast';
 import { ArrowRight } from 'lucide-react';
+import PhoneInput from './phone-input';
 
 interface CampoFormulario {
   id: string;
@@ -65,7 +66,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       const camposObrigatorios = config.campos.filter(campo => campo.obrigatorio);
       for (const campo of camposObrigatorios) {
         if (!formData[campo.nome] && formData[campo.nome] !== false) {
-          toast.error(`O campo ${campo.label} é obrigatório`);
+          showToast.error(`O campo ${campo.label} é obrigatório`);
           setIsSubmitting(false);
           return;
         }
@@ -99,7 +100,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       // Sucesso
       setSubmitted(true);
       setFormData({});
-      toast.success(config.mensagemSucesso || 'Formulário enviado com sucesso!');
+      showToast.success(config.mensagemSucesso || 'Formulário enviado com sucesso!');
       
       if (onSuccess) onSuccess();
       
@@ -109,7 +110,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
       }
     } catch (err) {
       console.error('Erro ao enviar formulário:', err);
-      toast.error('Ocorreu um erro ao enviar o formulário. Tente novamente.');
+      showToast.error('Ocorreu um erro ao enviar o formulário. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -212,6 +213,13 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                       </div>
                     ))}
                   </div>
+                ) : campo.tipo === 'tel' ? (
+                  <PhoneInput
+                    value={formData[campo.nome] || ''}
+                    onChange={(value) => setFormData(prev => ({ ...prev, [campo.nome]: value }))}
+                    placeholder={campo.placeholder}
+                    required={campo.obrigatorio}
+                  />
                 ) : (
                   <input
                     type={campo.tipo}

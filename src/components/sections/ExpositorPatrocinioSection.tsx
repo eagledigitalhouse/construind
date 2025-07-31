@@ -16,8 +16,8 @@ const ExpositorPatrocinioSection = () => {
           </div>
           
           <div className="mb-3">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
-              <span className="text-[#0a2856]">Sua marca no centro do </span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-none text-center">
+              <span className="text-[#0a2856]">Sua marca no centro<br />do </span>
               <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">movimento</span>
               <span className="text-[#0a2856]">.</span>
             </h2>
@@ -31,7 +31,7 @@ const ExpositorPatrocinioSection = () => {
             {/* COLUMN-1 - EXPOSITOR */}
             <div className="bg-darkblue pt-12 px-10 sm:px-24 pb-12 rounded-3xl">
               <h2 className="text-lg font-normal text-white tracking-widest mb-5 text-center sm:text-start">EXPOSITOR</h2>
-              <h3 className="text-4xl sm:text-65xl font-bold text-white leading-snug mb-5 text-center sm:text-start">Mostre <span className="text-grey">seus produtos e serviços.</span></h3>
+              <h3 className="text-5xl sm:text-6xl font-bold text-white leading-snug mb-5 text-center sm:text-start">Mostre <span className="text-grey">seus produtos e serviços.</span></h3>
               <h5 className="text-offwhite pt-2 mb-5 text-center sm:text-start">Acesso direto ao público qualificado do setor com networking premium e oportunidades de vendas estratégicas.</h5>
               <div className="text-center sm:text-start">
                 <Link to="/expositor">
@@ -43,7 +43,7 @@ const ExpositorPatrocinioSection = () => {
             {/* COLUMN-2 - PATROCÍNIO */}
             <div className="bg-build pt-12 px-10 sm:px-24 pb-52 md:pb-70 rounded-3xl">
               <h2 className="text-lg font-normal text-blue tracking-widest mb-5 text-center sm:text-start">PATROCÍNIO</h2>
-              <h3 className="text-4xl sm:text-65xl font-bold text-black leading-snug mb-5 text-center sm:text-start"><span className="text-blue">Apoie</span> e fortaleça o evento.</h3>
+              <h3 className="text-5xl sm:text-6xl font-bold text-black leading-snug mb-5 text-center sm:text-start"><span className="text-blue">Apoie</span> e fortaleça o evento.</h3>
               <h5 className="bluish pt-2 mb-5 text-center sm:text-start">Logo em destaque, presença em materiais promocionais e ações de engajamento para ativação da sua marca.</h5>
               <div className="text-center sm:text-start">
                 <Link to="/patrocinio">

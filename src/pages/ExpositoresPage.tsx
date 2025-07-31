@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Search, MapPin, Store, Filter, ArrowUpDown, Grid3X3, Grid2X2, X, ChevronRight, Loader2, AlertCircle } from "lucide-react";
+import { Search, X, Loader2, AlertCircle, Store, ChevronRight, Info } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Newsletter from "@/components/sections/Newsletter";
 import { GlassChip } from "@/components/ui/glass-chip";
-
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-import { AnimatedBeam } from "@/components/ui/animated-beam";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+
+import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+import { ExpositorCard } from "@/components/ui/ExpositorCard";
+
 import { useExpositores } from "@/hooks/useExpositores";
 
 // Define a shine animation
@@ -29,7 +29,6 @@ const ExpositoresPage = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   const filterBarRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
   
   // Usar hook do Supabase para carregar expositores
   const { expositores, loading: isLoading, error } = useExpositores();
@@ -44,7 +43,7 @@ const ExpositoresPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredExpositores, setFilteredExpositores] = useState<typeof expositores>(expositores);
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
-  const [isGridView, setIsGridView] = useState(true);
+
 
   // Filter expositores based on search query and active filter
   useEffect(() => {
@@ -93,53 +92,25 @@ const ExpositoresPage = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section ref={headerRef} className="relative overflow-hidden min-h-[45vh] flex items-center bg-[#0a2856]">
-        <div className="w-full">
-          <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="text-center max-w-5xl mx-auto">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-[0.9] mb-6">
-                <span className="block text-white mb-2">Expositores </span>
-              </h1>
-              {/* Search bar */}
-              <div className="max-w-xl mx-auto relative">
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="w-5 h-5 text-white/60" />
-                  </div>
-                  <input
-                    type="text"
-                    className="w-full bg-white/10 text-white placeholder:text-white/60 rounded-xl py-3 pl-10 pr-4 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#00d856]/50 transition-all duration-300"
-                    placeholder="Buscar expositores por nome ou localização..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  {searchQuery && (
-                    <button 
-                      className="absolute inset-y-0 right-0 flex items-center pr-3"
-                      onClick={() => setSearchQuery("")}
-                    >
-                      <X className="w-5 h-5 text-white/60 hover:text-white" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+      <section ref={headerRef} className="relative overflow-hidden bg-[#0a2856]">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Título separado */}
+          <div className="text-center max-w-5xl mx-auto pt-24 pb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-extrabold leading-normal text-white">
+              EXPOSITORES
+            </h1>
           </div>
-        </div>
-      </section>
-      
-      {/* Filter bar */}
-      <section ref={filterBarRef} className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm py-4">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          
+          {/* Filtros separados */}
+          <div className="text-center max-w-5xl mx-auto pb-4">
             {/* Category filters */}
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center justify-center gap-1 sm:gap-2 mb-6 overflow-x-auto scrollbar-hide">
               <button
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-sm",
+                  "px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm whitespace-nowrap flex-shrink-0",
                   activeFilter === null
-                    ? "bg-gradient-to-r from-[#0a2856] to-[#0a2856] text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                    ? "bg-white text-[#0a2856]"
+                    : "bg-white/20 text-white/80 hover:bg-white/30 border border-white/20"
                 )}
                 onClick={() => setActiveFilter(null)}
               >
@@ -150,66 +121,62 @@ const ExpositoresPage = () => {
                 <button
                   key={categoria.id}
                   className={cn(
-                    "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 shadow-sm flex items-center gap-2",
+                    "px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm flex items-center gap-1 sm:gap-2 whitespace-nowrap flex-shrink-0",
                     activeFilter === categoria.id
-                      ? `text-white shadow-md`
-                      : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
+                      ? "bg-white text-[#0a2856]"
+                      : "bg-white/20 text-white/80 hover:bg-white/30 border border-white/20"
                   )}
                   onClick={() => setActiveFilter(categoria.id)}
-                  style={{ 
-                    background: activeFilter === categoria.id 
-                      ? `linear-gradient(to right, ${categoria.cor}, ${categoria.cor})` 
-                      : '', 
-                    color: activeFilter === categoria.id ? 'white' : '' 
-                  }}
                 >
-                  {categoria.icone}
-                  {categoria.nome}
+                  <span className="text-xs sm:text-sm">{categoria.icone}</span>
+                  <span className="hidden sm:inline">{categoria.nome}</span>
+                  <span className="sm:hidden text-xs">{categoria.nome.split(' ')[0]}</span>
                 </button>
               ))}
             </div>
             
-            {/* View toggle & expositores count */}
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-500">
-                <span className="font-bold text-[#0a2856]">{isLoading ? '...' : filteredExpositores.length}</span> expositores encontrados
-              </div>
-              
-              <div className="border-l border-gray-200 h-6"></div>
-              
-              <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 shadow-sm p-1">
-                <button
-                  className={cn(
-                    "p-2 rounded-md transition-all duration-300",
-                    isGridView 
-                      ? "bg-gradient-to-r from-[#0a2856] to-[#0a2856] text-white shadow-sm" 
-                      : "hover:bg-gray-50 text-gray-700"
-                  )}
-                  onClick={() => setIsGridView(true)}
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </button>
-                
-                <button
-                  className={cn(
-                    "p-2 rounded-md transition-all duration-300",
-                    !isGridView 
-                      ? "bg-gradient-to-r from-[#0a2856] to-[#0a2856] text-white shadow-sm" 
-                      : "hover:bg-gray-50 text-gray-700"
-                  )}
-                  onClick={() => setIsGridView(false)}
-                >
-                  <Grid2X2 className="w-4 h-4" />
-                </button>
+            {/* Search bar */}
+            <div className="max-w-xl mx-auto relative">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Search className="w-5 h-5 text-white/60" />
+                </div>
+                <input
+                  type="text"
+                  className="w-full bg-white/10 text-white placeholder:text-white/60 rounded-xl py-3 pl-10 pr-4 backdrop-blur-md border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#00d856]/50 transition-all duration-300"
+                  placeholder="Buscar expositores por nome ou localização..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button 
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    onClick={() => setSearchQuery("")}
+                  >
+                    <X className="w-5 h-5 text-white/60 hover:text-white" />
+                  </button>
+                )}
               </div>
             </div>
           </div>
         </div>
       </section>
       
-      {/* Expositores grid/list */}
-      <section className="py-12 md:py-16">
+      {/* Results count bar */}
+      <section ref={filterBarRef} className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm py-2">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center">
+            <div className="text-xs text-gray-500 flex items-center gap-2">
+              <Info className="w-4 h-4 text-[#00d856]" />
+              <span>Passe o mouse sobre um expositor para ver a localização do stand</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Expositores grid/list */}
+      <section className="pt-0 pb-12 md:pt-0 md:pb-16">
+        <div className="container mx-auto px-6 sm:px-6 lg:px-8">
           {isLoading ? (
             <div className="text-center py-16">
               <div className="relative w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#0a2856] via-[#00d856] to-[#b1f727] p-[2px] shadow-xl">
@@ -277,103 +244,14 @@ const ExpositoresPage = () => {
               </ShimmerButton>
             </div>
           ) : (
-            <div className={cn(
-              "grid gap-6",
-              isGridView 
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" 
-                : "grid-cols-1"
-            )}>
+            <div className="grid gap-3 sm:gap-6 grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" style={{ gridRowGap: '1rem' }}>
               {filteredExpositores.map((expositor, index) => (
-                <motion.div
-                  key={expositor.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                >
-                  <Card className={cn(
-                    "overflow-hidden h-full bg-white/60 backdrop-blur-sm border-none shadow-xl relative group transition-all duration-300",
-                    !isGridView && "flex flex-col md:flex-row"
-                  )}>
-                    {/* Gradient border effect */}
-                    <div className="absolute inset-0 rounded-lg p-[1px] bg-gradient-to-br from-transparent via-transparent to-transparent group-hover:from-[#0a2856] group-hover:via-[#00d856] group-hover:to-[#b1f727] transition-all duration-500 opacity-70"></div>
-                    
-                    {/* Card image */}
-                    <div 
-                      className={cn(
-                        "relative overflow-hidden",
-                        isGridView 
-                          ? "h-56 rounded-t-lg" 
-                          : "h-56 md:h-auto md:w-2/5 md:rounded-l-lg md:rounded-tr-none"
-                      )}
-                    >
-                      <div 
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
-                        style={{ backgroundImage: `url(${expositor.logo})` }}
-                      ></div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                      
-                      {/* Animated decorative elements */}
-                      <div className="absolute top-0 left-0 w-full h-full opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#00d856]/20 to-[#b1f727]/30 rounded-full blur-xl transform translate-x-1/2 -translate-y-1/2"></div>
-                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-[#0a2856]/20 to-[#00d856]/30 rounded-full blur-xl transform -translate-x-1/2 translate-y-1/2"></div>
-                      </div>
-                      
-                      {/* Category badge with animated shine effect */}
-                      <div 
-                        className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg overflow-hidden backdrop-blur-sm" 
-                        style={{ 
-                          backgroundColor: `${expositor.cor_primaria}CC`,
-                        }}
-                      >
-                        <div className="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shine_1.5s_ease_forwards]" style={{ animationDelay: `${index * 0.1}s` }}></div>
-                        {categorias.find(cat => cat.id === expositor.categoria)?.nome}
-                      </div>
-                      
-                      {/* Location badge with animated icon */}
-                      <div className="absolute bottom-3 left-3 flex items-center text-white backdrop-blur-sm bg-black/30 px-2 py-1 rounded-full">
-                        <MapPin className="w-4 h-4 mr-1 group-hover:animate-bounce" style={{ animationDuration: '1s' }} />
-                        <span className="text-xs font-medium">{expositor.localizacao.split(" - ")[0]}</span>
-                      </div>
-                    </div>
-                    
-                    <div className={cn(
-                      "flex flex-col relative z-10",
-                      !isGridView && "md:w-3/5"
-                    )}>
-                      <CardHeader className="pb-2">
-                        <h3 className="card-title text-xl text-[#0a2856] group-hover:text-[#00d856] transition-colors duration-300 leading-tight">
-                          {expositor.nome}
-                        </h3>
-                        <p className="text-gray-500 text-sm mt-1 flex items-center">
-                          <Store className="w-3.5 h-3.5 mr-1 text-[#00d856]" />
-                          {expositor.localizacao.split(" - ")[1]}
-                        </p>
-                      </CardHeader>
-                      
-                      <CardContent className="pb-2">
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                          {expositor.descricao}
-                        </p>
-                      </CardContent>
-                      
-                      <CardFooter className="flex justify-between items-center mt-auto pt-2">
-                        <ShimmerButton
-                          shimmerColor={expositor.cor_secundaria}
-                          background={expositor.cor_primaria}
-                          className="group relative w-full overflow-hidden rounded-lg px-4 py-2 text-sm font-medium border-none shadow-sm transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]"
-                        >
-                          <span className="relative z-10 text-white font-semibold flex items-center justify-center">
-                            Visitar estande
-                            <ChevronRight className="ml-1 w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                          </span>
-                        </ShimmerButton>
-                      </CardFooter>
-                    </div>
-
-                    {/* Add subtle diagonal pattern overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/0 to-[#00d856]/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-                  </Card>
-                </motion.div>
+                <ExpositorCard
+                 key={expositor.id}
+                 expositor={expositor}
+                 index={index}
+                 categorias={categorias}
+               />
               ))}
             </div>
           )}
@@ -390,15 +268,15 @@ const ExpositoresPage = () => {
               Seja um expositor
             </GlassChip>
             
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 leading-tight mb-6">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-gray-900 leading-tight mb-6">
               Reserve seu <span className="text-[#00d856] font-semibold">espaço</span> na
               <br />
               <span className="text-[#00d856] font-semibold">FESPIN</span> <span className="text-[#00d856] font-semibold">2025</span>
             </h2>
             
-            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            <div className="subtitle-section mb-8 max-w-2xl mx-auto">
               Junte-se aos expositores da primeira feira de esporte do interior de São Paulo e conecte-se com mais de 15.000 visitantes qualificados.
-            </p>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a

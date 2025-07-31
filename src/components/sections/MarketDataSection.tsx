@@ -45,8 +45,7 @@ const MarketDataSection = () => {
             <span className="text-transparent bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text">
               bilionário
             </span>
-            ,<br />
-            em pleno crescimento.
+            ,<br />em pleno crescimento.
           </h2>
         </motion.div>
 

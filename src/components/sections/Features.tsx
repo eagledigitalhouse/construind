@@ -55,7 +55,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description, ind
           {icon}
         </div>
         <h3 className="text-lg font-display font-bold text-[#0a2856] mb-2">{title}</h3>
-        <p className="text-gray-600 text-xs md:text-sm leading-relaxed">{description}</p>
+        <p className="text-gray-600 text-xs md:text-sm leading-tight">{description}</p>
       </div>
       <BorderBeam 
         duration={8} 
@@ -111,18 +111,14 @@ const Features = () => {
             </div>
             
             <div className="mb-3">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-extrabold leading-none text-center">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-extrabold leading-none text-center">
                 <span className="text-[#0a2856]">Experiências que </span>
                 <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">transformam</span>
                 <span className="text-[#0a2856]">.</span>
               </h2>
             </div>
             
-            <p className="text-lg md:text-xl text-gray-700 leading-relaxed opacity-0 animate-fade-in max-w-2xl mx-auto" style={{
-              animationDelay: "0.5s"
-            }}>
-              Três dias repletos de atividades, conexões e descobertas que vão elevar sua paixão pelo movimento e bem-estar.
-            </p>
+
           </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-4 justify-items-center px-2 sm:px-4">
