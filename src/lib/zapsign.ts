@@ -3,12 +3,7 @@ import { showToast } from './toast';
 // Configuração da API ZapSign
 const ZAPSIGN_CONFIG = {
   baseUrl: '/api/zapsign-proxy',
-  apiKey: import.meta.env.VITE_ZAPSIGN_API_KEY,
 };
-
-if (!ZAPSIGN_CONFIG.apiKey) {
-  console.warn('VITE_ZAPSIGN_API_KEY não configurada nas variáveis de ambiente');
-}
 
 // Tipos para ZapSign API
 export interface ZapSignTemplate {
@@ -142,20 +137,15 @@ export interface ZapSignWebhookData {
 // Classe principal para integração com ZapSign
 export class ZapSignAPI {
   private baseUrl: string;
-  private apiKey: string;
 
   constructor() {
     this.baseUrl = ZAPSIGN_CONFIG.baseUrl;
-    this.apiKey = ZAPSIGN_CONFIG.apiKey;
   }
 
   private async makeRequest<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    if (!this.apiKey) {
-      throw new Error('API Key do ZapSign não configurada');
-    }
 
     // Remove a barra inicial do endpoint se existir
     const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
