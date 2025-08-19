@@ -14,7 +14,7 @@ Sistema web para gerenciamento de pré-inscrições de expositores do evento CON
 1. **Fork/Clone do Repositório**
    ```bash
    git clone <seu-repositorio>
-   cd fespin
+   cd construind-pre-formulario
    ```
 
 2. **Configurar Variáveis de Ambiente**

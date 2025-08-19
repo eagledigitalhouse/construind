@@ -467,8 +467,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   const getCorCategoria = (categoria: string): string => {
     const cores: {[key: string]: string} = {
       '2x2': '#0097b2',
-      '3x3_basico': '#004aad',
-      '3x3_acabamentos': '#6cace3',
+      '3x3': '#004aad',
       '5x5': '#55a04d',
       '8x8': '#ffb600',
       '10x10': '#ce1c21',
@@ -481,8 +480,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   const getTamanhoCategoria = (categoria: string): string => {
     const tamanhos: {[key: string]: string} = {
       '2x2': '2X2M (4m²)',
-      '3x3_basico': '3X3M BÁSICO (9m²)',
-      '3x3_acabamentos': '3X3M ACABAMENTOS (9m²)',
+      '3x3': '3X3M (9m²)',
       '5x5': '5X5M (25m²)',
       '8x8': '8X8M (64m²)',
       '10x10': '10X10M (100m²)',

@@ -381,13 +381,9 @@ const AdminPreInscricaoExpositores = () => {
       const num = parseInt(p.numero_stand);
       return num >= 1 && num <= 18;
     }).length,
-    stands3x3Basico: preInscricoes.filter(p => {
+    stands3x3: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return [19,20,21,22,23,24,25,26,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,67,68,69,70,71,72,73,74].includes(num);
-    }).length,
-    stands3x3Acabamentos: preInscricoes.filter(p => {
-      const num = parseInt(p.numero_stand);
-      return [27,28,29,30,31,32,33,34,35,36,37,38,55,56,57,58,59,60,61,62,63,64,65,66].includes(num);
+      return [19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74].includes(num);
     }).length,
     stands5x5: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
@@ -471,24 +467,14 @@ const AdminPreInscricaoExpositores = () => {
     }
     
     // Stands 3x3 Básico
-    if ([19,20,21,22,23,24,25,26,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,67,68,69,70,71,72,73,74].includes(num)) {
+    // Stands 3x3
+    if ([19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74].includes(num)) {
       return {
-        categoria: '3x3 Básico',
-        cor: '#004aad',
-        preco: 'R$ 3.500,00',
-        tamanho: '3x3m (9m²)',
-        segmento: 'Stands 3x3 Básico'
-      };
-    }
-    
-    // Stands 3x3 Acabamentos
-    if ([27,28,29,30,31,32,33,34,35,36,37,38,55,56,57,58,59,60,61,62,63,64,65,66].includes(num)) {
-      return {
-        categoria: '3x3 Acabamentos',
+        categoria: '3x3',
         cor: '#6cace3',
         preco: 'R$ 3.500,00',
         tamanho: '3x3m (9m²)',
-        segmento: 'Stands 3x3 Acabamentos'
+        segmento: 'Stands 3x3'
       };
     }
     
@@ -631,8 +617,7 @@ const AdminPreInscricaoExpositores = () => {
       {'Estatística': 'Pessoa Jurídica', 'Valor': stats.juridicas},
       {'Estatística': '', 'Valor': ''}, // linha vazia
       {'Estatística': 'Stands 2x2', 'Valor': stats.stands2x2},
-      {'Estatística': 'Stands 3x3 Básico', 'Valor': stats.stands3x3Basico},
-      {'Estatística': 'Stands 3x3 Acabamentos', 'Valor': stats.stands3x3Acabamentos},
+      {'Estatística': 'Stands 3x3', 'Valor': stats.stands3x3},
       {'Estatística': 'Stands 5x5', 'Valor': stats.stands5x5},
       {'Estatística': 'Stands 8x8', 'Valor': stats.stands8x8},
       {'Estatística': 'Stands 10x10', 'Valor': stats.stands10x10},
@@ -901,13 +886,13 @@ const AdminPreInscricaoExpositores = () => {
       {filteredPreInscricoes.map((inscricao) => (
         <Card 
           key={inscricao.id} 
-          className="bg-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#ff3c00]/20 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:border-[#ff3c00]/50"
+          className="bg-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#ff3c00]/20 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:border-[#ff3c00]/50 w-full max-w-full overflow-hidden"
           onClick={() => openModal(inscricao)}
         >
-          <CardHeader className="pb-3">
+          <CardHeader className="pb-3 overflow-hidden">
             <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-lg text-gray-900 mb-2 line-clamp-2">
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <CardTitle className="text-lg text-gray-900 mb-2 line-clamp-3 overflow-hidden break-all hyphens-auto leading-tight">
                   {getNome(inscricao)}
                 </CardTitle>
                 <div className="flex items-center gap-2">
@@ -1002,12 +987,12 @@ const AdminPreInscricaoExpositores = () => {
                   </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-600 pl-6">
+              <div className="text-xs text-gray-600 pl-6 truncate">
                 {getStandInfo(inscricao.numero_stand).categoria} • {getStandInfo(inscricao.numero_stand).tamanho} • {getStandInfo(inscricao.numero_stand).preco}
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-700">
-                <Phone className="w-4 h-4 text-[#ff3c00]" />
-                <span>{inscricao.contato_responsavel}</span>
+                <Phone className="w-4 h-4 text-[#ff3c00] flex-shrink-0" />
+                <span className="truncate">{inscricao.contato_responsavel}</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-gray-700">
                 <Calendar className="w-4 h-4 text-[#ff3c00]" />
@@ -1607,17 +1592,10 @@ const AdminPreInscricaoExpositores = () => {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#004aad' }}></div>
-                  <div className="text-xs">
-                    <div className="font-medium text-gray-900">3x3 Básico</div>
-                    <div className="text-gray-600">{stats.stands3x3Basico} stands</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#6cace3' }}></div>
                   <div className="text-xs">
-                    <div className="font-medium text-gray-900">3x3 Acabamentos</div>
-                    <div className="text-gray-600">{stats.stands3x3Acabamentos} stands</div>
+                    <div className="font-medium text-gray-900">3x3</div>
+                    <div className="text-gray-600">{stats.stands3x3} stands</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">

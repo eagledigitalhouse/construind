@@ -104,8 +104,8 @@ const Navbar = () => {
       {/* Desktop Navigation */}
       <NavBody 
         className={isScrolled 
-          ? "bg-transparent backdrop-blur-sm hover:bg-white/10 dark:hover:bg-neutral-950/10 px-6 md:px-12" 
-          : "bg-construind-dark/90 backdrop-blur-sm shadow-lg w-full px-6 md:px-12"
+          ? "bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-sm border-b border-[#ff3c00]/20 px-6 md:px-12" 
+          : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-sm shadow-lg border-b border-[#ff3c00]/30 w-full px-6 md:px-12"
         }
       >
         <div className="flex items-center justify-center w-full px-1">
@@ -148,8 +148,8 @@ const Navbar = () => {
             to="/admin" 
             className={`p-2 rounded-lg transition-colors duration-200 ${
               isScrolled 
-                ? "text-gray-600 hover:text-gray-900 hover:bg-gray-100" 
-                : "text-white/70 hover:text-white hover:bg-white/10"
+                ? "text-white/70 hover:text-[#ff3c00] hover:bg-[#ff3c00]/10" 
+                : "text-white/70 hover:text-[#ff3c00] hover:bg-[#ff3c00]/10"
             }`}
             title="Painel Administrativo"
           >
@@ -157,10 +157,10 @@ const Navbar = () => {
           </Link>
           <Link to="/pre-inscricao-expositores">
             <ShimmerButton
-              background={isScrolled ? "#0a2856" : "#00d856"}
-              shimmerColor={isScrolled ? "#b1f727" : "#b1f727"}
+              background={isScrolled ? "#ff3c00" : "#ff3c00"}
+              shimmerColor={isScrolled ? "#ff6b35" : "#ff6b35"}
               borderRadius="0.375rem"
-              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-white" : "text-construind-dark"}`}
+              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-white" : "text-white"}`}
             >
               <span className="flex items-center">
                 Pré-inscrição
@@ -176,8 +176,8 @@ const Navbar = () => {
       {/* Mobile Navigation */}
       <MobileNav 
         className={isScrolled 
-          ? "bg-transparent backdrop-blur-sm px-6" 
-          : "bg-construind-dark/90 backdrop-blur-sm shadow-lg w-full px-2"
+          ? "bg-gradient-to-r from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-sm border-b border-[#ff3c00]/20 px-6" 
+          : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-sm shadow-lg border-b border-[#ff3c00]/30 w-full px-2"
         }
       >
         <MobileNavHeader>
@@ -195,20 +195,20 @@ const Navbar = () => {
           <Link
             to="/"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100"
+            className="relative text-white/90 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-[#ff3c00]/20 hover:text-[#ff3c00] transition-colors"
           >
             <span className="block">Início</span>
           </Link>
           <a 
             href="#sobre" 
-            className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100"
+            className="relative text-white/90 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-[#ff3c00]/20 hover:text-[#ff3c00] transition-colors"
             onClick={(e) => handleNavClick(e, "sobre")}
           >
             <span className="block">Sobre</span>
           </a>
           <a 
             href="#programacao" 
-            className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100"
+            className="relative text-white/90 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-[#ff3c00]/20 hover:text-[#ff3c00] transition-colors"
             onClick={(e) => handleNavClick(e, "programacao")}
           >
             <span className="block">Programação</span>
@@ -216,7 +216,7 @@ const Navbar = () => {
 
           <Link 
             to="/admin" 
-            className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100 flex items-center justify-center gap-2"
+            className="relative text-white/90 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-[#ff3c00]/20 hover:text-[#ff3c00] transition-colors flex items-center justify-center gap-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <Settings className="w-5 h-5" />
@@ -229,10 +229,10 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <ShimmerButton
-                background="#0a2856"
-                shimmerColor="#b1f727"
+                background="#ff3c00"
+                shimmerColor="#ff6b35"
                 borderRadius="0.375rem"
-                className="w-full py-3 text-center text-sm"
+                className="w-full py-3 text-center text-sm text-white"
               >
                 <span className="flex items-center justify-center">
                   Pré-inscrição

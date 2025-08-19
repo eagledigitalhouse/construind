@@ -248,7 +248,7 @@ const MapViewer: React.FC<MapViewerProps> = ({
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
                <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#6cace3'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">3x3 Acabamentos</span>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">3x3</span>
              </div>
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
