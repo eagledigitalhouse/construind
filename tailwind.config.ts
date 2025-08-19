@@ -62,8 +62,8 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for FESPIN
-				fespin: {
+				// Custom colors for CONSTRUIND
+				construind: {
 					"dark": "#0a2856",     // Primário Escuro
 					"light": "#00d856",    // Primário Claro
 					"accent": "#b1f727",   // Destaque
@@ -151,9 +151,9 @@ export default {
 				'spin-around': 'spin-around 4s linear infinite'
 			},
 			backgroundImage: {
-				'fespin-gradient': 'linear-gradient(135deg, #0a2856 0%, #00d856 100%)',
-				'fespin-gradient-hero': 'linear-gradient(135deg, rgba(10, 40, 86, 0.95) 0%, rgba(0, 216, 86, 0.85) 70%, rgba(177, 247, 39, 0.75) 100%)',
-				'fespin-overlay': 'linear-gradient(180deg, rgba(10, 40, 86, 0.8) 0%, rgba(0, 216, 86, 0.3) 100%)',
+				'construind-gradient': 'linear-gradient(135deg, #0a2856 0%, #00d856 100%)',
+				'construind-gradient-hero': 'linear-gradient(135deg, rgba(10, 40, 86, 0.95) 0%, rgba(0, 216, 86, 0.85) 70%, rgba(177, 247, 39, 0.75) 100%)',
+				'construind-overlay': 'linear-gradient(180deg, rgba(10, 40, 86, 0.8) 0%, rgba(0, 216, 86, 0.3) 100%)',
 			},
 			fontFamily: {
 				'sans': ['Brockmann', 'Inter', 'sans-serif'],

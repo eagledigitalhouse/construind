@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import MetricCard from '@/components/ui/metric-card';
 import PageHeader from '@/components/layout/PageHeader';
+
 import { 
   Building2, 
   RefreshCw,
@@ -24,21 +25,20 @@ import {
   Settings,
   User,
   Mail,
-  ArrowLeft
+  ArrowLeft,
+  DollarSign
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { showToast } from '@/lib/toast';
-// AdminLayout removido
+import { formatarMoedaBrasileira, converterPrecoParaNumero } from '@/lib/utils';
 
 interface Stand {
   id: number;
   numero_stand: string;
   categoria: string;
   tamanho: string;
-  preco: string;
-  disponivel: boolean;
-  status?: string;
-  expositor_id?: string;
+  preco: string | null;
+  status: string;
   reservado_por?: string;
   data_reserva?: string;
   observacoes?: string;
@@ -61,11 +61,13 @@ interface Stand {
 const AdminStands: React.FC = () => {
   const [stands, setStands] = useState<Stand[]>([]);
   const [loading, setLoading] = useState(false);
+  const [filtroStands, setFiltroStands] = useState('');
   const [stats, setStats] = useState({
     total: 0,
     disponiveis: 0,
     reservados: 0,
-    ocupados: 0
+    ocupados: 0,
+    receitaTotalPotencial: 0
   });
 
   // Estados do modal
@@ -77,7 +79,7 @@ const AdminStands: React.FC = () => {
     categoria: '',
     tamanho: '3x3m',
     preco: 'R$ 3.300,00',
-    disponivel: true,
+    status: 'disponivel',
     observacoes: '',
     vinculado_pre_inscricao: 'remover'
   });
@@ -102,7 +104,7 @@ const AdminStands: React.FC = () => {
       return 'reservado';
     }
     
-    // Status da tabela stands_fespin
+    // Status da tabela stands_construind
     if (currentStatus === 'ocupado') return 'ocupado';
     if (currentStatus === 'reservado') return 'reservado';
     
@@ -117,7 +119,7 @@ const AdminStands: React.FC = () => {
 
       // 1. Carregar stands
       const { data: standsData, error: standsError } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .select('*')
         .order('categoria')
         .order('numero_stand');
@@ -135,7 +137,6 @@ const AdminStands: React.FC = () => {
       const { data: preInscricoesDisponiveis, error: preDispError } = await supabase
         .from('pre_inscricao_expositores')
         .select('*')
-        .in('status', ['pendente', 'rejeitado'])
         .eq('is_temporary', false);
 
       if (preDispError) throw preDispError;
@@ -153,11 +154,18 @@ const AdminStands: React.FC = () => {
       setStands(standsComPreInscricoes);
 
       // 5. Calcular estatísticas com os 3 status simplificados
+      const receitaTotal = standsComPreInscricoes.reduce((total, stand) => {
+        if (!stand.preco) return total;
+        const preco = converterPrecoParaNumero(stand.preco);
+        return total + preco;
+      }, 0);
+
       const newStats = {
         total: standsComPreInscricoes.length,
         disponiveis: standsComPreInscricoes.filter(s => normalizeStatus(s) === 'disponivel').length,
         reservados: standsComPreInscricoes.filter(s => normalizeStatus(s) === 'reservado').length,
         ocupados: standsComPreInscricoes.filter(s => normalizeStatus(s) === 'ocupado').length,
+        receitaTotalPotencial: receitaTotal
       };
       setStats(newStats);
 
@@ -179,7 +187,7 @@ const AdminStands: React.FC = () => {
 
     try {
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({ categoria: newName.trim() })
         .eq('categoria', oldName);
 
@@ -203,7 +211,7 @@ const AdminStands: React.FC = () => {
       categoria: categoria,
       tamanho: '3x3m', 
       preco: 'R$ 3.300,00',
-      disponivel: true,
+      status: 'disponivel',
       observacoes: '',
       vinculado_pre_inscricao: 'remover'
     });
@@ -221,7 +229,7 @@ const AdminStands: React.FC = () => {
       // Verificar duplicação de número (somente ao criar)
       if (!editingStand?.id) {
         const { data: existing } = await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .select('numero_stand')
           .eq('numero_stand', standForm.numero_stand);
 
@@ -236,14 +244,14 @@ const AdminStands: React.FC = () => {
         categoria: standForm.categoria,
         tamanho: standForm.tamanho,
         preco: standForm.preco,
-        disponivel: standForm.disponivel,
+        status: standForm.status,
         observacoes: standForm.observacoes || null
       };
 
       if (editingStand?.id) {
         // Atualizar
         const { error } = await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update(standData)
           .eq('id', editingStand.id);
 
@@ -252,7 +260,7 @@ const AdminStands: React.FC = () => {
       } else {
         // Criar
         const { error } = await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .insert(standData);
 
         if (error) throw error;
@@ -298,12 +306,12 @@ const AdminStands: React.FC = () => {
         categoria: newCategory.nome,
         tamanho: '3x3m',
         preco: 'R$ 3.300,00',
-        disponivel: true,
+        status: 'disponivel',
         observacoes: null
       };
 
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .insert(newStandData);
 
       if (error) throw error;
@@ -339,18 +347,17 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      // 3. NOVA LÓGICA: Atualizar STATUS da tabela stands_fespin
+      // 3. NOVA LÓGICA: Atualizar STATUS da tabela stands_construind
       const nomeExpositor = preInscricao.tipo_pessoa === 'fisica' 
         ? preInscricao.nome_pf 
         : preInscricao.razao_social || `${preInscricao.nome_responsavel} ${preInscricao.sobrenome_responsavel}`;
 
       if (newStatus === 'aprovado') {
-        // APROVADO: status = 'ocupado' + vincular expositor_id
+        // APROVADO: status = 'ocupado' + vincular expositor
         await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update({
             status: 'ocupado',
-            expositor_id: preInscricaoId, // VINCULAR EXPOSITOR
             reservado_por: nomeExpositor,
             data_reserva: new Date().toISOString(),
             observacoes: `APROVADO - ${nomeExpositor}`,
@@ -360,10 +367,9 @@ const AdminStands: React.FC = () => {
       } else {
         // REJEITADO: status = 'disponivel' + limpar vinculação
         await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update({
             status: 'disponivel',
-            expositor_id: null,
             reservado_por: null,
             data_reserva: null,
             observacoes: null,
@@ -409,7 +415,7 @@ const AdminStands: React.FC = () => {
       }
 
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .delete()
         .eq('id', stand.id);
 
@@ -431,7 +437,7 @@ const AdminStands: React.FC = () => {
       categoria: stand.categoria,
       tamanho: stand.tamanho,
       preco: stand.preco,
-      disponivel: stand.disponivel,
+      status: stand.status,
       observacoes: stand.observacoes || '',
       vinculado_pre_inscricao: stand.pre_inscricao?.id || 'remover'
     });
@@ -451,12 +457,11 @@ const AdminStands: React.FC = () => {
 
       if (error) throw error;
 
-      // NOVO: Liberar stand na tabela stands_fespin
+      // NOVO: Liberar stand na tabela stands_construind
       await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({
           status: 'disponivel',
-          expositor_id: null,
           reservado_por: null,
           data_reserva: null,
           observacoes: null,
@@ -477,10 +482,9 @@ const AdminStands: React.FC = () => {
     try {
       // ATUALIZAR status = 'reservado' (SEM timeout)
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({
           status: 'reservado',
-          expositor_id: null, // Sem expositor vinculado ainda
           reservado_por: 'RESERVADO PELO PRODUTOR',
           data_reserva: new Date().toISOString(),
           observacoes: 'Reservado manualmente pelo produtor via sistema administrativo - SEM timeout',
@@ -503,10 +507,9 @@ const AdminStands: React.FC = () => {
     try {
       // ATUALIZAR status = 'disponivel' para liberar stand
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({
           status: 'disponivel',
-          expositor_id: null,
           reservado_por: null,
           data_reserva: null,
           observacoes: null,
@@ -534,9 +537,9 @@ const AdminStands: React.FC = () => {
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'stands_fespin'
+        table: 'stands_construind'
       }, (payload) => {
-        console.log('[ADMIN] Mudança detectada na tabela stands_fespin:', payload);
+        console.log('[ADMIN] Mudança detectada na tabela stands_construind:', payload);
         loadStands();
       })
       .on('postgres_changes', {
@@ -561,95 +564,263 @@ const AdminStands: React.FC = () => {
 
   if (loading && stands.length === 0) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="flex items-center justify-center min-h-[400px]">
+      <div className="min-h-screen bg-black relative">
+        <div className="fixed inset-0 bg-gradient-to-br from-[#ff3c00]/5 via-black to-[#3d3d3d]/10 pointer-events-none" />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-4" />
-            <p className="text-gray-600">Carregando stands...</p>
+            <div className="w-16 h-16 bg-gradient-to-br from-[#ff3c00] to-[#ff8c00] rounded-full flex items-center justify-center mx-auto mb-4">
+              <RefreshCw className="w-8 h-8 animate-spin text-white" />
+            </div>
+            <p className="text-gray-300 text-lg">Carregando stands...</p>
           </div>
         </div>
       </div>
     );
   }
 
+  const estatisticas = [
+    {
+      titulo: 'Total de Stands',
+      valor: stats.total.toString(),
+      icone: Building2,
+      cor: 'laranja' as const
+    },
+    {
+      titulo: 'Disponíveis',
+      valor: stats.disponiveis.toString(),
+      icone: CheckCircle,
+      cor: 'verde' as const
+    },
+    {
+      titulo: 'Reservados',
+      valor: stats.reservados.toString(),
+      icone: XCircle,
+      cor: 'amarelo' as const
+    },
+    {
+      titulo: 'Ocupados',
+      valor: stats.ocupados.toString(),
+      icone: User,
+      cor: 'azul' as const
+    }
+  ];
+
+  const acoes = [
+    {
+      label: 'Novo Stand',
+      icone: Plus,
+      onClick: () => setShowCreateModal(true)
+    },
+    {
+      label: 'Atualizar',
+      icone: RefreshCw,
+      onClick: loadStands,
+      carregando: loading
+    }
+  ];
+
   return (
-    <div className="container mx-auto p-6 admin-page">
-      <div className="space-y-4">
-        <PageHeader
-          title="Gerenciamento de Stands"
-          description={`Gerencie os stands do evento FESPIN 2025 (Total: ${stats.total})`}
-          icon={Building2}
-          actions={[
-            {
-              label: "Atualizar",
-              icon: RefreshCw,
-              onClick: loadStands,
-              isDisabled: loading
-            }
-          ]}
-        />
-
-      {/* Estatísticas integradas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <MetricCard
-          title="Total de Stands"
-          value={stats.total}
-          icon={<Building2 className="h-6 w-6" />}
-          color="blue"
-        />
-        <MetricCard
-          title="Disponíveis"
-          value={stats.disponiveis}
-          icon={<CheckCircle className="h-6 w-6" />}
-          color="green"
-        />
-        <MetricCard
-          title="Reservados"
-          value={stats.reservados}
-          icon={<XCircle className="h-6 w-6" />}
-          color="yellow"
-        />
-        <MetricCard
-          title="Ocupados"
-          value={stats.ocupados}
-          icon={<CheckCircle className="h-6 w-6" />}
-          color="gray"
-        />
-      </div>
-
-      {/* GERENCIAMENTO DE CATEGORIAS */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-[#0a2856]">Stands por Categoria</CardTitle>
-            <div className="flex gap-2">
-              <Input
-                placeholder="Nome da nova categoria"
-                value={newCategory.nome}
-                onChange={(e) => setNewCategory({ nome: e.target.value })}
-                className="w-48"
-                onKeyDown={(e) => e.key === 'Enter' && createNewCategory()}
-              />
-              <Button 
-                onClick={createNewCategory}
-                disabled={creatingNewCategory || !newCategory.nome.trim()}
-                className="bg-[#00d856] hover:bg-[#00d856]/90"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Nova Categoria
-              </Button>
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] rounded-xl shadow-lg">
+              <Building2 className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Gestão de <span className="text-[#ff3c00]">Stands</span>
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Gerencie todos os stands do evento com controle total de status e vinculações
+              </p>
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {categories.length === 0 && !loading ? (
-            <div className="text-center py-8">
-              <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Nenhum stand encontrado</p>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowCreateModal(true)}
+              className="bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] hover:from-[#e63600] hover:to-[#e55a2b] text-white"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Stand
+            </Button>
+            <Button
+              onClick={loadStands}
+              disabled={loading}
+              variant="outline"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+              Atualizar
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Total de Stands</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
             </div>
-          ) : (
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Disponíveis</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.disponiveis}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-emerald-500 to-green-500 rounded-xl">
+                <CheckCircle className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Reservados</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.reservados}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-amber-400 to-yellow-500 rounded-xl">
+                <XCircle className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Ocupados</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.ocupados}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl">
+                <User className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Receita Total Potencial</p>
+                <p className="text-3xl font-bold text-gray-900">{formatarMoedaBrasileira(stats.receitaTotalPotencial)}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl">
+                <DollarSign className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* BARRA DE BUSCA DE STANDS */}
+      <Card className="bg-white border-0 shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <Input
+                placeholder="Buscar stands por número, categoria ou status..."
+                value={filtroStands}
+                onChange={(e) => setFiltroStands(e.target.value)}
+                className="bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-[#ff3c00]"
+              />
+            </div>
+            <Button
+              onClick={() => setFiltroStands('')}
+              variant="outline"
+              className="px-4"
+            >
+              Limpar
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-8">
+
+        {/* GERENCIAMENTO DE CATEGORIAS */}
+        <Card className="bg-white border-0 shadow-lg">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-gray-900 text-xl font-bold flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#ff3c00] to-[#ff8c00] rounded-lg flex items-center justify-center">
+                  <Building2 className="w-4 h-4 text-white" />
+                </div>
+                Stands por Categoria
+              </CardTitle>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Nome da nova categoria"
+                  value={newCategory.nome}
+                  onChange={(e) => setNewCategory({ nome: e.target.value })}
+                  className="w-48 bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-[#ff3c00]"
+                  onKeyDown={(e) => e.key === 'Enter' && createNewCategory()}
+                />
+                <Button 
+                  onClick={createNewCategory}
+                  disabled={creatingNewCategory || !newCategory.nome.trim()}
+                  className="bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] hover:from-[#ff3c00]/90 hover:to-[#ff8c00]/90 text-white"
+                >
+                  {creatingNewCategory ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-2" />
+                  )}
+                  Nova Categoria
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {categories.length === 0 && !loading ? (
+              <div className="text-center py-12">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building2 className="w-10 h-10 text-gray-400" />
+                </div>
+                <p className="text-gray-600 text-lg">Nenhum stand encontrado</p>
+                <p className="text-gray-500 text-sm mt-2">Crie uma nova categoria para começar</p>
+              </div>
+            ) : (
             categories.map(categoria => {
-              const standsCategoria = stands.filter(s => s.categoria === categoria);
+              // Filtrar stands por categoria e depois aplicar filtro de busca
+              let standsCategoria = stands.filter(s => s.categoria === categoria);
+              
+              // Aplicar filtro de busca se houver texto
+              if (filtroStands.trim()) {
+                standsCategoria = standsCategoria.filter(stand => 
+                  stand.numero_stand.toLowerCase().includes(filtroStands.toLowerCase()) ||
+                  stand.categoria.toLowerCase().includes(filtroStands.toLowerCase()) ||
+                  stand.status.toLowerCase().includes(filtroStands.toLowerCase()) ||
+                  (stand.reservado_por && stand.reservado_por.toLowerCase().includes(filtroStands.toLowerCase())) ||
+                  (stand.pre_inscricao?.razao_social && stand.pre_inscricao.razao_social.toLowerCase().includes(filtroStands.toLowerCase())) ||
+                  (stand.pre_inscricao?.nome_pf && `${stand.pre_inscricao.nome_pf} ${stand.pre_inscricao.sobrenome_pf || ''}`.toLowerCase().includes(filtroStands.toLowerCase()))
+                );
+              }
+              
+              // Ordenar stands numericamente dentro da categoria
+              standsCategoria.sort((a, b) => {
+                const numeroA = parseInt(a.numero_stand.replace(/\D/g, '')) || 0;
+                const numeroB = parseInt(b.numero_stand.replace(/\D/g, '')) || 0;
+                return numeroA - numeroB;
+              });
+              
               const isEditing = editingCategory === categoria;
 
               if (standsCategoria.length === 0) return null;
@@ -825,7 +996,11 @@ const AdminStands: React.FC = () => {
                                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                                   <span className="text-sm font-medium text-gray-700 leading-none">{stand.tamanho}</span>
                                 </div>
-                                <span className="font-bold text-green-600 text-lg leading-none">{stand.preco}</span>
+                                <span className="font-bold text-green-600 text-lg leading-none">
+                                  {stand.preco && stand.preco.toString().startsWith('R$') 
+                                    ? stand.preco 
+                                    : formatarMoedaBrasileira(parseFloat(stand.preco) || 0)}
+                                </span>
                               </div>
                             </div>
                 
@@ -924,6 +1099,29 @@ const AdminStands: React.FC = () => {
                                   </div>
                                 </div>
                               </div>
+                            ) : normalizeStatus(stand) === 'ocupado' && !stand.pre_inscricao ? (
+                              <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-xl border-2 border-gray-300 p-4 text-center shadow-sm">
+                                <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                                  <Building2 className="w-5 h-5 text-white" />
+                                </div>
+                                <p className="text-sm text-gray-800 font-bold leading-none mb-0">Stand Ocupado</p>
+                                <p className="text-xs text-gray-600 mt-1 leading-none">Sem expositor vinculado</p>
+                                
+                                {/* Botão de Liberar Stand */}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="mt-3 w-full bg-red-50 border-red-300 text-red-700 hover:bg-red-100 hover:border-red-400"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    liberarStand(stand.numero_stand);
+                                  }}
+                                  title="Liberar este stand"
+                                >
+                                  <XCircle className="w-4 h-4 mr-2" />
+                                  Liberar Stand
+                                </Button>
+                              </div>
                             ) : normalizeStatus(stand) === 'reservado' ? (
                               <div className="bg-gradient-to-br from-yellow-50 to-amber-100 rounded-xl border-2 border-yellow-200 p-3 shadow-sm">
                                 <div className="flex items-center justify-between mb-2">
@@ -972,6 +1170,21 @@ const AdminStands: React.FC = () => {
                                 </div>
                                 <p className="text-sm text-green-800 font-bold leading-none mb-0">Stand Disponível</p>
                                 <p className="text-xs text-green-700 mt-1 leading-none">Pronto para reserva</p>
+                                
+                                {/* Botão de Pré-Reservar */}
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="mt-3 w-full bg-blue-50 border-blue-300 text-blue-700 hover:bg-blue-100 hover:border-blue-400"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    preReservarStand(stand.numero_stand);
+                                  }}
+                                  title="Pré-reservar este stand"
+                                >
+                                  <Link className="w-4 h-4 mr-2" />
+                                  Pré-Reservar
+                                </Button>
                               </div>
                             )}
                           </CardContent>
@@ -1222,8 +1435,8 @@ const AdminStands: React.FC = () => {
                   <input
                     type="checkbox"
                     id="disponivel"
-                    checked={standForm.disponivel}
-                    onChange={(e) => setStandForm(prev => ({ ...prev, disponivel: e.target.checked }))}
+                    checked={standForm.status === 'disponivel'}
+                    onChange={(e) => setStandForm(prev => ({ ...prev, status: e.target.checked ? 'disponivel' : 'ocupado' }))}
                     className="w-4 h-4"
                   />
                   <Label htmlFor="disponivel" className="text-sm font-medium text-blue-900">
@@ -1309,7 +1522,7 @@ const AdminStands: React.FC = () => {
                 })()}
 
                 <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded-lg border border-gray-200">
-                  <strong>Dica:</strong> Apenas expositores com status "pendente" ou "rejeitado" podem ser vinculados a stands.
+                  <strong>Dica:</strong> Qualquer expositor pode ser vinculado a stands, independente do status. Expositores aprovados podem ser realocados para outros stands.
                 </div>
               </div>
             </div>

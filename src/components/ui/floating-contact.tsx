@@ -7,7 +7,7 @@ interface FloatingContactProps {
 }
 
 const FloatingContact: React.FC<FloatingContactProps> = ({ 
-  phone = "(19) 97179-7745",
+  phone = "19 97412-4162",
   showAfterScroll = 100 
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -30,7 +30,7 @@ const FloatingContact: React.FC<FloatingContactProps> = ({
   const formattedForWhatsApp = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
 
   const handleWhatsApp = () => {
-    window.open(`https://wa.me/${formattedForWhatsApp}?text=Olá! Entrei em contato através do site da FESPIN.`, '_blank');
+    window.open(`https://wa.me/${formattedForWhatsApp}?text=Olá! Entrei em contato através do site da CONSTRUIND.`, '_blank');
     setIsExpanded(false);
   };
 
@@ -91,4 +91,4 @@ const FloatingContact: React.FC<FloatingContactProps> = ({
   );
 };
 
-export default FloatingContact; 
+export default FloatingContact;

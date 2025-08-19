@@ -26,7 +26,7 @@ const MapViewer: React.FC<MapViewerProps> = ({
   const downloadMap = () => {
     const link = document.createElement('a');
     link.href = mapImage;
-    link.download = 'mapa-fespin-2025.png';
+    link.download = 'mapa-construind-2025.png';
     link.click();
   };
 
@@ -125,7 +125,7 @@ const MapViewer: React.FC<MapViewerProps> = ({
                   <div className="w-full h-full flex items-center justify-center p-6">
                     <img
                       src={mapImage}
-                      alt="Mapa do Evento FESPIN 2025"
+                      alt="Mapa do Evento CONSTRUIND 2025"
                       className="max-w-full max-h-full object-contain cursor-grab active:cursor-grabbing select-none"
                       draggable={false}
                     />
@@ -217,7 +217,7 @@ const MapViewer: React.FC<MapViewerProps> = ({
                   <div className="w-full h-full flex items-center justify-center p-4">
                     <img
                       src={mapImage}
-                      alt="Mapa do Evento FESPIN 2025"
+                      alt="Mapa do Evento CONSTRUIND 2025"
                       className="max-w-full max-h-full object-contain cursor-grab active:cursor-grabbing select-none"
                       draggable={false}
                     />
@@ -237,29 +237,41 @@ const MapViewer: React.FC<MapViewerProps> = ({
            {/* Layout responsivo - linha única no desktop, wrap no mobile */}
            <div className="flex flex-wrap justify-center items-center gap-3 lg:gap-4">
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
-               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#B6FF72'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Academia</span>
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#0097b2'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">2x2</span>
              </div>
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
-               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#FF776C'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Bem-estar</span>
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#004aad'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">3x3 Básico</span>
              </div>
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
-               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#A6CFFF'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Artigos Esportivos</span>
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#6cace3'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">3x3 Acabamentos</span>
              </div>
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
-               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#38FFB8'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Saúde e Nutrição</span>
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#55a04d'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">5x5</span>
              </div>
              
              <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
-               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#FFE27F'}}></div>
-               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">Área Livre</span>
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#ffb600'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">8x8</span>
              </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#ce1c21'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">10x10</span>
+             </div>
+             
+             <div className="flex items-center gap-2 bg-white rounded-full px-3 py-2 shadow-sm border border-gray-200 hover:shadow-md transition-all">
+               <div className="w-3 h-3 rounded-full shadow-sm" style={{backgroundColor: '#ff5500'}}></div>
+               <span className="text-gray-700 font-medium text-xs sm:text-sm whitespace-nowrap">9x10</span>
+             </div>
+             
+
            </div>
          </div>
        </div>

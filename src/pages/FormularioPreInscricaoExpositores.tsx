@@ -15,7 +15,7 @@ import { showToast } from '@/lib/toast';
 import MapViewer from '@/components/pages/MapViewer';
 import { supabase } from '@/lib/supabase';
 import { uploadImage } from '@/lib/uploadImage';
-import TimerFlutuante from '@/components/TimerFlutuante';
+import { formatarMoedaBrasileira, converterPrecoParaNumero } from '@/lib/utils';
 
 /*
 // SISTEMA DE RESERVAS TEMPORÁRIAS DE STANDS:
@@ -78,7 +78,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     sobrenomeResponsavel: '',
     emailResponsavel: '',
     contatoResponsavel: '',
-    isWhatsApp: '',
+    isWhatsApp: 'sim',
     
     // Responsável pelo Stand
     nomeResponsavelStand: '',
@@ -87,10 +87,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     
     // Serviços
     numeroStand: '',
-    desejaPatrocinio: '',
-    categoriaPatrocinio: '',
     condicaoPagamento: '',
     formaPagamento: '',
+    
+    // Patrocínio
+    desejaPatrocinio: '',
+    categoriaPatrocinio: '',
     
     // Informações Adicionais
     observacoes: ''
@@ -109,6 +111,23 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   const [tempoRestante, setTempoRestante] = useState<number>(0);
   const [cronometroAtivo, setCronometroAtivo] = useState(false);
 
+  const [condicoesPagamento, setCondicoesPagamento] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCondicoes = async () => {
+      const { data, error } = await supabase
+        .from('payment_conditions')
+        .select('*')
+        .order('created_at', { ascending: true });
+      if (error) {
+        console.error('Error fetching payment conditions:', error);
+      } else {
+        setCondicoesPagamento(data);
+      }
+    };
+    fetchCondicoes();
+  }, []);
+
   const estadosBrasil = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 
     'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
@@ -120,7 +139,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
       
       const { data: expiredStands, error: fetchError } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .select('numero_stand, data_reserva, observacoes')
         .eq('status', 'reservado')
         .not('data_reserva', 'is', null)
@@ -131,7 +150,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
       if (expiredStands && expiredStands.length > 0) {
         await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update({
             status: 'disponivel',
             reservado_por: null,
@@ -167,9 +186,9 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       .on('postgres_changes', {
         event: '*',
         schema: 'public',
-        table: 'stands_fespin'
+        table: 'stands_construind'
       }, (payload) => {
-        console.log('Mudança detectada na tabela stands_fespin:', payload);
+        console.log('Mudança detectada na tabela stands_construind:', payload);
         carregarStands();
       })
       .subscribe((status) => {
@@ -222,15 +241,24 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     
     try {
       // Buscar stands com todas as informações de status
-      const { data: standsData } = await supabase
-        .from('stands_fespin')
-        .select('numero_stand, categoria, tamanho, preco, disponivel, status, reservado_por, data_reserva, observacoes');
+      const { data: standsData, error } = await supabase
+        .from('stands_construind')
+        .select('numero_stand, categoria, preco, status, reservado_por, data_reserva, observacoes, cor, largura, altura');
+
+      if (error) {
+        console.error('Erro ao buscar stands:', error);
+        setIsLoadingStands(false);
+        return;
+      }
 
       if (!standsData) {
         console.log('Nenhum dado de stand encontrado');
         setIsLoadingStands(false);
         return;
       }
+
+      console.log('Dados dos stands carregados:', standsData.length, 'stands encontrados');
+      console.log('Primeiro stand:', standsData[0]);
 
       // LÓGICA APRIMORADA: Baseada no status com verificação de pré-inscrições
       const standsComStatus = standsData.map(stand => {
@@ -307,6 +335,9 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       setStandsAgrupados(agrupados);
       
       console.log(`Stands atualizados em ${new Date().toLocaleTimeString('pt-BR')}`);
+      console.log('Stands processados:', standsComStatus.length);
+      console.log('Stands agrupados:', Object.keys(agrupados));
+      console.log('Agrupados detalhes:', agrupados);
       
     } catch (error) {
       console.error('Erro ao carregar stands:', error);
@@ -315,22 +346,31 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
     }
   };
 
-  const condicoesPagamento = [
-    {
-      value: 'a_vista_desconto',
-      label: 'À vista com 5% desconto',
-      description: 'Pagamento até 30/08/2025 com desconto de 5%',
-      highlight: true
-    },
-    {
-      value: 'sinal_3_parcelas',
-      label: '20% sinal + 2 parcelas',
-      description: '20% na assinatura + parcelas setembro e outubro'
-    }
-  ];
-
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Função para obter dados completos do stand selecionado
+  const getDadosStandSelecionado = () => {
+    if (!formData.numeroStand) return null;
+    
+    const stand = standsDisponiveis.find(s => s.numero_stand === formData.numeroStand);
+    if (!stand) return null;
+    
+    // Obter tamanho do stand (largura x altura)
+    let metragem = 'Não especificado';
+    if (stand.largura && stand.altura) {
+      metragem = `${stand.largura}m x ${stand.altura}m`;
+    } else if (stand.largura) {
+      metragem = `${stand.largura}m`;
+    }
+    
+    return {
+      numero: stand.numero_stand,
+      categoria: getTamanhoCategoria(stand.categoria),
+      valor: stand.preco || 0,
+      metragem: metragem
+    };
   };
 
   // LÓGICA ORIGINAL: Apenas permitir deselecionar o próprio stand selecionado
@@ -342,7 +382,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       try {
         // Deselecionar meu stand
         const { error } = await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update({
             status: 'disponivel',
             reservado_por: null,
@@ -377,7 +417,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       // 1. Liberar stand anterior (se houver)
       if (formData.numeroStand) {
         await supabase
-          .from('stands_fespin')
+          .from('stands_construind')
           .update({
             status: 'disponivel',
             reservado_por: null,
@@ -393,7 +433,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       expirationTime.setMinutes(expirationTime.getMinutes() + 10);
 
       const { error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({
           status: 'reservado',
           reservado_por: 'Usuário do Formulário',
@@ -426,14 +466,29 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   // Obter cor da categoria
   const getCorCategoria = (categoria: string): string => {
     const cores: {[key: string]: string} = {
-      'Academias': '#B6FF72',
-      'Bem-Estar': '#FF776C', 
-      'Artigos Esportivos': '#A6CFFF',
-      'Saúde e Nutrição': '#38FFB8',
-      'Área Livre': '#FFE27F',
+      '2x2': '#0097b2',
+      '3x3_basico': '#004aad',
+      '3x3_acabamentos': '#6cace3',
+      '5x5': '#55a04d',
+      '8x8': '#ffb600',
+      '10x10': '#ce1c21',
+      '9x10': '#ff5500',
       'Patrocinadores': '#59B275'
     };
     return cores[categoria] || '#CCCCCC';
+  };
+
+  const getTamanhoCategoria = (categoria: string): string => {
+    const tamanhos: {[key: string]: string} = {
+      '2x2': '2X2M (4m²)',
+      '3x3_basico': '3X3M BÁSICO (9m²)',
+      '3x3_acabamentos': '3X3M ACABAMENTOS (9m²)',
+      '5x5': '5X5M (25m²)',
+      '8x8': '8X8M (64m²)',
+      '10x10': '10X10M (100m²)',
+      '9x10': '9X10M (90m²)'
+    };
+    return tamanhos[categoria] || categoria.toUpperCase();
   };
 
 
@@ -771,9 +826,6 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         throw new Error('Por favor, preencha o e-mail do responsável pelo stand');
       }
 
-      if (!formData.desejaPatrocinio) {
-        throw new Error('Por favor, informe se deseja ser patrocinador');
-      }
 
 
       // Obter IP do usuário (opcional)
@@ -825,7 +877,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         sobrenome_responsavel: formData.sobrenomeResponsavel,
         email_responsavel: formData.emailResponsavel || null,
         contato_responsavel: formData.contatoResponsavel,
-        is_whatsapp: formData.isWhatsApp,
+        is_whatsapp: formData.isWhatsApp === 'sim',
         
         // Responsável pelo Stand
         nome_responsavel_stand: formData.nomeResponsavelStand,
@@ -834,8 +886,6 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         
         // Serviços
         numero_stand: formData.numeroStand,
-        deseja_patrocinio: formData.desejaPatrocinio,
-        categoria_patrocinio: formData.categoriaPatrocinio || null,
         condicao_pagamento: formData.condicaoPagamento,
         forma_pagamento: formData.formaPagamento,
         
@@ -866,7 +916,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         : formData.razaoSocial || `${formData.nomeResponsavel} ${formData.sobrenomeResponsavel}`;
 
       await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update({
           status: 'reservado', // Continua reservado até aprovação
           reservado_por: nomeExpositor,
@@ -885,6 +935,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
       
       // Formulário enviado com sucesso - Redirecionar para página de confirmação
       
+      // Obter dados do stand selecionado
+      const dadosStand = getDadosStandSelecionado();
+      
+      // Obter descrição da condição de pagamento
+      const condicaoPagamentoSelecionada = condicoesPagamento.find(c => c.id === formData.condicaoPagamento);
+      
       // Preparar dados para a página de confirmação
       const dadosConfirmacao = {
         nome: formData.tipoPessoa === 'fisica' 
@@ -901,7 +957,14 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         tipoPessoa: formData.tipoPessoa,
         dataEnvio: new Date().toLocaleDateString('pt-BR'),
         horarioEnvio: new Date().toLocaleTimeString('pt-BR'),
-        numeroProtocolo: `FESPIN-${Date.now().toString().slice(-8)}`
+        numeroProtocolo: `CONSTRUIND-${Date.now().toString().slice(-8)}`,
+        // Dados do stand
+        standSelecionado: dadosStand,
+        // Dados de pagamento
+        condicaoPagamento: condicaoPagamentoSelecionada?.label || formData.condicaoPagamento,
+        formaPagamento: formData.formaPagamento === 'pix' ? 'PIX' : 'Boleto Bancário',
+        // Valor total (stand + patrocínio, se aplicável)
+        valorTotal: dadosStand?.valor || 0
       };
 
       // Navegar para página de confirmação com os dados
@@ -909,8 +972,25 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         state: { dadosSubmissao: dadosConfirmacao } 
       });
     } catch (error: any) {
-      console.error('Erro ao enviar formulário:', error);
-      showToast.error(error.message || 'Erro ao enviar formulário. Tente novamente.');
+      console.error('Erro ao enviar formulário:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code,
+        fullError: error
+      });
+      
+      let errorMessage = 'Erro ao enviar formulário. Tente novamente.';
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.details) {
+        errorMessage = error.details;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+      
+      showToast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -932,15 +1012,15 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
   const scrollProgress = Math.min(scrollY / 800, 1); // máximo aos 800px de scroll
   
   return (
-    <div className="min-h-screen bg-white relative">
+    <div className="min-h-screen bg-black relative">
       {/* Degradê mais visível que aparece conforme scroll */}
       <div 
         className="fixed inset-0 transition-opacity duration-1000 ease-out pointer-events-none"
         style={{
           background: `linear-gradient(135deg, 
-            rgba(0, 216, 86, ${0.25 * scrollProgress}) 0%, 
-            rgba(177, 247, 39, ${0.35 * scrollProgress}) 60%, 
-            rgba(10, 40, 86, ${0.15 * scrollProgress}) 100%
+            rgba(255, 60, 0, ${0.25 * scrollProgress}) 0%, 
+            rgba(61, 61, 61, ${0.35 * scrollProgress}) 60%, 
+            rgba(0, 0, 0, ${0.15 * scrollProgress}) 100%
           )`,
           opacity: scrollProgress
         }}
@@ -957,6 +1037,77 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
           50% { transform: translateX(100%) skewX(-25deg); }
           100% { transform: translateX(100%) skewX(-25deg); }
         }
+        
+        /* Remove focus ring padrão e força apenas borda laranja */
+        input:focus,
+        textarea:focus,
+        select:focus,
+        button:focus {
+          outline: none !important;
+          box-shadow: none !important;
+          ring: 0 !important;
+        }
+        
+        /* Força apenas borda laranja no focus */
+        .focus-orange:focus {
+          border-color: #ff3c00 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+        
+        /* Estilos para PhoneInput */
+        .react-tel-input .form-control {
+          background-color: #1f2937 !important;
+          border: 1px solid #4b5563 !important;
+          color: white !important;
+          height: 48px !important;
+          border-radius: 8px !important;
+          padding-left: 58px !important;
+        }
+        
+        .react-tel-input .form-control:focus {
+          border-color: #ff3c00 !important;
+          box-shadow: none !important;
+          outline: none !important;
+        }
+        
+        .react-tel-input .flag-dropdown {
+          background-color: #1f2937 !important;
+          border: 1px solid #4b5563 !important;
+          border-radius: 8px 0 0 8px !important;
+        }
+        
+        .react-tel-input .flag-dropdown:hover {
+          background-color: #374151 !important;
+        }
+        
+        .react-tel-input .selected-flag {
+          background-color: #1f2937 !important;
+          border-right: 1px solid #4b5563 !important;
+        }
+        
+        .react-tel-input .selected-flag:hover {
+          background-color: #374151 !important;
+        }
+        
+        .react-tel-input .country-list {
+          background-color: #1f2937 !important;
+          border: 1px solid #4b5563 !important;
+          border-radius: 8px !important;
+        }
+        
+        .react-tel-input .country-list .country {
+          background-color: #1f2937 !important;
+          color: white !important;
+        }
+        
+        .react-tel-input .country-list .country:hover {
+          background-color: #ff3c00 !important;
+        }
+        
+        .react-tel-input .country-list .country.highlight {
+          background-color: #ff3c00 !important;
+        }
       `}</style>
       
       {/* Conteúdo */}
@@ -964,12 +1115,12 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         <div className="relative max-w-4xl mx-auto px-6 py-12">
           {/* Hero Header */}
           <div className="text-center mb-16">
-            {/* Logo FESPIN */}
-            <div className="mb-6 relative overflow-hidden opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.2s_forwards]">
+            {/* Logo CONSTRUIND */}
+            <div className="w-64 mx-auto mb-6 relative overflow-hidden opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.2s_forwards]">
               <img 
-                src="/LOGO HORIZONTAL AZUL DEGRADE.svg" 
-                alt="Logo FESPIN" 
-                className="h-12 md:h-16 lg:h-18 mx-auto object-contain relative z-10"
+                src="/CONSTRUIND.svg" 
+                alt="Logo CONSTRUIND" 
+                className="w-full h-auto object-contain relative z-10"
               />
               {/* Efeito Glass Reflexo */}
               <div 
@@ -981,30 +1132,30 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
               ></div>
             </div>
             
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#0a2856]/10 to-[#00d856]/10 rounded-full mb-6 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.4s_forwards]">
-              <Target className="w-4 h-4 text-[#0a2856]" />
-              <span className="text-sm font-semibold text-[#0a2856]">Seja um expositor</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[#ff3c00]/20 to-[#3d3d3d]/20 rounded-full mb-6 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.4s_forwards]">
+              <Target className="w-4 h-4 text-[#ff3c00]" />
+              <span className="text-sm font-semibold text-white">Seja um expositor</span>
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#0a2856] leading-tight mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">
               Pré-inscrição
               <br />
-              <span className="bg-gradient-to-r from-[#00d856] to-[#b1f727] bg-clip-text text-transparent">
-                FESPIN 2025
+              <span className="bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] bg-clip-text text-transparent">
+                CONSTRUIND 2025
               </span>
             </h1>
             
             <div className="max-w-3xl mx-auto">
-              <div className="subtitle-section mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.8s_forwards] text-center">
-                Manifeste seu interesse em participar da maior feira fitness do interior paulista e conecte-se com milhares de visitantes.
+              <div className="subtitle-section mb-4 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_0.8s_forwards] text-center text-gray-300">
+                {/* Texto removido conforme solicitado */}
               </div>
               
-              <div className="inline-block bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 border border-[#0a2856]/20 rounded-lg px-4 py-3 text-[#0a2856] text-sm max-w-2xl opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1s_forwards]">
+              <div className="inline-block bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 border border-[#ff3c00]/30 rounded-lg px-4 py-3 text-white text-sm max-w-2xl opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1s_forwards]">
                 <div className="flex items-start gap-2">
-                  <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#00d856]" />
+                  <Info className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#ff3c00]" />
                   <div>
-                    <p className="font-medium mb-1 text-[#0a2856]">Informação Importante</p>
-                    <p className="text-xs leading-relaxed text-[#0a2856]/80">
+                    <p className="font-medium mb-1 text-white">Informação Importante</p>
+                    <p className="text-xs leading-relaxed text-gray-300">
                       Este é um formulário de pré-inscrição. O preenchimento não garante sua participação na feira. 
                       A confirmação será enviada após análise da organização.
                     </p>
@@ -1016,17 +1167,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* TIPO DE PESSOA */}
-            <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1s_forwards]">
-                          <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+            <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg hover:shadow-xl transition-all duration-300 opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1s_forwards]">
+                          <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
               <div className="flex items-center space-x-4">
-              <div className="p-3 bg-[#0a2856] rounded-xl">
+              <div className="p-3 bg-[#ff3c00] rounded-xl">
                 <Users className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                  <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                     TIPO DE PESSOA
                   </CardTitle>
-                  <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                  <CardDescription className="text-gray-300 -mt-1 leading-tight">
                     Selecione se você é Pessoa Física ou Jurídica
                   </CardDescription>
                 </div>
@@ -1050,11 +1201,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                   />
                   <label
                     htmlFor="fisica"
-                  className="flex flex-col items-center p-6 bg-gray-50 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100 peer-checked:border-[#00d856] peer-checked:bg-[#00d856]/5 transition-all duration-300"
+                  className="flex flex-col items-center p-6 bg-gray-800 border-2 border-gray-600 rounded-xl cursor-pointer hover:bg-gray-700 peer-checked:border-[#ff3c00] peer-checked:bg-[#ff3c00]/10 transition-all duration-300"
                 >
-                  <User className="w-12 h-12 text-[#0a2856] mb-3" />
-                  <h3 className="text-[#0a2856] font-bold text-lg mb-2">PESSOA FÍSICA</h3>
-                  <p className="text-gray-600 text-center text-sm">
+                  <User className="w-12 h-12 text-[#ff3c00] mb-3" />
+                  <h3 className="text-white font-bold text-lg mb-2">PESSOA FÍSICA</h3>
+                  <p className="text-gray-300 text-center text-sm">
                       Para pessoas físicas que desejam expor
                     </p>
                   </label>
@@ -1071,11 +1222,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                   />
                   <label
                     htmlFor="juridica"
-                  className="flex flex-col items-center p-6 bg-gray-50 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-100 peer-checked:border-[#00d856] peer-checked:bg-[#00d856]/5 transition-all duration-300"
+                  className="flex flex-col items-center p-6 bg-gray-800 border-2 border-gray-600 rounded-xl cursor-pointer hover:bg-gray-700 peer-checked:border-[#ff3c00] peer-checked:bg-[#ff3c00]/10 transition-all duration-300"
                 >
-                  <Building2 className="w-12 h-12 text-[#0a2856] mb-3" />
-                  <h3 className="text-[#0a2856] font-bold text-lg mb-2">PESSOA JURÍDICA</h3>
-                  <p className="text-gray-600 text-center text-sm">
+                  <Building2 className="w-12 h-12 text-[#ff3c00] mb-3" />
+                  <h3 className="text-white font-bold text-lg mb-2">PESSOA JURÍDICA</h3>
+                  <p className="text-gray-300 text-center text-sm">
                       Para empresas e organizações
                     </p>
                   </label>
@@ -1086,17 +1237,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
         {/* DADOS PESSOA FÍSICA - Condicional */}
         {formData.tipoPessoa === 'fisica' && (
-          <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.2s_forwards]">
-            <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+          <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.2s_forwards]">
+            <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                 <div className="flex items-center space-x-4">
-                <div className="p-3 bg-[#0a2856] rounded-xl">
+                <div className="p-3 bg-[#ff3c00] rounded-xl">
                   <User className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                                            <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                                            <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                           DADOS PESSOAIS
                         </CardTitle>
-                        <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                        <CardDescription className="text-gray-300 -mt-1 leading-tight">
                         Suas informações pessoais
                       </CardDescription>
                     </div>
@@ -1106,28 +1257,28 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
               <CardContent className="p-6 space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="nomePF" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="nomePF" className="text-sm font-semibold text-white">
                       NOME COMPLETO *
                       </Label>
                       <Input
                         id="nomePF"
                         value={formData.nomePF}
                         onChange={(e) => handleInputChange('nomePF', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                      className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg placeholder:text-gray-400"
                         placeholder="Seu nome completo"
                         required
                       />
                     </div>
                     
                   <div className="space-y-2">
-                    <Label htmlFor="cpf" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="cpf" className="text-sm font-semibold text-white">
                       CPF *
                       </Label>
                       <Input
                         id="cpf"
                         value={formData.cpf}
                         onChange={(e) => handleInputChange('cpf', formatCPF(e.target.value))}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                      className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="000.000.000-00"
                         maxLength={14}
                         required
@@ -1137,7 +1288,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="emailPF" className="text-sm font-semibold text-[#0a2856] flex items-center">
+                    <Label htmlFor="emailPF" className="text-sm font-semibold text-white flex items-center">
                         <Mail className="w-4 h-4 mr-2" />
                       E-MAIL *
                       </Label>
@@ -1145,13 +1296,13 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         id="emailPF"
                         value={formData.emailPF}
                         onChange={(value) => handleInputChange('emailPF', value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Digite seu email..."
                       />
                     </div>
                     
                   <div className="space-y-2">
-                    <Label htmlFor="telefonePF" className="text-sm font-semibold text-[#0a2856] flex items-center">
+                    <Label htmlFor="telefonePF" className="text-sm font-semibold text-white flex items-center">
                         <Phone className="w-4 h-4 mr-2" />
                       TELEFONE *
                       </Label>
@@ -1159,7 +1310,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         id="telefonePF"
                         value={formData.telefonePF}
                         onChange={(value) => handleInputChange('telefonePF', value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Digite o número"
                         required
                       />
@@ -1168,8 +1319,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   {/* Campos de Endereço Separados - Pessoa Física */}
                   <div className="space-y-2">
-                    <Label htmlFor="cepPF" className="text-sm font-semibold text-[#0a2856]">
-                      CEP * <span className="text-xs text-gray-500 font-normal">(preenchimento automático)</span>
+                    <Label htmlFor="cepPF" className="text-sm font-semibold text-white">
+                      CEP * <span className="text-xs text-gray-400 font-normal">(preenchimento automático)</span>
                     </Label>
                     <div className="relative">
                     <Input
@@ -1177,46 +1328,46 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         value={formData.cepPF}
                         onChange={(e) => handleInputChange('cepPF', formatCEP(e.target.value))}
                         onBlur={handleCEPBlurPF}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg pr-12"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus:border-[#ff3c00] focus:ring-0 focus:outline-none rounded-lg pr-12 placeholder:text-gray-400"
                         placeholder="00000-000"
                         maxLength={9}
                       required
                     />
                       {isSearchingCEP && (
                         <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                          <Loader2 className="w-5 h-5 text-[#00d856] animate-spin" />
+                          <Loader2 className="w-5 h-5 text-[#ff3c00] animate-spin" />
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400">
                       Digite o CEP e aguarde o preenchimento automático
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-2">
-                      <Label htmlFor="logradouroPF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="logradouroPF" className="text-sm font-semibold text-white">
                         LOGRADOURO *
                       </Label>
                       <Input
                         id="logradouroPF"
                         value={formData.logradouroPF}
                         onChange={(e) => handleInputChange('logradouroPF', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Rua, Avenida, etc."
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="numeroPF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="numeroPF" className="text-sm font-semibold text-white">
                         NÚMERO *
                       </Label>
                       <Input
                         id="numeroPF"
                         value={formData.numeroPF}
                         onChange={(e) => handleInputChange('numeroPF', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="123"
                         required
                       />
@@ -1225,27 +1376,27 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="complementoPF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="complementoPF" className="text-sm font-semibold text-white">
                         COMPLEMENTO
                       </Label>
                       <Input
                         id="complementoPF"
                         value={formData.complementoPF}
                         onChange={(e) => handleInputChange('complementoPF', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Apto, Casa, etc."
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="bairroPF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="bairroPF" className="text-sm font-semibold text-white">
                         BAIRRO *
                       </Label>
                       <Input
                         id="bairroPF"
                         value={formData.bairroPF}
                         onChange={(e) => handleInputChange('bairroPF', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Preenchido automaticamente"
                         required
                       />
@@ -1254,25 +1405,25 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="cidadePF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="cidadePF" className="text-sm font-semibold text-white">
                         CIDADE *
                       </Label>
                       <Input
                         id="cidadePF"
                         value={formData.cidadePF}
                         onChange={(e) => handleInputChange('cidadePF', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Preenchido automaticamente"
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="estadoPF" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="estadoPF" className="text-sm font-semibold text-white">
                         ESTADO *
                       </Label>
                       <Select onValueChange={(value) => handleInputChange('estadoPF', value)} value={formData.estadoPF}>
-                        <SelectTrigger className="h-12 border-gray-300 focus:border-[#00d856] rounded-lg">
+                        <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg">
                           <SelectValue placeholder="Selecione o estado" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1291,17 +1442,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
           {/* DADOS DA EMPRESA - Condicional para Pessoa Jurídica */}
           {formData.tipoPessoa === 'juridica' && (
-            <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.2s_forwards]">
-              <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+            <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.2s_forwards]">
+              <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                   <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-[#0a2856] rounded-xl">
+                  <div className="p-3 bg-[#ff3c00] rounded-xl">
                     <Building2 className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                      <CardTitle className="text-2xl font-bold text-white mb-0 leading-tight">
                         DADOS DA EMPRESA
                       </CardTitle>
-                      <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                      <CardDescription className="text-gray-300 -mt-1 leading-tight">
                         Informações básicas da empresa expositora
                       </CardDescription>
                     </div>
@@ -1311,8 +1462,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
               <CardContent className="p-6 space-y-6">
                   {/* CNPJ com busca automática */}
                 <div className="space-y-2">
-                  <Label htmlFor="cnpj" className="text-sm font-semibold text-[#0a2856]">
-                    CNPJ * <span className="text-xs text-gray-500 font-normal">(preenchimento automático)</span>
+                  <Label htmlFor="cnpj" className="text-sm font-semibold text-white">
+                    CNPJ * <span className="text-xs text-gray-400 font-normal">(preenchimento automático)</span>
                     </Label>
                     <div className="relative">
                       <Input
@@ -1320,51 +1471,51 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         value={formData.cnpj}
                         onChange={(e) => handleInputChange('cnpj', formatCNPJ(e.target.value))}
                         onBlur={handleCNPJBlur}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg pr-12"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus:border-[#ff3c00] focus:ring-0 focus:outline-none rounded-lg pr-12 placeholder:text-gray-400"
                         placeholder="00.000.000/0000-00"
                         maxLength={18}
                         required
                       />
                       {isSearchingCNPJ && (
                         <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                        <Loader2 className="w-5 h-5 text-[#00d856] animate-spin" />
+                        <Loader2 className="w-5 h-5 text-[#3d3d3d] animate-spin" />
                         </div>
                       )}
                       {!isSearchingCNPJ && formData.cnpj && (
                         <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                        <Search className="w-5 h-5 text-[#00d856]" />
+                        <Search className="w-5 h-5 text-[#3d3d3d]" />
                         </div>
                       )}
                     </div>
-                  <p className="text-xs text-gray-500">
-                    Digite o CNPJ e aguarde o preenchimento automático dos dados
+                    <p className="text-xs text-gray-400">
+                      Digite o CNPJ e aguarde o preenchimento automático dos dados
                     </p>
                   </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="razaoSocial" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="razaoSocial" className="text-sm font-semibold text-white">
                       RAZÃO SOCIAL *
                       </Label>
                       <Input
                         id="razaoSocial"
                         value={formData.razaoSocial}
                         onChange={(e) => handleInputChange('razaoSocial', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Preenchido automaticamente"
                         required
                       />
                     </div>
                     
                   <div className="space-y-2">
-                    <Label htmlFor="nomeSocial" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="nomeSocial" className="text-sm font-semibold text-white">
                         NOME FANTASIA
                       </Label>
                       <Input
                         id="nomeSocial"
                         value={formData.nomeSocial}
                         onChange={(e) => handleInputChange('nomeSocial', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Preenchido automaticamente"
                       />
                     </div>
@@ -1372,8 +1523,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                                   {/* Campos de Endereço Separados */}
                   <div className="space-y-2">
-                    <Label htmlFor="cep" className="text-sm font-semibold text-[#0a2856]">
-                      CEP * <span className="text-xs text-gray-500 font-normal">(preenchimento automático)</span>
+                    <Label htmlFor="cep" className="text-sm font-semibold text-white">
+                      CEP * <span className="text-xs text-gray-400 font-normal">(preenchimento automático)</span>
                     </Label>
                     <div className="relative">
                     <Input
@@ -1381,46 +1532,46 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         value={formData.cep}
                         onChange={(e) => handleInputChange('cep', formatCEP(e.target.value))}
                         onBlur={handleCEPBlur}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg pr-12"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus:border-[#ff3c00] focus:ring-0 focus:outline-none rounded-lg pr-12 placeholder:text-gray-400"
                         placeholder="00000-000"
                         maxLength={9}
-                        required
-                      />
+                      required
+                    />
                       {isSearchingCEP && (
                         <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                          <Loader2 className="w-5 h-5 text-[#00d856] animate-spin" />
+                          <Loader2 className="w-5 h-5 text-[#3d3d3d] animate-spin" />
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-400">
                       Digite o CEP e aguarde o preenchimento automático
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2 space-y-2">
-                      <Label htmlFor="logradouro" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="logradouro" className="text-sm font-semibold text-white">
                         LOGRADOURO *
                       </Label>
                       <Input
                         id="logradouro"
                         value={formData.logradouro}
                         onChange={(e) => handleInputChange('logradouro', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Rua, Avenida, etc."
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="numero" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="numero" className="text-sm font-semibold text-white">
                         NÚMERO *
                       </Label>
                       <Input
                         id="numero"
                         value={formData.numero}
                         onChange={(e) => handleInputChange('numero', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="123"
                         required
                       />
@@ -1429,27 +1580,27 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="complemento" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="complemento" className="text-sm font-semibold text-white">
                         COMPLEMENTO
                       </Label>
                       <Input
                         id="complemento"
                         value={formData.complemento}
                         onChange={(e) => handleInputChange('complemento', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Apto, Sala, etc."
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="bairro" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="bairro" className="text-sm font-semibold text-white">
                         BAIRRO *
                       </Label>
                       <Input
                         id="bairro"
                         value={formData.bairro}
                         onChange={(e) => handleInputChange('bairro', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                       placeholder="Preenchido automaticamente"
                       required
                     />
@@ -1458,25 +1609,25 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="cidade" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="cidade" className="text-sm font-semibold text-white">
                         CIDADE *
                       </Label>
                       <Input
                         id="cidade"
                         value={formData.cidade}
                         onChange={(e) => handleInputChange('cidade', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Preenchido automaticamente"
                         required
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="estado" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="estado" className="text-sm font-semibold text-white">
                         ESTADO *
                       </Label>
                       <Select onValueChange={(value) => handleInputChange('estado', value)} value={formData.estado}>
-                        <SelectTrigger className="h-12 border-gray-300 focus:border-[#00d856] rounded-lg">
+                        <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus:border-[#3d3d3d] rounded-lg">
                           <SelectValue placeholder="Selecione o estado" />
                         </SelectTrigger>
                         <SelectContent>
@@ -1492,7 +1643,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="telefoneEmpresa" className="text-sm font-semibold text-[#0a2856] flex items-center">
+                    <Label htmlFor="telefoneEmpresa" className="text-sm font-semibold text-white flex items-center">
                         <Phone className="w-4 h-4 mr-2" />
                       TELEFONE *
                       </Label>
@@ -1500,14 +1651,14 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         id="telefoneEmpresa"
                         value={formData.telefoneEmpresa}
                         onChange={(value) => handleInputChange('telefoneEmpresa', value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                         placeholder="Digite o número"
                         required
                       />
                     </div>
                     
                   <div className="space-y-2">
-                    <Label htmlFor="emailEmpresa" className="text-sm font-semibold text-[#0a2856] flex items-center">
+                    <Label htmlFor="emailEmpresa" className="text-sm font-semibold text-white flex items-center">
                         <Mail className="w-4 h-4 mr-2" />
                       E-MAIL *
                       </Label>
@@ -1516,7 +1667,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         type="email"
                         value={formData.emailEmpresa}
                         onChange={(e) => handleInputChange('emailEmpresa', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                      className="h-12 bg-gray-800 border-gray-600 text-white focus:border-[#ff3c00] focus:ring-0 focus:outline-none rounded-lg"
                         placeholder="contato@empresa.com.br"
                         required
                       />
@@ -1532,17 +1683,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
           {formData.tipoPessoa && (
             <>
               {/* RESPONSÁVEL LEGAL */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.4s_forwards]">
-              <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.4s_forwards]">
+              <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                   <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-[#0a2856] rounded-xl">
+                  <div className="p-3 bg-[#ff3c00] rounded-xl">
                     <User className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                      <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                         RESPONSÁVEL LEGAL
                       </CardTitle>
-                        <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                        <CardDescription className="text-gray-300 -mt-1 leading-tight">
                           Informações da pessoa que irá assinar o contrato
                         </CardDescription>
                       </div>
@@ -1552,28 +1703,28 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="nomeResponsavel" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="nomeResponsavel" className="text-sm font-semibold text-white">
                         NOME *
                         </Label>
                         <Input
                           id="nomeResponsavel"
                           value={formData.nomeResponsavel}
                           onChange={(e) => handleInputChange('nomeResponsavel', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                           placeholder="Nome do responsável"
                           required
                         />
                       </div>
                       
                     <div className="space-y-2">
-                      <Label htmlFor="sobrenomeResponsavel" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="sobrenomeResponsavel" className="text-sm font-semibold text-white">
                         SOBRENOME *
                         </Label>
                         <Input
                           id="sobrenomeResponsavel"
                           value={formData.sobrenomeResponsavel}
                           onChange={(e) => handleInputChange('sobrenomeResponsavel', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                           placeholder="Sobrenome do responsável"
                           required
                         />
@@ -1582,7 +1733,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="emailResponsavel" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="emailResponsavel" className="text-sm font-semibold text-white">
                           E-MAIL DO RESPONSÁVEL
                         </Label>
                         <Input
@@ -1590,59 +1741,43 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                           type="email"
                           value={formData.emailResponsavel}
                           onChange={(e) => handleInputChange('emailResponsavel', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                           placeholder="responsavel@empresa.com.br"
                         />
                       </div>
                       
                     <div className="space-y-2">
-                      <Label htmlFor="contatoResponsavel" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="contatoResponsavel" className="text-sm font-semibold text-white">
                         TELEFONE DO RESPONSÁVEL *
                         </Label>
                         <PhoneInput
                           id="contatoResponsavel"
                           value={formData.contatoResponsavel}
                           onChange={(value) => handleInputChange('contatoResponsavel', value)}
-                          className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
-                          placeholder="De preferência WhatsApp"
+                          className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
+                          placeholder="Digite o número de telefone"
                           required
                         />
                       </div>
                     </div>
 
-                  <div className="space-y-3">
-                    <Label className="text-sm font-semibold text-[#0a2856]">É WHATSAPP?</Label>
-                      <RadioGroup
-                        value={formData.isWhatsApp}
-                        onValueChange={(value) => handleInputChange('isWhatsApp', value)}
-                      className="flex space-x-6"
-                    >
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <RadioGroupItem value="sim" id="whatsapp-sim" className="text-[#00d856]" />
-                        <Label htmlFor="whatsapp-sim" className="cursor-pointer text-[#0a2856] font-medium">SIM</Label>
-                        </div>
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <RadioGroupItem value="nao" id="whatsapp-nao" className="text-[#00d856]" />
-                        <Label htmlFor="whatsapp-nao" className="cursor-pointer text-[#0a2856] font-medium">NÃO</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
+
                   </CardContent>
                 </Card>
 
               {/* RESPONSÁVEL PELO STAND */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.6s_forwards]">
-                <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.6s_forwards]">
+                <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                     <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-[#0a2856] rounded-xl">
+                    <div className="p-3 bg-[#ff3c00] rounded-xl">
                       <MapPin className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                        <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                           RESPONSÁVEL PELO STAND
                         </CardTitle>
-                        <CardDescription className="text-gray-600 -mt-1 leading-tight">
-                          Funcionário responsável pelas comunicações da FESPIN 2025
+                        <CardDescription className="text-gray-300 -mt-1 leading-tight">
+                          Funcionário responsável pelas comunicações da CONSTRUIND 2025
                         </CardDescription>
                       </div>
                     </div>
@@ -1651,28 +1786,28 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <CardContent className="p-6 space-y-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <Label htmlFor="nomeResponsavelStand" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="nomeResponsavelStand" className="text-sm font-semibold text-white">
                         NOME *
                         </Label>
                         <Input
                           id="nomeResponsavelStand"
                           value={formData.nomeResponsavelStand}
                           onChange={(e) => handleInputChange('nomeResponsavelStand', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                           placeholder="Nome do responsável"
                           required
                         />
                       </div>
                       
                     <div className="space-y-2">
-                      <Label htmlFor="sobrenomeResponsavelStand" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="sobrenomeResponsavelStand" className="text-sm font-semibold text-white">
                         SOBRENOME *
                         </Label>
                         <Input
                           id="sobrenomeResponsavelStand"
                           value={formData.sobrenomeResponsavelStand}
                           onChange={(e) => handleInputChange('sobrenomeResponsavelStand', e.target.value)}
-                        className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                        className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg"
                           placeholder="Sobrenome do responsável"
                           required
                         />
@@ -1680,7 +1815,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                     </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="emailResponsavelStand" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="emailResponsavelStand" className="text-sm font-semibold text-white">
                       E-MAIL *
                       </Label>
                       <Input
@@ -1688,7 +1823,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                         type="email"
                         value={formData.emailResponsavelStand}
                         onChange={(e) => handleInputChange('emailResponsavelStand', e.target.value)}
-                      className="h-12 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg"
+                      className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg placeholder:text-gray-400"
                         placeholder="responsavel.stand@empresa.com.br"
                         required
                       />
@@ -1697,17 +1832,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 </Card>
 
               {/* MAPA DO EVENTO */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.8s_forwards]">
-                <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_1.8s_forwards]">
+                <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-[#0a2856] rounded-xl">
+                    <div className="p-3 bg-[#ff3c00] rounded-xl">
                       <MapPin className="w-6 h-6 text-white" />
               </div>
                     <div>
-                      <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                      <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                         MAPA DO EVENTO
                       </CardTitle>
-                      <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                      <CardDescription className="text-gray-300 -mt-1 leading-tight">
                         Visualize a localização dos stands antes de escolher
                       </CardDescription>
                     </div>
@@ -1717,8 +1852,8 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <CardContent className="p-0">
                   <div className="w-full">
                     <MapViewer 
-                      mapImage="/mapa fespin.png"
-                      title="Mapa da FESPIN 2025"
+                      mapImage="/mapa-do-evento.png"
+                      title="Mapa da CONSTRUIND 2025"
                       description="Clique e arraste para navegar pelo mapa do evento"
                       showDownloadButton={false}
                       showFullscreenButton={false}
@@ -1728,17 +1863,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
               </Card>
 
               {/* SERVIÇOS E STAND */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2s_forwards]">
-                <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2s_forwards]">
+                <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                     <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-[#0a2856] rounded-xl">
+                    <div className="p-3 bg-[#ff3c00] rounded-xl">
                       <CreditCard className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                        <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                           ESCOLHA SEU STAND
                         </CardTitle>
-                        <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                        <CardDescription className="text-gray-300 -mt-1 leading-tight">
                           Selecione o estande ideal para sua empresa
                         </CardDescription>
                       </div>
@@ -1748,31 +1883,31 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <CardContent className="p-6 space-y-8">
                   
                   {/* Legenda das cores dos stands - MOVIDA PARA O TOPO */}
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-                    <div className="text-sm font-bold text-gray-800 mb-2">LEGENDA DOS STANDS</div>
-                    <div className="text-xs text-gray-600 mb-4">
+                  <div className="bg-gradient-to-r from-gray-700 to-gray-600 border border-gray-500 rounded-xl p-6">
+                    <div className="text-sm font-bold text-white mb-2">LEGENDA DOS STANDS</div>
+                    <div className="text-xs text-gray-300 mb-4">
                       Cada cor indica o status atual do stand disponível para reserva.
                     </div>
                     <div className="grid grid-cols-3 gap-6">
                                               <div className="flex items-center gap-3">
                           <div className="w-5 h-5 rounded-full bg-green-500 shadow-sm"></div>
                           <div>
-                            <div className="text-sm font-semibold text-gray-800">Disponível</div>
-                            <div className="text-xs text-gray-600">Pode ser selecionado</div>
+                            <div className="text-sm font-semibold text-white">Disponível</div>
+                            <div className="text-xs text-gray-300">Pode ser selecionado</div>
                           </div>
                         </div>
                       <div className="flex items-center gap-3">
                         <div className="w-5 h-5 rounded-full bg-yellow-500 shadow-sm"></div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-800">Pré-reservado</div>
-                          <div className="text-xs text-gray-600">Indisponível temporariamente</div>
+                          <div className="text-sm font-semibold text-white">Pré-reservado</div>
+                          <div className="text-xs text-gray-300">Indisponível temporariamente</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="w-5 h-5 rounded-full bg-gray-500 shadow-sm"></div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-800">Ocupado</div>
-                          <div className="text-xs text-gray-600">Stand já confirmado</div>
+                          <div className="text-sm font-semibold text-white">Ocupado</div>
+                          <div className="text-xs text-gray-300">Stand já confirmado</div>
                         </div>
                       </div>
                     </div>
@@ -1783,7 +1918,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                     {/* Seletor de Stand com bolinhas coloridas */}
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <Label className="text-sm font-semibold text-[#0a2856]">
+                        <Label className="text-sm font-semibold text-white">
                           NÚMERO DO STAND *
                         </Label>
                         {!isLoadingStands && standsDisponiveis.length === 0 && (
@@ -1796,13 +1931,13 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                       
                                               {formData.numeroStand && (
-                        <div className="bg-[#00d856]/10 border border-[#00d856]/20 rounded-lg p-4">
+                        <div className="bg-[#ff3c00]/10 border border-[#ff3c00]/20 rounded-lg p-4">
                           <div className="flex items-center gap-2 text-sm">
-                            <div className="w-3 h-3 rounded-full bg-[#00d856]"></div>
-                            <span className="font-medium text-[#0a2856]">
+                            <div className="w-3 h-3 rounded-full bg-[#ff3c00]"></div>
+                            <span className="font-medium text-white">
                               Stand {formData.numeroStand} selecionado
                             </span>
-                            <span className="text-gray-600">
+                            <span className="text-gray-300">
                               - Complete o formulário para confirmar sua reserva
                             </span>
                           </div>
@@ -1848,11 +1983,11 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                                   className="w-4 h-4 rounded-full" 
                                   style={{ backgroundColor: getCorCategoria(categoria) }}
                                 ></div>
-                                <h4 className="text-sm font-semibold text-gray-700">
-                                  ESTANDES {categoria.toUpperCase()} {stands[0]?.tamanho || '3X3M'}
+                                <h4 className="text-sm font-semibold text-white">
+                                  ESTANDES {getTamanhoCategoria(categoria)}
                                 </h4>
-                                <span className="text-xs text-gray-500">
-                                  ({stands[0]?.preco || 'Preço não definido'})
+                                <span className="text-xs text-gray-300">
+                                  ({formatarMoedaBrasileira(converterPrecoParaNumero(stands[0]?.preco))})
                                 </span>
                               </div>
                               <div className="grid grid-cols-8 sm:grid-cols-10 md:grid-cols-12 lg:grid-cols-16 gap-2">
@@ -1901,56 +2036,56 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   {/* Patrocínio */}
                   <div className="space-y-3">
-                    <Label className="text-sm font-semibold text-[#0a2856]">DESEJA SER PATROCINADOR?</Label>
+                    <Label className="text-sm font-semibold text-white">DESEJA SER PATROCINADOR?</Label>
                      <RadioGroup
                        value={formData.desejaPatrocinio}
                        onValueChange={(value) => handleInputChange('desejaPatrocinio', value)}
                        className="flex space-x-6"
                      >
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <RadioGroupItem value="sim" id="patrocinio-sim" className="text-[#00d856]" />
-                        <Label htmlFor="patrocinio-sim" className="cursor-pointer text-[#0a2856] font-medium">SIM</Label>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg border border-gray-600">
+                        <RadioGroupItem value="sim" id="patrocinio-sim" className="text-[#ff3c00]" />
+                        <Label htmlFor="patrocinio-sim" className="cursor-pointer text-white font-medium">SIM</Label>
                        </div>
-                      <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                        <RadioGroupItem value="nao" id="patrocinio-nao" className="text-[#00d856]" />
-                        <Label htmlFor="patrocinio-nao" className="cursor-pointer text-[#0a2856] font-medium">NÃO</Label>
+                      <div className="flex items-center space-x-3 p-3 bg-gray-800 rounded-lg border border-gray-600">
+                        <RadioGroupItem value="nao" id="patrocinio-nao" className="text-[#ff3c00]" />
+                        <Label htmlFor="patrocinio-nao" className="cursor-pointer text-white font-medium">NÃO</Label>
                        </div>
                      </RadioGroup>
                   </div>
                   
                   {formData.desejaPatrocinio === 'sim' && (
                     <div className="space-y-2">
-                      <Label htmlFor="categoriaPatrocinio" className="text-sm font-semibold text-[#0a2856]">
+                      <Label htmlFor="categoriaPatrocinio" className="text-sm font-semibold text-white">
                             CATEGORIA DE PATROCÍNIO
                           </Label>
                           <Select onValueChange={(value) => handleInputChange('categoriaPatrocinio', value)}>
-                        <SelectTrigger className="h-12 border-gray-300 focus:border-[#00d856] rounded-lg">
+                        <SelectTrigger className="h-12 bg-gray-800 border-gray-600 text-white focus-orange rounded-lg">
                               <SelectValue placeholder="Selecione a categoria" />
                             </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="bronze">
+                          <SelectItem value="master">
                             <div className="flex items-center justify-between w-full">
-                              <span>Bronze</span>
-                              <span className="ml-4 text-[#00d856] font-semibold">R$ 5.000</span>
-                        </div>
+                              <span>Master</span>
+                              <span className="ml-4 text-[#ff3c00] font-semibold">{formatarMoedaBrasileira(20000)}</span>
+                            </div>
                           </SelectItem>
-                          <SelectItem value="prata">
+                          <SelectItem value="diamante">
                             <div className="flex items-center justify-between w-full">
-                              <span>Prata</span>
-                              <span className="ml-4 text-[#00d856] font-semibold">R$ 10.000</span>
-                    </div>
+                              <span>Diamante</span>
+                              <span className="ml-4 text-[#ff3c00] font-semibold">{formatarMoedaBrasileira(12000)}</span>
+                            </div>
                           </SelectItem>
                           <SelectItem value="ouro">
                             <div className="flex items-center justify-between w-full">
                               <span>Ouro</span>
-                              <span className="ml-4 text-[#00d856] font-semibold">R$ 12.000</span>
+                              <span className="ml-4 text-[#ff3c00] font-semibold">{formatarMoedaBrasileira(10000)}</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="telao_led">
                             <div className="flex items-center justify-between w-full">
                               <span>Telão de LED</span>
-                              <span className="ml-4 text-[#00d856] font-semibold">R$ 500</span>
-                          </div>
+                              <span className="ml-4 text-[#ff3c00] font-semibold">{formatarMoedaBrasileira(600)}</span>
+                            </div>
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -1960,17 +2095,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 </Card>
 
               {/* CONDIÇÕES E FORMAS DE PAGAMENTO */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2.2s_forwards]">
-                <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2.2s_forwards]">
+                <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                     <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-[#0a2856] rounded-xl">
+                    <div className="p-3 bg-[#ff3c00] rounded-xl">
                       <CreditCard className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                        <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                           CONDIÇÕES DE PAGAMENTO
                         </CardTitle>
-                        <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                        <CardDescription className="text-gray-300 -mt-1 leading-tight">
                           Escolha a forma de pagamento que melhor se adequa à sua empresa
                         </CardDescription>
                       </div>
@@ -1980,7 +2115,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <CardContent className="p-6 space-y-8">
                   {/* Condições de Pagamento */}
                   <div className="space-y-4">
-                    <Label className="text-sm font-semibold text-[#0a2856]">
+                    <Label className="text-sm font-semibold text-white">
                       CONDIÇÃO DE PAGAMENTO *
                     </Label>
                     <RadioGroup
@@ -1989,30 +2124,30 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                       className="space-y-4"
                     >
                       {condicoesPagamento.map((condicao) => (
-                        <div key={condicao.value} className="relative">
+                        <div key={condicao.id} className="relative">
                           <input
                             type="radio"
-                            id={condicao.value}
-                            value={condicao.value}
+                            id={condicao.id}
+                            value={condicao.id}
                             name="condicaoPagamento"
                             className="sr-only peer"
                             onChange={(e) => handleInputChange('condicaoPagamento', e.target.value)}
                           />
                           <label
-                            htmlFor={condicao.value}
-                            className={`block p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 peer-checked:border-[#00d856] peer-checked:bg-[#00d856]/5 transition-all duration-300 ${condicao.highlight ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200' : 'bg-gray-50'}`}
+                            htmlFor={condicao.id}
+                            className={`block p-4 border-2 border-gray-600 rounded-xl cursor-pointer hover:bg-gray-700 peer-checked:border-[#ff3c00] peer-checked:bg-[#ff3c00]/10 transition-all duration-300 ${condicao.highlight ? 'bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 border-[#ff3c00]/30' : 'bg-gray-800'}`}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
-                                <h3 className="text-[#0a2856] font-bold text-lg mb-1">
+                                <h3 className="text-white font-bold text-lg mb-1">
                                   {condicao.label}
                                   {condicao.highlight && (
-                                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                    <span className="ml-2 px-2 py-1 bg-[#ff3c00]/20 text-[#ff3c00] text-xs font-medium rounded-full">
                                       DESCONTO
                                     </span>
                                   )}
                                 </h3>
-                                <p className="text-gray-600 text-sm">{condicao.description}</p>
+                                <p className="text-gray-300 text-sm">{condicao.description}</p>
                         </div>
                         </div>
                           </label>
@@ -2023,7 +2158,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
 
                   {/* Forma de Pagamento */}
                         <div className="space-y-4">
-                    <Label className="text-sm font-semibold text-[#0a2856]">
+                    <Label className="text-sm font-semibold text-white">
                       FORMA DE PAGAMENTO *
                     </Label>
                           <RadioGroup
@@ -2031,13 +2166,13 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                       onValueChange={(value) => handleInputChange('formaPagamento', value)}
                             className="flex space-x-6"
                           >
-                      <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:bg-gray-100 transition-colors">
-                        <RadioGroupItem value="pix" id="pagamento-pix" className="text-[#00d856]" />
-                        <Label htmlFor="pagamento-pix" className="cursor-pointer text-[#0a2856] font-medium text-lg">PIX</Label>
+                      <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg border-2 border-gray-600 hover:bg-gray-700 transition-colors">
+                        <RadioGroupItem value="pix" id="pagamento-pix" className="text-[#ff3c00]" />
+                        <Label htmlFor="pagamento-pix" className="cursor-pointer text-white font-medium text-lg">PIX</Label>
                             </div>
-                      <div className="flex items-center space-x-3 p-4 bg-gray-50 rounded-lg border-2 border-gray-200 hover:bg-gray-100 transition-colors">
-                        <RadioGroupItem value="boleto" id="pagamento-boleto" className="text-[#00d856]" />
-                        <Label htmlFor="pagamento-boleto" className="cursor-pointer text-[#0a2856] font-medium text-lg">BOLETO</Label>
+                      <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg border-2 border-gray-600 hover:bg-gray-700 transition-colors">
+                        <RadioGroupItem value="boleto" id="pagamento-boleto" className="text-[#ff3c00]" />
+                        <Label htmlFor="pagamento-boleto" className="cursor-pointer text-white font-medium text-lg">BOLETO</Label>
                             </div>
                           </RadioGroup>
                         </div>
@@ -2045,17 +2180,17 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
               </Card>
 
               {/* INFORMAÇÕES ADICIONAIS */}
-              <Card className="overflow-hidden bg-white border border-gray-200 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2.4s_forwards]">
-                <CardHeader className="bg-gradient-to-r from-[#0a2856]/5 to-[#00d856]/5 pb-6">
+              <Card className="overflow-hidden bg-gray-900 border border-gray-700 shadow-lg opacity-0 translate-y-8 animate-[fadeInUp_1s_ease-out_2.4s_forwards]">
+                <CardHeader className="bg-gradient-to-r from-[#ff3c00]/10 to-[#3d3d3d]/10 pb-6">
                   <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-[#0a2856] rounded-xl">
+                    <div className="p-3 bg-[#ff3c00] rounded-xl">
                       <FileText className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-bold text-[#0a2856] mb-0 leading-tight">
+                      <CardTitle className="text-2xl font-bold text-[#ff3c00] mb-0 leading-tight">
                         INFORMAÇÕES ADICIONAIS
                       </CardTitle>
-                      <CardDescription className="text-gray-600 -mt-1 leading-tight">
+                      <CardDescription className="text-gray-300 -mt-1 leading-tight">
                         Conte-nos mais sobre sua empresa e objetivos no evento
                       </CardDescription>
                     </div>
@@ -2064,14 +2199,14 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 
                 <CardContent className="p-6">
                   <div className="space-y-2">
-                    <Label htmlFor="observacoes" className="text-sm font-semibold text-[#0a2856]">
+                    <Label htmlFor="observacoes" className="text-sm font-semibold text-white">
                       OBSERVAÇÕES E SOLICITAÇÕES ESPECIAIS
                         </Label>
                         <Textarea
                       id="observacoes"
                       value={formData.observacoes}
                       onChange={(e) => handleInputChange('observacoes', e.target.value)}
-                      className="border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]/20 rounded-lg min-h-[120px]"
+                      className="bg-gray-800 border-gray-600 text-white focus-orange rounded-lg min-h-[120px] placeholder:text-gray-400"
                       placeholder="Descreva seus produtos/serviços, objetivos no evento, necessidades especiais do stand, etc..."
                       rows={5}
                         />
@@ -2087,7 +2222,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                className="bg-gradient-to-r from-[#00d856] to-[#b1f727] hover:from-[#00c851] hover:to-[#a0e620] text-white px-12 py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-w-[250px]"
+                className="bg-gradient-to-r from-[#ff3c00] to-[#3d3d3d] hover:from-[#e63600] hover:to-[#2d2d2d] text-white px-12 py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 min-w-[250px]"
                 >
                   {isSubmitting ? (
                       <div className="flex items-center">
@@ -2109,8 +2244,6 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         </div>
       </div>
       
-      {/* Timer flutuante global da página */}
-      <TimerFlutuante tempoRestante={tempoRestante} ativo={cronometroAtivo} />
     </div>
   );
 };

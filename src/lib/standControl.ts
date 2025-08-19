@@ -26,11 +26,11 @@ export function generateUserSession(): string {
 
 // Salvar sessão no localStorage
 export function getUserSession(): string {
-  let session = localStorage.getItem('fespin_stand_session');
+  let session = localStorage.getItem('construind_stand_session');
   
   if (!session) {
     session = generateUserSession();
-    localStorage.setItem('fespin_stand_session', session);
+    localStorage.setItem('construind_stand_session', session);
   }
   
   return session;
@@ -245,10 +245,12 @@ export function getStandsStats(stands: StandStatus[]) {
     temp_reservado: stands.filter(s => s.status === 'temp_reservado').length,
     pre_reservado: stands.filter(s => s.status === 'pre_reservado').length,
     ocupado: stands.filter(s => s.status === 'ocupado').length,
-    academias: stands.filter(s => s.categoria === 'Academias').length,
-    bemEstar: stands.filter(s => s.categoria === 'Bem-Estar').length,
-    artigos: stands.filter(s => s.categoria === 'Artigos Esportivos').length,
-    saude: stands.filter(s => s.categoria === 'Saúde e Nutrição').length,
-    areaLivre: stands.filter(s => s.categoria === 'Área Livre').length,
+    stands2x2: stands.filter(s => s.categoria === '2x2').length,
+    stands3x3Basico: stands.filter(s => s.categoria === '3x3 Básico').length,
+    stands3x3Acabamentos: stands.filter(s => s.categoria === '3x3 Acabamentos').length,
+    stands5x5: stands.filter(s => s.categoria === '5x5').length,
+    stands8x8: stands.filter(s => s.categoria === '8x8').length,
+    stands10x10: stands.filter(s => s.categoria === '10x10').length,
+    stands9x10: stands.filter(s => s.categoria === '9x10').length,
   };
-} 
+}

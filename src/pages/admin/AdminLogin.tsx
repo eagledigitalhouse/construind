@@ -76,22 +76,29 @@ const AdminLogin: React.FC = () => {
 
   if (showForgotPassword) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a2856] via-[#0a2856]/90 to-[#00d856]/20 flex items-center justify-center p-4">
-        <div className="absolute inset-0 bg-[url('/FESPIN -mapa svg.svg')] bg-center bg-no-repeat bg-contain opacity-5"></div>
+      <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,60,0,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,140,0,0.1),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,60,0,0.05),transparent_50%)]" />
+        </div>
         
-        <Card className="w-full max-w-md relative z-10 shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+        <Card className="w-full max-w-md relative z-10 shadow-2xl border border-gray-800/50 bg-[#1a1a1a]/95 backdrop-blur-xl">
           <CardHeader className="text-center pb-6">
-            <div className="mb-4">
+            <div className="mb-6">
               <img 
-                src="/LOGO HORIZONTAL AZUL DEGRADE.svg" 
-                alt="FESPIN Logo" 
-                className="h-12 mx-auto object-contain"
+                src="/CONSTRUIND.svg" 
+                alt="CONSTRUIND Logo" 
+                className="h-16 mx-auto object-contain opacity-90"
               />
             </div>
-            <CardTitle className="text-2xl font-bold text-[#0a2856]">
-              Recuperar Senha
+            <CardTitle className="text-2xl font-bold mb-2">
+              <span className="bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] bg-clip-text text-transparent">
+                Recuperar Senha
+              </span>
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-400">
               Digite seu email para receber as instruções de recuperação
             </CardDescription>
           </CardHeader>
@@ -99,24 +106,24 @@ const AdminLogin: React.FC = () => {
           <CardContent>
             <form onSubmit={handleForgotPassword} className="space-y-4">
               {error && (
-                <Alert variant="destructive">
+                <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-400">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
               
               <div className="space-y-2">
-                <Label htmlFor="reset-email" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="reset-email" className="text-sm font-medium text-gray-300">
                   Email
                 </Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
                   <Input
                     id="reset-email"
                     type="email"
                     placeholder="seu@email.com"
                     value={resetEmail}
                     onChange={(e) => setResetEmail(e.target.value)}
-                    className="pl-10 h-11 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]"
+                    className="pl-10 h-11 bg-[#2d2d2d]/50 border-gray-700 text-white placeholder-gray-500 focus:border-[#ff3c00] focus:ring-[#ff3c00]/20"
                     required
                   />
                 </div>
@@ -125,7 +132,7 @@ const AdminLogin: React.FC = () => {
               <div className="space-y-3">
                 <Button 
                   type="submit" 
-                  className="w-full h-11 bg-[#00d856] hover:bg-[#00c04d] text-white font-medium transition-colors"
+                  className="w-full h-11 bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] hover:from-[#e63600] hover:to-[#e67e00] text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
                   disabled={isResetting}
                 >
                   {isResetting ? (
@@ -141,7 +148,7 @@ const AdminLogin: React.FC = () => {
                 <Button 
                   type="button" 
                   variant="ghost" 
-                  className="w-full h-11 text-gray-600 hover:text-[#0a2856]"
+                  className="w-full h-11 text-gray-400 hover:text-white hover:bg-gray-800/50 transition-colors"
                   onClick={() => {
                     setShowForgotPassword(false);
                     setError('');
@@ -160,8 +167,13 @@ const AdminLogin: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a2856] via-[#0a2856]/90 to-[#00d856]/20 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[url('/FESPIN -mapa svg.svg')] bg-center bg-no-repeat bg-contain opacity-5"></div>
+    <div className="min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,60,0,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(255,140,0,0.1),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,60,0,0.05),transparent_50%)]" />
+      </div>
       
       {/* Link para voltar ao site */}
       <Link 
@@ -172,60 +184,62 @@ const AdminLogin: React.FC = () => {
         Voltar ao Site
       </Link>
       
-      <Card className="w-full max-w-md relative z-10 shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+      <Card className="w-full max-w-md relative z-10 shadow-2xl border border-gray-800/50 bg-[#1a1a1a]/95 backdrop-blur-xl">
         <CardHeader className="text-center pb-6">
-          <div className="mb-4">
+          <div className="mb-6">
             <img 
-              src="/LOGO HORIZONTAL AZUL DEGRADE.svg" 
-              alt="FESPIN Logo" 
-              className="h-12 mx-auto object-contain"
+              src="/CONSTRUIND.svg" 
+              alt="CONSTRUIND Logo" 
+              className="h-16 mx-auto object-contain opacity-90"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-[#0a2856]">
-            Área Administrativa
+          <CardTitle className="text-2xl font-bold mb-2">
+            <span className="bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] bg-clip-text text-transparent">
+              CONSTRUIND 2025
+            </span>
           </CardTitle>
-          <CardDescription className="text-gray-600">
-            Faça login para acessar o painel administrativo
+          <CardDescription className="text-gray-400">
+            Área Administrativa - Faça login para acessar o painel
           </CardDescription>
         </CardHeader>
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="bg-red-900/20 border-red-800 text-red-400">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="email" className="text-sm font-medium text-gray-300">
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-11 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]"
+                  className="pl-10 h-11 bg-[#2d2d2d]/50 border-gray-700 text-white placeholder-gray-500 focus:border-[#ff3c00] focus:ring-[#ff3c00]/20"
                   required
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-300">
                 Senha
               </Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
                 <Input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="••••••••"
-                  className="pl-10 pr-10 h-11 border-gray-300 focus:border-[#00d856] focus:ring-[#00d856]"
+                  className="pl-10 pr-10 h-11 bg-[#2d2d2d]/50 border-gray-700 text-white placeholder-gray-500 focus:border-[#ff3c00] focus:ring-[#ff3c00]/20"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -234,7 +248,7 @@ const AdminLogin: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -245,7 +259,7 @@ const AdminLogin: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowForgotPassword(true)}
-                className="text-sm text-[#00d856] hover:text-[#00c04d] transition-colors"
+                className="text-sm text-[#ff3c00] hover:text-[#ff8c00] transition-colors"
               >
                 Esqueceu a senha?
               </button>
@@ -253,7 +267,7 @@ const AdminLogin: React.FC = () => {
             
             <Button 
               type="submit" 
-              className="w-full h-11 bg-[#00d856] hover:bg-[#00c04d] text-white font-medium transition-colors"
+              className="w-full h-11 bg-gradient-to-r from-[#ff3c00] to-[#ff8c00] hover:from-[#e63600] hover:to-[#e67e00] text-white font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
               disabled={isLoading}
             >
               {isLoading ? (

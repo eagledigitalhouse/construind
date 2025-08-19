@@ -19,12 +19,12 @@ const CustomNavbarLogo = ({ isScrolled }: { isScrolled: boolean }) => {
     <Link
       to="/"
       className="relative z-20 flex items-center px-2"
-      aria-label="FESPIN 2025"
+      aria-label="CONSTRUIND 2025"
     >
       <img 
-        src={isScrolled ? "/LOGO FESPIN - AZUL _ DEGRADE.png" : "/LOGO BRANCO COM ICONE VERDE.png"}
-        alt="FESPIN Logo" 
-        className="w-20 md:w-24 h-auto"
+        src="/CONSTRUIND.svg"
+        alt="CONSTRUIND Logo" 
+        className="w-48 h-auto"
       />
     </Link>
   );
@@ -105,7 +105,7 @@ const Navbar = () => {
       <NavBody 
         className={isScrolled 
           ? "bg-transparent backdrop-blur-sm hover:bg-white/10 dark:hover:bg-neutral-950/10 px-6 md:px-12" 
-          : "bg-fespin-dark/90 backdrop-blur-sm shadow-lg w-full px-6 md:px-12"
+          : "bg-construind-dark/90 backdrop-blur-sm shadow-lg w-full px-6 md:px-12"
         }
       >
         <div className="flex items-center justify-center w-full px-1">
@@ -155,28 +155,15 @@ const Navbar = () => {
           >
             <Settings className="w-5 h-5" />
           </Link>
-          <Link to="/expositor">
+          <Link to="/pre-inscricao-expositores">
             <ShimmerButton
               background={isScrolled ? "#0a2856" : "#00d856"}
               shimmerColor={isScrolled ? "#b1f727" : "#b1f727"}
               borderRadius="0.375rem"
-              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-white" : "text-fespin-dark"}`}
+              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-white" : "text-construind-dark"}`}
             >
               <span className="flex items-center">
-                Quero ser expositor
-                <ChevronRight className="ml-1 w-4 h-4" />
-              </span>
-            </ShimmerButton>
-          </Link>
-          <Link to="/patrocinio">
-            <ShimmerButton
-              background={isScrolled ? "#00d856" : "#ffffff"}
-              shimmerColor={isScrolled ? "#ffffff" : "#00d856"}
-              borderRadius="0.375rem"
-              className={`px-4 py-2 text-sm font-medium ${isScrolled ? "text-fespin-dark" : "text-fespin-dark"}`}
-            >
-              <span className="flex items-center">
-                Quero patrocinar
+                Pré-inscrição
                 <ChevronRight className="ml-1 w-4 h-4" />
               </span>
             </ShimmerButton>
@@ -190,7 +177,7 @@ const Navbar = () => {
       <MobileNav 
         className={isScrolled 
           ? "bg-transparent backdrop-blur-sm px-6" 
-          : "bg-fespin-dark/90 backdrop-blur-sm shadow-lg w-full px-2"
+          : "bg-construind-dark/90 backdrop-blur-sm shadow-lg w-full px-2"
         }
       >
         <MobileNavHeader>
@@ -226,13 +213,7 @@ const Navbar = () => {
           >
             <span className="block">Programação</span>
           </a>
-          <Link 
-            to="/expositores" 
-            className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <span className="block">Expositores</span>
-          </Link>
+
           <Link 
             to="/admin" 
             className="relative text-neutral-600 dark:text-neutral-300 w-full text-xl font-medium py-4 px-6 text-center rounded-lg hover:bg-gray-100 flex items-center justify-center gap-2"
@@ -243,7 +224,7 @@ const Navbar = () => {
           </Link>
           <div className="flex w-full flex-col gap-4 mt-6">
             <Link 
-              to="/expositor" 
+              to="/pre-inscricao-expositores" 
               className="w-full"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -254,24 +235,7 @@ const Navbar = () => {
                 className="w-full py-3 text-center text-sm"
               >
                 <span className="flex items-center justify-center">
-                  Quero ser expositor
-                  <ChevronRight className="ml-1 w-4 h-4" />
-                </span>
-              </ShimmerButton>
-            </Link>
-            <Link 
-              to="/patrocinio" 
-              className="w-full"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <ShimmerButton
-                background="#00d856"
-                shimmerColor="#ffffff"
-                borderRadius="0.375rem"
-                className="w-full py-3 text-center text-sm text-fespin-dark"
-              >
-                <span className="flex items-center justify-center">
-                  Quero patrocinar
+                  Pré-inscrição
                   <ChevronRight className="ml-1 w-4 h-4" />
                 </span>
               </ShimmerButton>

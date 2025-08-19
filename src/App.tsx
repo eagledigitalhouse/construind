@@ -7,40 +7,15 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Páginas públicas
-import Index from "./pages/Index";
-import PatrocinioPage from "./pages/PatrocinioPage";
-import ExpositorPage from "./pages/ExpositorPage";
-import ExpositoresPage from "./pages/ExpositoresPage";
 import FormularioPreInscricaoExpositores from "./pages/FormularioPreInscricaoExpositores";
 import ConfirmacaoPreInscricao from "./pages/ConfirmacaoPreInscricao";
 import NotFound from "./pages/NotFound";
 
 // Páginas administrativas
 import AdminLogin from "./pages/admin/AdminLogin";
+
 import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminPatrocinadores from "./pages/admin/AdminPatrocinadores";
-import AdminExpositores from "./pages/admin/AdminExpositores";
-import AdminPreInscricaoExpositores from "./pages/admin/AdminPreInscricaoExpositores";
-import AdminStands from "./pages/admin/AdminStands";
-import AdminNewsletter from "./pages/admin/AdminNewsletter";
-import AdminContratos from "./pages/admin/AdminContratos";
 
-
-
-
-import AdminAgenda from "./pages/admin/AdminAgenda";
-import Messages from "./pages/Messages";
-import TesteToast from "./pages/TesteToast";
-
-// Páginas financeiras
-import FinancialCenter from "./pages/financial/index";
-import InvoicesPage from "./pages/financial/invoices/index";
-import ExpensesPage from "./pages/financial/expenses/index";
-import ReportsPage from "./pages/reports/index";
-
-
-
-// Importar a página de teste
 
 
 const queryClient = new QueryClient();
@@ -88,13 +63,9 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Rotas Públicas */}
-            <Route path="/" element={<Index />} />
-            <Route path="/patrocinio" element={<PatrocinioPage />} />
-            <Route path="/expositor" element={<ExpositorPage />} />
-            <Route path="/expositores" element={<ExpositoresPage />} />
+            <Route path="/" element={<FormularioPreInscricaoExpositores />} />
             <Route path="/pre-inscricao-expositores" element={<FormularioPreInscricaoExpositores />} />
             <Route path="/confirmacao-pre-inscricao" element={<ConfirmacaoPreInscricao />} />
-            <Route path="/teste-toast" element={<TesteToast />} />
             
             {/* Rota de Login Administrativo */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -105,72 +76,8 @@ const App = () => (
                 <AdminDashboard />
               </ProtectedRoute>
             } />
-            <Route path="/admin/patrocinadores" element={
-              <ProtectedRoute>
-                <AdminPatrocinadores />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/expositores" element={
-              <ProtectedRoute>
-                <AdminExpositores />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/pre-inscricao-expositores" element={
-              <ProtectedRoute>
-                <AdminPreInscricaoExpositores />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/stands" element={
-              <ProtectedRoute>
-                <AdminStands />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/newsletter" element={
-              <ProtectedRoute>
-                <AdminNewsletter />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/contratos" element={
-              <ProtectedRoute>
-                <AdminContratos />
-              </ProtectedRoute>
-            } />
 
 
-
-
-            <Route path="/admin/agenda" element={
-              <ProtectedRoute>
-                <AdminAgenda />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/messages" element={
-              <ProtectedRoute>
-                <Messages />
-              </ProtectedRoute>
-            } />
-            
-            {/* Rotas Financeiras */}
-            <Route path="/financial" element={
-              <ProtectedRoute>
-                <FinancialCenter />
-              </ProtectedRoute>
-            } />
-            <Route path="/financial/invoices" element={
-              <ProtectedRoute>
-                <InvoicesPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/financial/expenses" element={
-              <ProtectedRoute>
-                <ExpensesPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/reports" element={
-              <ProtectedRoute>
-                <ReportsPage />
-              </ProtectedRoute>
-            } />
 
 
             {/* Rota 404 */}

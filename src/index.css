@@ -82,11 +82,11 @@
   }
   
   :root {
-    /* FESPIN Colors */
-    --fespin-primary-dark: #0a2856;
-    --fespin-primary-light: #00d856;
-    --fespin-accent: #b1f727;
-    --fespin-neutral: #FFFFFF;
+    /* CONSTRUIND Colors */
+    --construind-primary-dark: #0a2856;
+    --construind-primary-light: #00d856;
+    --construind-accent: #b1f727;
+    --construind-neutral: #FFFFFF;
     
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -280,7 +280,7 @@
     display: none;
   }
 
-  .fespin-chip {
+  .construind-chip {
     @apply inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-[#00d856] text-white border border-[#00d856]/30;
   }
   
@@ -501,7 +501,7 @@
   }
   
   .nav-link {
-    @apply relative font-medium text-gray-800 hover:text-fespin-light py-2 transition-colors duration-300 text-sm;
+    @apply relative font-medium text-gray-800 hover:text-construind-light py-2 transition-colors duration-300 text-sm;
     position: relative;
   }
   
@@ -706,24 +706,7 @@ span.text-\[\#0a2856\], span.gradient-text {
 .resizable-navbar-links a {
   @apply text-white hover:text-accent transition-colors duration-200;
 }
-/* Classes para ExpositorPatrocinioSection */
-.bg-build {
-  background-image: url('/images/beliefs/bg.svg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: unset;
-}
 
-.pb-70 {
-  padding-bottom: 18rem;
-}
-
-.bg-beliefs {
-  background-image: url('/images/beliefs/swirls.svg');
-  background-repeat: no-repeat;
-  background-position: left bottom;
-  background-size: contain;
-}
 
 /* Animação para o border beam */
 @keyframes border-beam {
@@ -1653,87 +1636,7 @@ span.text-\[\#0a2856\], span.gradient-text {
   margin-top: 15px;
 }
 
-/* ===== CONTRATO ELEGANTE ===== */
-.elegant-header {
-  text-align: center;
-  margin: 40px 0;
-}
-
-.header-line {
-  height: 2px;
-  background: linear-gradient(to right, transparent, #2563eb, transparent);
-  margin: 20px 0;
-}
-
-
-
-/* Partes do Contrato */
-.parties-section {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  margin: 40px 0;
-}
-
-.party-box {
-  flex: 1;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 25px;
-  background: #f9fafb;
-}
-
-
-
-.party-box {
-  border-color: #10b981;
-}
-
-.party-box h3 {
-  font-size: 16px;
-  font-weight: bold;
-  color: #1f2937;
-  margin: 0 0 15px 0;
-  text-align: center;
-}
-
-.party-info p {
-  margin: 8px 0;
-  font-size: 14px;
-}
-
-.party-connector {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.connector-line {
-  width: 2px;
-  height: 30px;
-  background: #d1d5db;
-}
-
-.connector-icon {
-  font-size: 24px;
-  color: #6b7280;
-}
-
-/* Cláusulas */
-.clauses-section {
-  margin: 40px 0;
-}
-
-.clause-item {
-  display: flex;
-  gap: 20px;
-  margin-bottom: 30px;
-  padding: 20px;
-  border-left: 4px solid #e5e7eb;
-  background: #fafafa;
-  border-radius: 0 8px 8px 0;
-}
+/* Estilos de contrato removidos */
 
 .clause-number {
   background: #2563eb;

@@ -22,7 +22,7 @@ const PhoneContact: React.FC<PhoneContactProps> = ({ phone, className = "", chil
   };
 
   const handleWhatsApp = () => {
-    window.open(`https://wa.me/${formattedForWhatsApp}?text=Olá! Entrei em contato através do site da FESPIN.`, '_blank');
+    window.open(`https://wa.me/${formattedForWhatsApp}?text=Olá! Entrei em contato através do site da CONSTRUIND.`, '_blank');
     setIsModalOpen(false);
   };
 
@@ -100,4 +100,4 @@ const PhoneContact: React.FC<PhoneContactProps> = ({ phone, className = "", chil
   );
 };
 
-export default PhoneContact; 
+export default PhoneContact;

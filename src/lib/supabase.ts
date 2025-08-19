@@ -106,70 +106,114 @@ export const getCurrentUserProfile = async (userId: string): Promise<UserProfile
   }
 }
 
-// Interfaces para contratos
-export interface ModeloContrato {
-  id: string
-  nome: string
-  descricao: string | null
-  conteudo: string
-  status: 'ativo' | 'inativo'
-  tipo: 'padrao' | 'premium'
-  variaveis_disponiveis: string[]
-  created_at: string
-  updated_at: string
-}
 
-export interface ContratoGerado {
-  id: string
-  pre_inscricao_id: string
-  modelo_contrato_id: string
-  numero_contrato: string
-  conteudo_preenchido: string
-  status: 'rascunho' | 'enviado_assinatura' | 'assinado_produtor' | 'totalmente_assinado' | 'cancelado'
-
-  url_assinatura_produtor: string | null
-  url_assinatura_expositor: string | null
-  data_assinatura_produtor: string | null
-  data_assinatura_expositor: string | null
-  url_arquivo_final: string | null
-  dados_preenchimento: any
-  created_at: string
-  updated_at: string
-}
-
-export interface ContratoHistorico {
-  id: string
-  contrato_id: string
-  acao: string
-  status_anterior: string | null
-  status_novo: string | null
-  observacoes: string | null
-  usuario_id: string | null
-  created_at: string
-}
 
 export interface PreInscricaoExpositor {
   id: string
-  nome_empresa: string
+  
+  // Tipo de Pessoa
+  tipo_pessoa: 'fisica' | 'juridica'
+  
+  // Pessoa Física
+  nome_pf?: string | null
+  sobrenome_pf?: string | null
+  cpf?: string | null
+  email_pf?: string | null
+  telefone_pf?: string | null
+  cep_pf?: string | null
+  logradouro_pf?: string | null
+  numero_pf?: string | null
+  complemento_pf?: string | null
+  bairro_pf?: string | null
+  cidade_pf?: string | null
+  estado_pf?: string | null
+  
+  // Pessoa Jurídica
+  razao_social?: string | null
+  nome_social?: string | null
+  cnpj?: string | null
+  cep?: string | null
+  logradouro?: string | null
+  numero?: string | null
+  complemento?: string | null
+  bairro?: string | null
+  cidade?: string | null
+  estado?: string | null
+  telefone_empresa?: string | null
+  email_empresa?: string | null
+  
+  // Responsável Legal
   nome_responsavel: string
-  email: string
-  telefone: string
-  cnpj: string | null
-  endereco: string | null
-  cidade: string | null
-  estado: string | null
-  cep: string | null
-  categoria_id: string
-  descricao_produtos: string
-  area_desejada: string | null
-  necessidades_especiais: string | null
+  sobrenome_responsavel: string
+  email_responsavel?: string | null
+  contato_responsavel: string
+  is_whatsapp: boolean
+  
+  // Responsável pelo Stand
+  nome_responsavel_stand: string
+  sobrenome_responsavel_stand: string
+  email_responsavel_stand: string
+  
+  // Serviços
+  numero_stand?: string | null
+  deseja_patrocinio: boolean
+  categoria_patrocinio?: string | null
+  condicao_pagamento: string
+  forma_pagamento: string
+  
+  // Informações Adicionais
+  observacoes?: string | null
+  
+  // Dados de controle
+  ip_address?: string | null
   status: 'pendente' | 'aprovado' | 'rejeitado' | 'contrato_enviado' | 'contrato_assinado'
-  observacoes_admin: string | null
+  is_temporary: boolean
+  
+  created_at: string
+  updated_at: string
+}
+
+// Interfaces para stands e categorias
+export interface StandConstruind {
+  id: string
+  numero_stand: string
+  categoria?: string | null
+  preco?: number | null
+  status: 'disponivel' | 'reservado' | 'ocupado' | 'manutencao'
+  reservado_por?: string | null
+  data_reserva?: string | null
+  observacoes?: string | null
+  posicao_x?: number | null
+  posicao_y?: number | null
+  largura?: number | null
+  altura?: number | null
+  cor: string
+  created_at: string
+  updated_at: string
+}
+
+export interface CategoriaStand {
+  id: string
+  nome: string
+  cor: string
+  preco_base?: number | null
+  descricao?: string | null
+  ordem: number
+  ativo: boolean
   created_at: string
   updated_at: string
 }
 
 // Database type definitions
+// Interfaces para configuração do formulário
+export interface FormConfig {
+  id: string
+  name: string
+  config: Json
+  created_at: string
+  updated_at: string
+}
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export interface Database {
@@ -184,69 +228,7 @@ export interface Database {
         Update: Partial<Omit<Categoria, 'id' | 'created_at'>>
         Relationships: []
       }
-      contratos_gerados: {
-        Row: ContratoGerado
-        Insert: Omit<ContratoGerado, 'id' | 'created_at' | 'updated_at'> & {
-          id?: string
-          status?: ContratoGerado['status']
 
-          url_assinatura_produtor?: string | null
-          url_assinatura_expositor?: string | null
-          data_assinatura_produtor?: string | null
-          data_assinatura_expositor?: string | null
-          url_arquivo_final?: string | null
-          dados_preenchimento?: Json
-          created_at?: string
-          updated_at?: string
-        }
-        Update: Partial<Omit<ContratoGerado, 'id'>>
-        Relationships: [
-          {
-            foreignKeyName: "contratos_gerados_modelo_contrato_id_fkey"
-            columns: ["modelo_contrato_id"]
-            isOneToOne: false
-            referencedRelation: "modelos_contratos"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contratos_gerados_pre_inscricao_id_fkey"
-            columns: ["pre_inscricao_id"]
-            isOneToOne: false
-            referencedRelation: "pre_inscricao_expositores"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      contratos_historico: {
-        Row: ContratoHistorico
-        Insert: Omit<ContratoHistorico, 'id' | 'created_at'> & {
-          id?: string
-          created_at?: string
-        }
-        Update: Partial<Omit<ContratoHistorico, 'id'>>
-        Relationships: [
-          {
-            foreignKeyName: "contratos_historico_contrato_id_fkey"
-            columns: ["contrato_id"]
-            isOneToOne: false
-            referencedRelation: "contratos_gerados"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      modelos_contratos: {
-        Row: ModeloContrato
-        Insert: Omit<ModeloContrato, 'id' | 'created_at' | 'updated_at'> & {
-          id?: string
-          status?: ModeloContrato['status']
-          tipo?: ModeloContrato['tipo']
-          variaveis_disponiveis?: string[]
-          created_at?: string
-          updated_at?: string
-        }
-        Update: Partial<Omit<ModeloContrato, 'id'>>
-        Relationships: []
-      }
       pre_inscricao_expositores: {
         Row: PreInscricaoExpositor
         Insert: Omit<PreInscricaoExpositor, 'id' | 'created_at' | 'updated_at'> & {
@@ -305,6 +287,36 @@ export interface Database {
         Update: Partial<Omit<UserProfile, 'id'>>
         Relationships: []
       }
+      form_configs: {
+        Row: FormConfig
+        Insert: Omit<FormConfig, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<FormConfig, 'id'>>
+        Relationships: []
+      }
+      stands_construind: {
+        Row: StandConstruind
+        Insert: Omit<StandConstruind, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<StandConstruind, 'id'>>
+        Relationships: []
+      }
+      categorias_stands: {
+        Row: CategoriaStand
+        Insert: Omit<CategoriaStand, 'id' | 'created_at' | 'updated_at'> & {
+          id?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: Partial<Omit<CategoriaStand, 'id'>>
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -318,5 +330,106 @@ export interface Database {
     CompositeTypes: {
       [_ in never]: never
     }
+  }
+}
+
+// Funções para gerenciar configurações do formulário
+export const salvarConfiguracaoFormulario = async (nome: string, configuracao: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('form_configs')
+      .insert({
+        name: nome,
+        config: configuracao
+      })
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Erro ao salvar configuração:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('Erro ao salvar configuração do formulário:', error)
+    throw error
+  }
+}
+
+export const carregarConfiguracaoFormulario = async (id?: string) => {
+  try {
+    let query = supabase.from('form_configs').select('*')
+    
+    if (id) {
+      query = query.eq('id', id)
+      const { data, error } = await query.single()
+      
+      if (error) {
+        console.error('Erro ao carregar configuração:', error)
+        throw error
+      }
+      
+      return data
+    } else {
+      // Retorna a configuração mais recente se não especificar ID
+      const { data, error } = await query
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      if (error) {
+        console.error('Erro ao carregar configuração:', error)
+        throw error
+      }
+      
+      return data
+    }
+  } catch (error) {
+    console.error('Erro ao carregar configuração do formulário:', error)
+    throw error
+  }
+}
+
+export const listarConfiguracoesFormulario = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('form_configs')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error('Erro ao listar configurações:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('Erro ao listar configurações do formulário:', error)
+    throw error
+  }
+}
+
+export const atualizarConfiguracaoFormulario = async (id: string, configuracao: any) => {
+  try {
+    const { data, error } = await supabase
+      .from('form_configs')
+      .update({
+        config: configuracao,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Erro ao atualizar configuração:', error)
+      throw error
+    }
+
+    return data
+  } catch (error) {
+    console.error('Erro ao atualizar configuração do formulário:', error)
+    throw error
   }
 }

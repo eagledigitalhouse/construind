@@ -1,4 +1,4 @@
-# 📊 RELATÓRIO DE CHECKUP DO BANCO DE DADOS - FESPIN
+# 📊 RELATÓRIO DE CHECKUP DO BANCO DE DADOS - CONSTRUIND
 
 **Data:** $(Get-Date -Format "dd/MM/yyyy HH:mm")
 **Executado por:** Script automatizado de verificação
@@ -9,7 +9,7 @@
 
 ### ✅ **SITUAÇÃO ATUAL CONFIRMADA:**
 - ❌ **Tabela `entities` (do template EventAll): NÃO EXISTE**
-- ✅ **Tabela `entidades` (customizada para FESPIN): EXISTE e ATIVA**
+- ✅ **Tabela `entidades` (customizada para CONSTRUIND): EXISTE e ATIVA**
 - ✅ **Tabela `pre_inscricao_expositores`: EXISTE com 2 registros**
 - ✅ **Sistema de stands: ATIVO com 81 stands configurados**
 
@@ -26,7 +26,7 @@
 - Necessário usar a tabela `entidades` customizada
 - Arquivos como `template eventall/client/src/pages/entities.tsx` precisam ser adaptados
 
-### 2. ✅ TABELA `entidades` (Customizada FESPIN)
+### 2. ✅ TABELA `entidades` (Customizada CONSTRUIND)
 **Status:** ✅ ATIVA
 **Registros:** 2 entidades cadastradas
 
@@ -118,7 +118,7 @@
 |--------|--------|-----------|-------------|
 | `contratos_gerados` | ✅ | 0 | Sistema de contratos pronto |
 | `modelos_contratos` | ✅ | 0 | Templates de contrato prontos |
-| `stands_fespin` | ✅ | 81 | Stands configurados |
+| `stands_construind` | ✅ | 81 | Stands configurados |
 | `categorias` | ✅ | 4 | Categorias do sistema |
 | `newsletters` | ✅ | 7 | Newsletter ativa |
 | `entidades_historico` | ✅ | 0 | Histórico de interações |
@@ -195,7 +195,7 @@
 
 #### ✅ **Metadados:**
 - `origem` ← "pre_inscricao_expositor"
-- `tags` ← `["expositor", "fespin-2025", "stand-{numero_stand}"]`
+- `tags` ← `["expositor", "construind-2025", "stand-{numero_stand}"]`
 - `observacoes` ← `pre_inscricao.observacoes`
 - `status` ← "ativo" (quando aprovado)
 
@@ -236,7 +236,7 @@
 
 ## 🎯 CONCLUSÃO
 
-**✅ O sistema FESPIN está usando uma estrutura de banco de dados customizada e funcional.**
+**✅ O sistema CONSTRUIND está usando uma estrutura de banco de dados customizada e funcional.**
 
 - A tabela `entidades` está bem estruturada e atende às necessidades específicas do projeto
 - O sistema de pré-inscrições está funcionando corretamente

@@ -153,7 +153,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         {/* Seletor de código do país */}
         <div className="w-32">
           <Select value={countryCode} onValueChange={handleCountryCodeChange} disabled={disabled}>
-            <SelectTrigger className={cn("text-sm", error && "border-red-500")}>
+            <SelectTrigger className={cn("text-sm bg-gray-950 border-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none focus:border-orange-500", error && "border-red-500")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -173,7 +173,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
         {isBrazil && (
           <div className="w-20">
             <Select value={areaCode} onValueChange={handleAreaCodeChange} disabled={disabled}>
-              <SelectTrigger className={cn("text-sm", error && "border-red-500")}>
+              <SelectTrigger className={cn("text-sm bg-gray-950 border-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none focus:border-orange-500", error && "border-red-500")}>
                 <SelectValue placeholder="DDD" />
               </SelectTrigger>
               <SelectContent className="max-h-60">
@@ -197,7 +197,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
             placeholder={isBrazil ? "99999-9999" : placeholder}
             disabled={disabled}
             required={required}
-            className={cn(error && "border-red-500")}
+            className={cn("bg-gray-950 border-gray-800 placeholder:text-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:outline-none focus:border-orange-500", error && "border-red-500")}
             maxLength={isBrazil ? 10 : 15}
           />
         </div>

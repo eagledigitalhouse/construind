@@ -121,7 +121,7 @@ export const NavItems = ({ items, className, onItemClick, isScrolled }: NavItems
       onMouseLeave={() => setHovered(null)}
       className={cn(
         "hidden flex-row items-center justify-center gap-1 text-base font-medium transition duration-200 lg:flex", // Removed absolute positioning
-        isScrolled ? "text-fespin-green hover:text-fespin-accent" : "text-white hover:text-gray-200",
+        isScrolled ? "text-construind-green hover:text-construind-accent" : "text-white hover:text-gray-200",
         className,
       )}
     >
@@ -131,7 +131,7 @@ export const NavItems = ({ items, className, onItemClick, isScrolled }: NavItems
           onClick={onItemClick}
           className={cn(
             "relative px-2 py-2 transition duration-200", // Further reduced padding
-            isScrolled ? "text-fespin-green hover:text-fespin-accent" : "text-white hover:text-gray-200"
+            isScrolled ? "text-construind-green hover:text-construind-accent" : "text-white hover:text-gray-200"
           )}
           key={`link-${idx}`}
           href={item.link}

@@ -51,7 +51,7 @@ export const useStandsAprovados = () => {
 
       // Buscar informações dos stands
       const { data: standsData, error: standsError } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .select('numero_stand, categoria');
 
       if (standsError) {

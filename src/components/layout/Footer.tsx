@@ -11,17 +11,17 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({
   variant = 'home',
-  contactEmail = "contato@fespin.com.br",
-  contactPhone = "(19) 97179-7745"
+  contactEmail = "construind25@gmail.com",
+  contactPhone = "19 97412-4162"
 }) => {
   const config = {
     home: {
-      contactEmail: "contato@fespin.com.br",
-      contactPhone: "(19) 97179-7745"
+      contactEmail: "construind25@gmail.com",
+      contactPhone: "19 97412-4162"
     },
     patrocinio: {
-      contactEmail: "patrocinio@fespin.com.br",
-      contactPhone: "(19) 97179-7745"
+      contactEmail: "construind25@gmail.com",
+      contactPhone: "19 97412-4162"
     }
   };
 
@@ -40,7 +40,7 @@ const Footer: React.FC<FooterProps> = ({
             <div className="mb-4">
               <img 
                 src="/LOGO BRANCO COM ICONE VERDE.png" 
-                alt="FESPIN Logo" 
+                alt="CONSTRUIND Logo" 
                 className="w-56 h-auto"
               />
             </div>
@@ -56,8 +56,8 @@ const Footer: React.FC<FooterProps> = ({
           <div className="hidden md:block">
             <h4 className="font-bold mb-5 text-white text-lg text-center md:text-left">Serviços</h4>
             <ul className="space-y-3 text-base flex flex-col items-center md:items-start">
-              <li><Link to="/expositores" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Expositores</Link></li>
-              <li><Link to="/patrocinio" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Patrocínio</Link></li>
+              <li><Link to="/pre-inscricao-expositores" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Pré-inscrição</Link></li>
+              <li><Link to="/admin" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Administração</Link></li>
               <li><a href="#newsletter" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Newsletter</a></li>
               <li><a href="#sobre" className="text-white/70 hover:text-white hover:translate-x-1 transition-all duration-200">Sobre</a></li>
             </ul>
@@ -79,10 +79,10 @@ const Footer: React.FC<FooterProps> = ({
             <h4 className="font-bold mb-5 text-white text-lg">Contato</h4>
             <div className="flex flex-row justify-center md:flex-col md:justify-start gap-8 md:gap-4 flex-wrap">
               <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
-                <a href="https://instagram.com/fespin_25" target="_blank" rel="noopener noreferrer" className="bg-[#00d856]/20 p-3 rounded-full hover:bg-[#00d856]/30 transition-colors">
+                <a href="https://instagram.com/construind_25" target="_blank" rel="noopener noreferrer" className="bg-[#00d856]/20 p-3 rounded-full hover:bg-[#00d856]/30 transition-colors">
                   <Instagram className="w-6 h-6 text-[#00d856]" />
                 </a>
-                <a href="https://instagram.com/fespin_25" target="_blank" rel="noopener noreferrer" className="hidden md:block text-white/90 text-sm md:text-base hover:text-white transition-colors">@fespin_25</a>
+                <a href="https://instagram.com/construind_25" target="_blank" rel="noopener noreferrer" className="hidden md:block text-white/90 text-sm md:text-base hover:text-white transition-colors">@construind_25</a>
               </div>
               <div className="flex flex-col md:flex-row items-center md:items-center gap-2 md:gap-3">
                 <PhoneContact
@@ -109,7 +109,7 @@ const Footer: React.FC<FooterProps> = ({
         </div>
         <div className="border-t border-white/10 mt-12 mb-8" />
         <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left text-white/60 text-sm gap-3">
-          <span>© 2025 FESPIN. Todos os direitos reservados.</span>
+          <span>© 2025 CONSTRUIND. Todos os direitos reservados.</span>
           <span className="flex items-center justify-center md:justify-start gap-2"><Activity className="w-4 h-4" /> Transformando vidas através do esporte</span>
         </div>
       </div>

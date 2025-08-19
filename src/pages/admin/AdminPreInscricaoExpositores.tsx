@@ -3,8 +3,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { showToast } from '@/lib/toast';
 import { supabase } from '@/lib/supabase';
+import { formatarMoedaBrasileira, converterPrecoParaNumero } from '@/lib/utils';
 import * as XLSX from 'xlsx';
 import PageHeader from '@/components/layout/PageHeader';
+import LayoutPaginaAdmin from '@/components/layout/LayoutPaginaAdmin';
+import CardEstatistica from '@/components/admin/CardEstatistica';
+import BotaoAcaoAdmin from '@/components/admin/BotaoAcaoAdmin';
 import {
   Users,
   User,
@@ -45,8 +49,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { verificarContratoExistente, criarContratoZapSign } from '@/lib/contratos';
-import ModalSelecaoModeloZapSign from '@/components/contratos/ModalSelecaoModeloZapSign';
+
 import type { PreInscricaoExpositor } from '@/types/supabase';
 
 const AdminPreInscricaoExpositores = () => {
@@ -63,22 +66,19 @@ const AdminPreInscricaoExpositores = () => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   // Estado para controle de modais e contratos
   // Removido showContratoModal que não é mais usado
-  const [contratoExistente, setContratoExistente] = useState<boolean>(false);
-  const [showEntidadeModal, setShowEntidadeModal] = useState(false);
-  const [showZapSignModal, setShowZapSignModal] = useState(false);
-  const [preInscricaoParaContrato, setPreInscricaoParaContrato] = useState<PreInscricaoExpositor | null>(null);
-  const [preInscricaoParaEntidade, setPreInscricaoParaEntidade] = useState<PreInscricaoExpositor | null>(null);
   // Estado para stands disponíveis
   const [standsDisponiveis, setStandsDisponiveis] = useState<any[]>([]);
+  // Estado para condições de pagamento
+  const [condicoesPagamento, setCondicoesPagamento] = useState<any[]>([]);
 
   // Carregar stands disponíveis
   const loadStandsDisponiveis = async () => {
     try {
       const { data, error } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .select('*')
-        .eq('disponivel', true)
-        .order('numero_stand');
+        .eq('status', 'disponivel')
+        .order('numero_stand', { ascending: true });
 
       if (error) {
         console.error('Erro ao carregar stands disponíveis:', error);
@@ -91,15 +91,34 @@ const AdminPreInscricaoExpositores = () => {
     }
   };
 
+  // Carregar condições de pagamento
+  const loadCondicoesPagamento = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('payment_conditions')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) {
+        console.error('Erro ao carregar condições de pagamento:', error);
+        return;
+      }
+
+      setCondicoesPagamento(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar condições de pagamento:', error);
+    }
+  };
+
   // Carregar pré-inscrições
   const loadPreInscricoes = async () => {
     try {
       setLoading(true);
-          const { data, error } = await supabase
-      .from('pre_inscricao_expositores')
-      .select('*')
-      .eq('is_temporary', false) // FILTRAR REGISTROS TEMPORÁRIOS (não aparecem no painel)
-      .order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('pre_inscricao_expositores')
+        .select('*')
+        .eq('is_temporary', false) // FILTRAR REGISTROS TEMPORÁRIOS (não aparecem no painel)
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Erro ao carregar pré-inscrições:', error);
@@ -108,8 +127,9 @@ const AdminPreInscricaoExpositores = () => {
       }
 
       setPreInscricoes(data || []);
-      // Carregar stands disponíveis também
+      // Carregar stands disponíveis e condições de pagamento
       await loadStandsDisponiveis();
+      await loadCondicoesPagamento();
     } catch (error) {
       console.error('Erro ao carregar pré-inscrições:', error);
       showToast.error('Erro ao carregar pré-inscrições');
@@ -146,136 +166,6 @@ const AdminPreInscricaoExpositores = () => {
     }
   };
 
-  // Função para adicionar dados à tabela de entidades
-  const adicionarAEntidades = async (preInscricao: PreInscricaoExpositor) => {
-    try {
-      // Verificar se já existe uma entidade para esta pré-inscrição
-      const { data: entidadeExistente, error: errorVerificacao } = await supabase
-        .from('entidades')
-        .select('id')
-        .eq('origem', 'pre_inscricao_expositor')
-        .like('origem_id', `${preInscricao.id}%`)
-        .single();
-
-      if (errorVerificacao && errorVerificacao.code !== 'PGRST116') {
-        console.error('Erro ao verificar entidade existente:', errorVerificacao);
-        showToast.error('Erro ao verificar entidade existente');
-        return false;
-      }
-
-      if (entidadeExistente) {
-        showToast.error('Já existe uma entidade criada para esta pré-inscrição');
-        return false;
-      }
-      
-      let dadosEntidade: any = {
-        nome: '',
-        tipo: preInscricao.tipo_pessoa === 'fisica' ? 'pessoa_fisica' : 'pessoa_juridica',
-        categoria: 'expositores', // Categoria específica para expositores
-        subcategoria: `Stand ${preInscricao.numero_stand}`,
-        status: 'ativo',
-        prioridade: 'normal',
-        origem: 'pre_inscricao_expositor',
-        origem_id: preInscricao.id, // Identificador da pré-inscrição
-        observacoes: `Expositor aprovado para o stand ${preInscricao.numero_stand}. Criado em: ${new Date().toLocaleString('pt-BR')}.`,
-        tags: ['expositor', 'fespin-2025', `stand-${preInscricao.numero_stand}`, `pre-inscricao-${preInscricao.id}`]
-      };
-
-      if (preInscricao.tipo_pessoa === 'fisica') {
-        // Pessoa Física - Mapeamento completo
-        dadosEntidade.nome = `${preInscricao.nome_pf} ${preInscricao.sobrenome_pf}`;
-        dadosEntidade.dados_pessoa_fisica = {
-          cpf: preInscricao.cpf,
-          // RG não está disponível na interface PreInscricaoExpositor
-          // data_nascimento não está disponível na interface
-          // profissao não está disponível na interface
-        };
-        
-        // Contatos completos para pessoa física
-        dadosEntidade.contatos = {
-          email_principal: preInscricao.email_pf,
-          email_secundario: preInscricao.email_responsavel,
-          email_comercial: preInscricao.email_responsavel_stand,
-          telefone_celular: preInscricao.telefone_pf,
-          telefone_fixo: preInscricao.contato_responsavel,
-          whatsapp: preInscricao.is_whatsapp === 'sim' ? (preInscricao.contato_responsavel || preInscricao.telefone_pf) : undefined
-        };
-        
-        // Endereço residencial completo
-        dadosEntidade.enderecos = {
-          residencial: {
-            cep: preInscricao.cep_pf,
-            rua: preInscricao.logradouro_pf,
-            numero: preInscricao.numero_pf,
-            complemento: preInscricao.complemento_pf,
-            bairro: preInscricao.bairro_pf,
-            cidade: preInscricao.cidade_pf,
-            estado: preInscricao.estado_pf,
-            pais: 'Brasil'
-          }
-        };
-      } else {
-        // Pessoa Jurídica - Mapeamento completo
-        dadosEntidade.nome = preInscricao.razao_social || preInscricao.nome_social || 'Empresa';
-        dadosEntidade.dados_pessoa_juridica = {
-          razao_social: preInscricao.razao_social,
-          nome_fantasia: preInscricao.nome_social,
-          cnpj: preInscricao.cnpj,
-          // Removed inscricao_estadual since it's not in PreInscricaoExpositor interface
-          // Removed inscricao_municipal since it's not in PreInscricaoExpositor interface
-          ramo_atividade: getStandInfo(preInscricao.numero_stand).segmento
-        };
-        
-        // Contatos completos para pessoa jurídica
-        dadosEntidade.contatos = {
-          email_principal: preInscricao.email_empresa,
-          email_secundario: preInscricao.email_responsavel_stand,
-          email_comercial: preInscricao.email_responsavel,
-          telefone_fixo: preInscricao.telefone_empresa,
-          telefone_celular: preInscricao.contato_responsavel,
-          whatsapp: preInscricao.is_whatsapp === 'sim' ? preInscricao.contato_responsavel : undefined,
-          // Removed site_oficial since site_empresa doesn't exist in PreInscricaoExpositor interface
-        };
-        
-        // Endereço comercial completo
-        dadosEntidade.enderecos = {
-          comercial: {
-            cep: preInscricao.cep,
-            rua: preInscricao.logradouro,
-            numero: preInscricao.numero,
-            complemento: preInscricao.complemento,
-            bairro: preInscricao.bairro,
-            cidade: preInscricao.cidade,
-            estado: preInscricao.estado,
-            pais: 'Brasil'
-          }
-        };
-        
-        // Adicionar informações do responsável se disponível
-        if (preInscricao.nome_responsavel) {
-          dadosEntidade.notas_internas = `Responsável: ${preInscricao.nome_responsavel} ${preInscricao.sobrenome_responsavel}\nEmail: ${preInscricao.email_responsavel || 'Não informado'}\nTelefone: ${preInscricao.contato_responsavel || 'Não informado'}`;
-        }
-      }
-
-      // Inserir na tabela entidades
-      const { error } = await supabase
-        .from('entidades')
-        .insert([dadosEntidade]);
-
-      if (error) {
-        console.error('Erro ao adicionar à entidades:', error);
-        showToast.error('Erro ao adicionar à entidades: ' + error.message);
-        return false;
-      }
-
-      showToast.success('Dados adicionados à entidades com sucesso!');
-      return true;
-    } catch (error) {
-      console.error('Erro ao adicionar à entidades:', error);
-      showToast.error('Erro ao adicionar à entidades');
-      return false;
-    }
-  };
 
   // Atualizar status da pré-inscrição E DO STAND (LÓGICA COMPLETA)
   const updateStatus = async (id: string, newStatus: 'aprovado' | 'rejeitado' | 'pendente') => {
@@ -318,15 +208,15 @@ const AdminPreInscricaoExpositores = () => {
       if (newStatus === 'aprovado') {
         // APROVADO → Stand fica OCUPADO PERMANENTEMENTE
         standUpdate = {
-          disponivel: false,
+          status: 'ocupado',
           reservado_por: nomeExpositor,
           data_reserva: new Date().toISOString(),
-          observacoes: `APROVADO - Reservado por ${nomeExpositor} - FESPIN 2025`
+          observacoes: `APROVADO - Reservado por ${nomeExpositor} - CONSTRUIND 2025`
         };
       } else if (newStatus === 'rejeitado') {
         // REJEITADO → Stand volta DISPONÍVEL
         standUpdate = {
-          disponivel: true,
+          status: 'disponivel',
           reservado_por: null,
           data_reserva: null,
           observacoes: null
@@ -334,7 +224,7 @@ const AdminPreInscricaoExpositores = () => {
       } else if (newStatus === 'pendente') {
         // PENDENTE → Stand fica PRÉ-RESERVADO
         standUpdate = {
-          disponivel: false,
+          status: 'reservado',
           reservado_por: nomeExpositor,
           data_reserva: new Date().toISOString(),
           observacoes: `🟡 PRÉ-RESERVADO - ${nomeExpositor} - Aguardando aprovação final`
@@ -343,7 +233,7 @@ const AdminPreInscricaoExpositores = () => {
 
       // 4. Aplicar atualização no stand
       const { error: standError } = await supabase
-        .from('stands_fespin')
+        .from('stands_construind')
         .update(standUpdate)
         .eq('numero_stand', inscricao.numero_stand);
 
@@ -368,19 +258,6 @@ const AdminPreInscricaoExpositores = () => {
         `${statusEmojis[newStatus]} Pré-inscrição ${statusMessages[newStatus]}!`
       );
       
-      // Se foi aprovado, perguntar se deseja adicionar à entidades
-      if (newStatus === 'aprovado') {
-        const preInscricaoCompleta = await supabase
-          .from('pre_inscricao_expositores')
-          .select('*')
-          .eq('id', id)
-          .single();
-        
-        if (preInscricaoCompleta.data) {
-          setPreInscricaoParaEntidade(preInscricaoCompleta.data);
-          setShowEntidadeModal(true);
-        }
-      }
       
       loadPreInscricoes();
       
@@ -470,158 +347,10 @@ const AdminPreInscricaoExpositores = () => {
     setEditData(inscricao);
     setIsEditing(false);
     setShowDetailModal(true);
-    
-    // Verificar se já existe contrato para esta pré-inscrição
-    try {
-      console.log('openModal: Verificando contrato existente para ID:', inscricao.id);
-      const existeContrato = await verificarContratoExistente(inscricao.id);
-      console.log('openModal: Resultado da verificação de contrato existente:', existeContrato);
-      setContratoExistente(!!existeContrato);
-      console.log('openModal: Estado contratoExistente definido como:', !!existeContrato);
-    } catch (error) {
-      console.error('Erro ao verificar contrato existente:', error);
-      setContratoExistente(false);
-    }
   }, []);
 
   // Abrir modal de seleção de contrato - Unificado com ZapSign
-  const handleGerarContrato = async () => {
-    console.log('handleGerarContrato chamado');
-    if (!selectedPreInscricao) {
-      console.log('Nenhuma pré-inscrição selecionada');
-      return;
-    }
-    
-    console.log('Status da pré-inscrição:', selectedPreInscricao.status);
-    
-    // Verificar se a pré-inscrição está aprovada
-    if (selectedPreInscricao.status !== 'aprovado') {
-      console.log('Pré-inscrição não aprovada, mostrando toast de erro');
-      showToast.error('Apenas pré-inscrições aprovadas podem gerar contratos');
-      return;
-    }
-
-    // Verificar se já existe contrato
-    try {
-      console.log('Verificando contrato existente para ID:', selectedPreInscricao.id);
-      const contratoExistente = await verificarContratoExistente(selectedPreInscricao.id);
-      console.log('Resultado da verificação de contrato existente:', contratoExistente);
-      
-      if (contratoExistente) {
-        console.log('Contrato já existe, mostrando toast de erro');
-        showToast.error('Já existe um contrato para esta pré-inscrição');
-        return;
-      }
-    } catch (error) {
-      console.error('Erro ao verificar contrato existente:', error);
-      showToast.error('Erro ao verificar contrato existente');
-      return;
-    }
-
-    // Abrir o modal de seleção de modelo ZapSign
-    console.log('Definindo pré-inscrição para contrato:', selectedPreInscricao);
-    setPreInscricaoParaContrato(selectedPreInscricao);
-    console.log('Abrindo modal ZapSign...');
-    setShowZapSignModal(true);
-    console.log('Estado showZapSignModal definido como true');
-    
-    // Verificar se o estado foi atualizado
-    setTimeout(() => {
-      console.log('Estado showZapSignModal após timeout:', showZapSignModal);
-    }, 100);
-  };
-
-  // Função para abrir modal de seleção de modelo ZapSign
-  const handleGerarContratoZapSign = async (inscricao: PreInscricaoExpositor) => {
-    console.log('handleGerarContratoZapSign chamado para:', inscricao.id);
-    console.log('Status da pré-inscrição:', inscricao.status);
-    console.log('Estado atual showZapSignModal:', showZapSignModal);
-    
-    // Verificar se a pré-inscrição está aprovada
-    if (inscricao.status !== 'aprovado') {
-      console.log('Pré-inscrição não aprovada, mostrando toast de erro');
-      showToast.error('Apenas pré-inscrições aprovadas podem gerar contratos');
-      return;
-    }
-
-    // Verificar se já existe contrato
-    try {
-      console.log('Verificando contrato existente para ID:', inscricao.id);
-      const contratoExistente = await verificarContratoExistente(inscricao.id);
-      console.log('Resultado da verificação de contrato existente:', contratoExistente);
-      
-      if (contratoExistente) {
-        console.log('Contrato já existe, mostrando toast de erro');
-        showToast.error('Já existe um contrato para esta pré-inscrição');
-        return;
-      }
-    } catch (error) {
-      console.error('Erro ao verificar contrato existente:', error);
-      showToast.error('Erro ao verificar contrato existente');
-      return;
-    }
-
-    console.log('Definindo pré-inscrição para contrato:', inscricao);
-    setPreInscricaoParaContrato(inscricao);
-    console.log('Abrindo modal ZapSign...');
-    setShowZapSignModal(true);
-    console.log('Estado showZapSignModal definido como true');
-    
-    // Verificar se o estado foi atualizado
-    setTimeout(() => {
-      console.log('Estado showZapSignModal após timeout:', showZapSignModal);
-    }, 100);
-  };
-
-  // Função para processar a seleção do template e criar o contrato
-  const handleSelectTemplate = async (templateId: string, templateName: string, mappedData?: Record<string, string>) => {
-    console.log('AdminPreInscricaoExpositores: handleSelectTemplate chamado com templateId:', templateId, 'templateName:', templateName, 'e mappedData:', mappedData);
-    
-    if (!preInscricaoParaContrato) {
-      console.error('AdminPreInscricaoExpositores: Erro - Pré-inscrição não selecionada');
-      showToast.error('Erro: Pré-inscrição não selecionada');
-      return;
-    }
-
-    console.log('AdminPreInscricaoExpositores: Pré-inscrição selecionada:', preInscricaoParaContrato.id);
-    
-    try {
-      console.log('AdminPreInscricaoExpositores: Chamando criarContratoZapSign com templateId:', templateId);
-      const contrato = await criarContratoZapSign(
-        preInscricaoParaContrato.id,
-        templateId,
-        templateName,
-        mappedData
-      );
-
-      console.log('AdminPreInscricaoExpositores: Contrato criado com sucesso:', contrato);
-      showToast.success(`Contrato criado com sucesso! Número: ${contrato.numero_contrato}`);
-      
-      // Fechar modal e atualizar lista
-      setShowZapSignModal(false);
-      setPreInscricaoParaContrato(null);
-      
-      // Atualizar a lista de pré-inscrições para refletir que agora tem contrato
-      loadPreInscricoes();
-      
-      // Se o modal de detalhes estiver aberto, atualizar o status do contrato
-      if (selectedPreInscricao?.id === preInscricaoParaContrato.id) {
-        setContratoExistente(true);
-      }
-    } catch (error) {
-      console.error('AdminPreInscricaoExpositores: Erro ao criar contrato:', error);
-      showToast.error('Erro ao criar contrato: ' + (error as Error).message);
-    }
-  };
-
-  // Função para fechar modal ZapSign
-  const handleCloseZapSignModal = () => {
-    setShowZapSignModal(false);
-    setPreInscricaoParaContrato(null);
-  };
-
-  // Função de callback após criação do contrato foi removida
-  // Agora usamos handleSelectTemplate para processar a criação do contrato
+  // Funções relacionadas a contratos foram removidas
 
   // Filtrar pré-inscrições
   const filteredPreInscricoes = preInscricoes.filter(inscricao => {
@@ -647,26 +376,34 @@ const AdminPreInscricaoExpositores = () => {
     rejeitadas: preInscricoes.filter(p => p.status === 'rejeitado').length,
     fisicas: preInscricoes.filter(p => p.tipo_pessoa === 'fisica').length,
     juridicas: preInscricoes.filter(p => p.tipo_pessoa === 'juridica').length,
-    // Estatísticas por categoria de stand
-    academias: preInscricoes.filter(p => {
+    // Estatísticas por categoria de stand CONSTRUIND
+    stands2x2: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return num >= 1 && num <= 32;
+      return num >= 1 && num <= 18;
     }).length,
-    bemEstar: preInscricoes.filter(p => {
+    stands3x3Basico: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return num >= 33 && num <= 36;
+      return [19,20,21,22,23,24,25,26,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,67,68,69,70,71,72,73,74].includes(num);
     }).length,
-    artigos: preInscricoes.filter(p => {
+    stands3x3Acabamentos: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return (num >= 37 && num <= 44) || (num >= 53 && num <= 60);
+      return [27,28,29,30,31,32,33,34,35,36,37,38,55,56,57,58,59,60,61,62,63,64,65,66].includes(num);
     }).length,
-    saude: preInscricoes.filter(p => {
+    stands5x5: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return (num >= 45 && num <= 52) || (num >= 61 && num <= 68);
+      return num >= 75 && num <= 90;
     }).length,
-    areaLivre: preInscricoes.filter(p => {
+    stands8x8: preInscricoes.filter(p => {
       const num = parseInt(p.numero_stand);
-      return num >= 69 && num <= 83;
+      return num >= 92 && num <= 97;
+    }).length,
+    stands10x10: preInscricoes.filter(p => {
+      const num = parseInt(p.numero_stand);
+      return num === 91;
+    }).length,
+    stands9x10: preInscricoes.filter(p => {
+      const num = parseInt(p.numero_stand);
+      return num >= 99 && num <= 106;
     }).length
   };
 
@@ -691,6 +428,13 @@ const AdminPreInscricaoExpositores = () => {
   // Função para converter códigos em texto legível
   const getTextoLegivel = {
     condicaoPagamento: (valor: string) => {
+      // Primeiro, tentar buscar na tabela de condições de pagamento (para UUIDs)
+      const condicaoEncontrada = condicoesPagamento.find(c => c.id === valor);
+      if (condicaoEncontrada) {
+        return condicaoEncontrada.label;
+      }
+      
+      // Fallback para códigos antigos (compatibilidade)
       const mapeamento = {
         'a_vista_desconto': 'À vista com 5% desconto',
         'sinal_3_parcelas': '20% sinal + 2 parcelas'
@@ -704,17 +448,8 @@ const AdminPreInscricaoExpositores = () => {
       };
       return mapeamento[valor as keyof typeof mapeamento] || valor;
     },
-    categoriaPatrocinio: (valor: string) => {
-      const mapeamento = {
-        'bronze': 'Bronze (R$ 5.000)',
-        'prata': 'Prata (R$ 10.000)',
-        'ouro': 'Ouro (R$ 12.000)',
-        'telao_led': 'Telão de LED (R$ 500)'
-      };
-      return mapeamento[valor as keyof typeof mapeamento] || valor;
-    },
-    desejaPatrocinio: (valor: string) => {
-      return valor === 'sim' ? 'Sim' : valor === 'nao' ? 'Não' : valor;
+    tipoPessoa: (valor: string) => {
+      return valor === 'fisica' ? 'Pessoa Física' : valor === 'juridica' ? 'Pessoa Jurídica' : valor;
     },
     isWhatsApp: (valor: string) => {
       return valor === 'sim' ? 'Sim' : valor === 'nao' ? 'Não' : valor;
@@ -724,53 +459,80 @@ const AdminPreInscricaoExpositores = () => {
   const getStandInfo = useCallback((numeroStand: string) => {
     const num = parseInt(numeroStand);
     
-    if (num >= 1 && num <= 32) {
+    // Stands 2x2 (1-18)
+    if (num >= 1 && num <= 18) {
       return {
-        categoria: 'Academias',
-        cor: '#B6FF72',
-        preco: 'R$ 3.300,00',
-        tamanho: '3x3m',
-        segmento: 'Academias'
+        categoria: '2x2',
+        cor: '#0097b2',
+        preco: 'R$ 2.600,00',
+        tamanho: '2x2m (4m²)',
+        segmento: 'Stands 2x2'
       };
     }
     
-    if (num >= 33 && num <= 36) {
+    // Stands 3x3 Básico
+    if ([19,20,21,22,23,24,25,26,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,67,68,69,70,71,72,73,74].includes(num)) {
       return {
-        categoria: 'Bem-Estar',
-        cor: '#FF776C', 
-        preco: 'R$ 3.300,00',
-        tamanho: '3x3m',
-        segmento: 'Bem-Estar'
+        categoria: '3x3 Básico',
+        cor: '#004aad',
+        preco: 'R$ 3.500,00',
+        tamanho: '3x3m (9m²)',
+        segmento: 'Stands 3x3 Básico'
       };
     }
     
-    if ((num >= 37 && num <= 44) || (num >= 53 && num <= 60)) {
+    // Stands 3x3 Acabamentos
+    if ([27,28,29,30,31,32,33,34,35,36,37,38,55,56,57,58,59,60,61,62,63,64,65,66].includes(num)) {
       return {
-        categoria: 'Artigos Esportivos',
-        cor: '#A6CFFF',
-        preco: 'R$ 3.300,00', 
-        tamanho: '3x3m',
-        segmento: 'Artigos Esportivos'
+        categoria: '3x3 Acabamentos',
+        cor: '#6cace3',
+        preco: 'R$ 3.500,00',
+        tamanho: '3x3m (9m²)',
+        segmento: 'Stands 3x3 Acabamentos'
       };
     }
     
-    if ((num >= 45 && num <= 52) || (num >= 61 && num <= 68)) {
+    // Área 5x5 (75-90)
+    if (num >= 75 && num <= 90) {
       return {
-        categoria: 'Saúde e Nutrição',
-        cor: '#38FFB8',
-        preco: 'R$ 3.300,00',
-        tamanho: '3x3m', 
-        segmento: 'Saúde e Nutrição'
+        categoria: '5x5',
+        cor: '#55a04d',
+        preco: 'R$ 5.200,00',
+        tamanho: '5x5m (25m²)',
+        segmento: 'Área 5x5'
       };
     }
     
-    if (num >= 69 && num <= 83) {
+    // Área 8x8 (92-97)
+    if (num >= 92 && num <= 97) {
       return {
-        categoria: 'Área Livre',
-        cor: '#FFD700',
-        preco: 'R$ 5.500,00',
-        tamanho: '5x5m',
-        segmento: 'Área Livre'
+        categoria: '8x8',
+        cor: '#ffb600',
+        preco: 'R$ 8.500,00',
+        tamanho: '8x8m (64m²)',
+        segmento: 'Área 8x8'
+      };
+    }
+    
+    // Área 10x10 (91)
+    if (num === 91) {
+      return {
+        categoria: '10x10',
+        cor: '#ce1c21',
+        preco: 'R$ 20.000,00',
+        tamanho: '10x10m (100m²)',
+        segmento: 'Área 10x10'
+      };
+    }
+    
+    // Área 9x10 (99-106)
+    if (num >= 99 && num <= 106) {
+      return {
+        categoria: '9x10',
+        cor: '#ff5500',
+        preco: 'R$ 9.500,00',
+        tamanho: '9x10m (90m²)',
+        segmento: 'Área 9x10'
       };
     }
     
@@ -812,8 +574,6 @@ const AdminPreInscricaoExpositores = () => {
         'Segmento': standInfo.segmento,
         'Tamanho': standInfo.tamanho,
         'Valor Stand': standInfo.preco,
-        'Deseja Patrocínio': getTextoLegivel.desejaPatrocinio(inscricao.deseja_patrocinio || ''),
-        'Tipo Patrocínio': inscricao.categoria_patrocinio ? getTextoLegivel.categoriaPatrocinio(inscricao.categoria_patrocinio) : '',
         'Condição Pagamento': getTextoLegivel.condicaoPagamento(inscricao.condicao_pagamento || ''),
         'Forma Pagamento': getTextoLegivel.formaPagamento(inscricao.forma_pagamento || ''),
         'Observações': inscricao.observacoes || '',
@@ -870,11 +630,13 @@ const AdminPreInscricaoExpositores = () => {
       {'Estatística': 'Pessoa Física', 'Valor': stats.fisicas},
       {'Estatística': 'Pessoa Jurídica', 'Valor': stats.juridicas},
       {'Estatística': '', 'Valor': ''}, // linha vazia
-      {'Estatística': 'Stands Academias', 'Valor': stats.academias},
-      {'Estatística': 'Stands Bem-Estar', 'Valor': stats.bemEstar},
-      {'Estatística': 'Stands Artigos Esportivos', 'Valor': stats.artigos},
-      {'Estatística': 'Stands Saúde e Nutrição', 'Valor': stats.saude},
-      {'Estatística': 'Stands Área Livre', 'Valor': stats.areaLivre}
+      {'Estatística': 'Stands 2x2', 'Valor': stats.stands2x2},
+      {'Estatística': 'Stands 3x3 Básico', 'Valor': stats.stands3x3Basico},
+      {'Estatística': 'Stands 3x3 Acabamentos', 'Valor': stats.stands3x3Acabamentos},
+      {'Estatística': 'Stands 5x5', 'Valor': stats.stands5x5},
+      {'Estatística': 'Stands 8x8', 'Valor': stats.stands8x8},
+      {'Estatística': 'Stands 10x10', 'Valor': stats.stands10x10},
+      {'Estatística': 'Stands 9x10', 'Valor': stats.stands9x10}
     ];
     
     const ws2 = XLSX.utils.json_to_sheet(estatisticas);
@@ -910,7 +672,7 @@ const AdminPreInscricaoExpositores = () => {
     
     // Salvar arquivo
     const timestamp = format(new Date(), 'dd-MM-yyyy-HH-mm');
-    const filename = `FESPIN-2025-Pre-Inscricoes-${timestamp}.xlsx`;
+    const filename = `CONSTRUIND-2025-Pre-Inscricoes-${timestamp}.xlsx`;
     XLSX.writeFile(wb, filename);
     
     const isFiltered = filteredPreInscricoes.length !== preInscricoes.length;
@@ -1139,18 +901,18 @@ const AdminPreInscricaoExpositores = () => {
       {filteredPreInscricoes.map((inscricao) => (
         <Card 
           key={inscricao.id} 
-          className="hover:shadow-lg transition-all duration-200 cursor-pointer hover:scale-[1.02]"
+          className="bg-white border-0 shadow-lg hover:shadow-xl hover:shadow-[#ff3c00]/20 transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:border-[#ff3c00]/50"
           onClick={() => openModal(inscricao)}
         >
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <CardTitle className="text-lg text-[#0a2856] mb-2 line-clamp-2">
+                <CardTitle className="text-lg text-gray-900 mb-2 line-clamp-2">
                   {getNome(inscricao)}
                 </CardTitle>
                 <div className="flex items-center gap-2">
                   {getStatusBadge(inscricao.status)}
-                  <div className="flex items-center gap-1 text-xs text-gray-500">
+                  <div className="flex items-center gap-1 text-xs text-gray-600">
                     {inscricao.tipo_pessoa === 'juridica' ? 
                       <Building2 className="w-3 h-3" /> : 
                       <User className="w-3 h-3" />
@@ -1159,56 +921,59 @@ const AdminPreInscricaoExpositores = () => {
                   </div>
                 </div>
               </div>
-                             <DropdownMenu>
-                 <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                   <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                     <MoreVertical className="w-4 h-4" />
-                   </Button>
-                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={(e) => {
-                    e.stopPropagation();
-                    openModal(inscricao);
-                  }}>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-600 hover:text-gray-900 hover:bg-gray-100">
+                    <MoreVertical className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white border-gray-200">
+                  <DropdownMenuItem 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openModal(inscricao);
+                    }}
+                    className="text-gray-900 hover:bg-gray-100"
+                  >
                     <Eye className="w-4 h-4 mr-2" />
                     Ver Detalhes
                   </DropdownMenuItem>
-                                     <DropdownMenuItem 
-                     className="text-green-600"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       updateStatus(inscricao.id, 'aprovado');
-                     }}
-                     disabled={inscricao.status === 'aprovado'}
-                   >
-                     <CheckCircle className="w-4 h-4 mr-2" />
-                     Aprovar
-                   </DropdownMenuItem>
-                   <DropdownMenuItem 
-                     className="text-red-600"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       updateStatus(inscricao.id, 'rejeitado');
-                     }}
-                     disabled={inscricao.status === 'rejeitado'}
-                   >
-                     <XCircle className="w-4 h-4 mr-2" />
-                     Rejeitar
-                   </DropdownMenuItem>
-                   <DropdownMenuItem 
-                     className="text-yellow-600"
-                     onClick={(e) => {
-                       e.stopPropagation();
-                       updateStatus(inscricao.id, 'pendente');
-                     }}
-                     disabled={inscricao.status === 'pendente'}
-                   >
-                     <Clock className="w-4 h-4 mr-2" />
-                     Pendente
-                   </DropdownMenuItem>
-                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    className="text-red-600"
+                    className="text-green-600 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStatus(inscricao.id, 'aprovado');
+                    }}
+                    disabled={inscricao.status === 'aprovado'}
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Aprovar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-red-600 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStatus(inscricao.id, 'rejeitado');
+                    }}
+                    disabled={inscricao.status === 'rejeitado'}
+                  >
+                    <XCircle className="w-4 h-4 mr-2" />
+                    Rejeitar
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className="text-yellow-600 hover:bg-gray-100"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateStatus(inscricao.id, 'pendente');
+                    }}
+                    disabled={inscricao.status === 'pendente'}
+                  >
+                    <Clock className="w-4 h-4 mr-2" />
+                    Pendente
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem 
+                    className="text-red-600 hover:bg-gray-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       setDeleteConfirm(inscricao.id);
@@ -1222,30 +987,30 @@ const AdminPreInscricaoExpositores = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
+            <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <MapPin className="w-4 h-4" />
+                <div className="flex items-center gap-2 text-sm text-gray-700">
+                  <MapPin className="w-4 h-4 text-[#ff3c00]" />
                   <span>Stand: {inscricao.numero_stand}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div 
-                    className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold"
+                    className="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center text-xs font-bold text-white shadow-lg"
                     style={{ backgroundColor: getStandInfo(inscricao.numero_stand).cor }}
                   >
                     {inscricao.numero_stand}
                   </div>
                 </div>
               </div>
-              <div className="text-xs text-gray-500 pl-6">
+              <div className="text-xs text-gray-600 pl-6">
                 {getStandInfo(inscricao.numero_stand).categoria} • {getStandInfo(inscricao.numero_stand).tamanho} • {getStandInfo(inscricao.numero_stand).preco}
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Phone className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <Phone className="w-4 h-4 text-[#ff3c00]" />
                 <span>{inscricao.contato_responsavel}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-sm text-gray-700">
+                <Calendar className="w-4 h-4 text-[#ff3c00]" />
                 <span>{format(new Date(inscricao.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</span>
               </div>
             </div>
@@ -1311,20 +1076,19 @@ const AdminPreInscricaoExpositores = () => {
                 <SelectContent>
                   {options?.map(option => {
                     let displayText = option;
-                    // Converter códigos para texto legível nos dropdowns
+                    
                     if (fieldName === 'condicao_pagamento') {
                       displayText = getTextoLegivel.condicaoPagamento(option);
                     } else if (fieldName === 'forma_pagamento') {
                       displayText = getTextoLegivel.formaPagamento(option);
-                    } else if (fieldName === 'categoria_patrocinio') {
-                      displayText = getTextoLegivel.categoriaPatrocinio(option);
-                    } else if (fieldName === 'deseja_patrocinio') {
-                      displayText = getTextoLegivel.desejaPatrocinio(option);
                     } else if (fieldName === 'is_whatsapp') {
                       displayText = getTextoLegivel.isWhatsApp(option);
                     }
+                    
                     return (
-                      <SelectItem key={option} value={option}>{displayText}</SelectItem>
+                      <SelectItem key={option} value={option}>
+                        {displayText}
+                      </SelectItem>
                     );
                   })}
                 </SelectContent>
@@ -1337,178 +1101,141 @@ const AdminPreInscricaoExpositores = () => {
               />
             )
           ) : (
-            <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded border min-h-[32px] flex items-center">
+            <p className="text-sm text-gray-900 p-2 bg-gray-50 rounded border">
               {value || 'Não informado'}
             </p>
           )}
         </div>
       );
-    }, [currentData, isEditing, localInputs, updateFieldWithDebounce, setEditData]);
+    }, [isEditing, localInputs, currentData, updateFieldWithDebounce]);
+
+    // Função para salvar edições
+    const saveEdits = async (inputs: Record<string, string>) => {
+      if (!selectedPreInscricao) return;
+      
+      try {
+        const updatedData = { ...editData };
+        
+        // Aplicar inputs locais ao editData
+        Object.entries(inputs).forEach(([key, value]) => {
+          updatedData[key] = value;
+        });
+
+        const { error } = await supabase
+          .from('pre_inscricao_expositores')
+          .update(updatedData)
+          .eq('id', selectedPreInscricao.id);
+
+        if (error) throw error;
+
+        // Atualizar lista local
+        setPreInscricoes(prev => 
+          prev.map(item => 
+            item.id === selectedPreInscricao.id 
+              ? { ...item, ...updatedData }
+              : item
+          )
+        );
+
+        setIsEditing(false);
+        setEditData({});
+        setLocalInputs({});
+        showToast.success('Pré-inscrição atualizada com sucesso!');
+      } catch (error) {
+        console.error('Erro ao salvar edições:', error);
+        showToast.error('Erro ao salvar alterações');
+      }
+    };
 
     return (
-      <Dialog open={showDetailModal} onOpenChange={(open) => !open && setShowDetailModal(false)}>
-        <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto !fixed !left-[50%] !top-[50%] !translate-x-[-50%] !translate-y-[-50%]">
-          {/* Botão de Fechar Personalizado */}
-          <button
-            onClick={() => setShowDetailModal(false)}
-            className="absolute top-4 right-4 z-10 w-8 h-8 bg-[#0a2856] hover:bg-[#0a2856]/90 rounded-full flex items-center justify-center transition-colors"
-            aria-label="Fechar modal"
-          >
-            <X className="w-4 h-4 text-white" />
-          </button>
-          <DialogHeader className="pb-3 border-b">
-            <DialogTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                {selectedPreInscricao.tipo_pessoa === 'juridica' ? 
-                  <Building2 className="w-5 h-5 text-[#0a2856]" /> : 
-                  <User className="w-5 h-5 text-[#0a2856]" />
-                }
-                <div>
-                  <span className="text-lg font-semibold text-[#0a2856] leading-none">
-                    {getNome(selectedPreInscricao)}
-                  </span>
-                  <div className="flex items-center gap-2 mt-1">
-                    {getStatusBadge(selectedPreInscricao.status)}
-                    <span className="text-xs text-gray-500">
-                      Stand #{selectedPreInscricao.numero_stand} • {format(new Date(selectedPreInscricao.created_at), 'dd/MM/yyyy', { locale: ptBR })}
-                    </span>
-                  </div>
-                </div>
-              </div>
+      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-[#0a2856] flex items-center gap-2">
+              <FileText className="w-6 h-6" />
+              Detalhes da Pré-inscrição
             </DialogTitle>
-            <DialogDescription>
-              Detalhes da pré-inscrição do expositor
-            </DialogDescription>
           </DialogHeader>
-
-          <div className="space-y-5">
-            {/* Ações Rápidas */}
-            <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b">
-              <div className="flex flex-wrap items-center gap-2">
-                <Button 
-                  onClick={() => updateStatus(selectedPreInscricao.id, 'aprovado')}
-                  className={`${selectedPreInscricao.status === 'aprovado' ? 'bg-green-700' : 'bg-green-600 hover:bg-green-700'}`}
-                  size="sm"
-                  disabled={selectedPreInscricao.status === 'aprovado'}
-                >
-                  <CheckCircle className="w-4 h-4 mr-1" />
-                  Aprovar
-                </Button>
-                <Button 
-                  onClick={() => updateStatus(selectedPreInscricao.id, 'rejeitado')}
-                  className={`${selectedPreInscricao.status === 'rejeitado' ? 'bg-red-700' : 'bg-red-600 hover:bg-red-700'}`}
-                  size="sm"
-                  disabled={selectedPreInscricao.status === 'rejeitado'}
-                >
-                  <XCircle className="w-4 h-4 mr-1" />
-                  Rejeitar
-                </Button>
-                <Button 
-                  onClick={() => updateStatus(selectedPreInscricao.id, 'pendente')}
-                  className={`${selectedPreInscricao.status === 'pendente' ? 'bg-yellow-700' : 'bg-yellow-600 hover:bg-yellow-700'}`}
-                  size="sm"
-                  disabled={selectedPreInscricao.status === 'pendente'}
-                >
-                  <Clock className="w-4 h-4 mr-1" />
-                  Pendente
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                {isEditing ? (
-                  <>
-                    {/* Botão Gerar Contrato Unificado com ZapSign - só aparece se aprovado */}
-                    {selectedPreInscricao.status === 'aprovado' && (
-                        <Button 
-                          onClick={handleGerarContrato}
-                          variant="outline"
-                          size="sm"
-                          disabled={contratoExistente}
-                        >
-                          <FileText className="w-4 h-4 mr-1" />
-                          {contratoExistente ? 'Contrato Gerado' : 'Gerar Contrato'}
-                        </Button>
-                      )}
-                    <Button onClick={() => saveEdits(localInputs)} size="sm" className="bg-[#00d856] hover:bg-[#00d856]/90">
-                       <Save className="w-4 h-4 mr-1" />
-                       Salvar
-                     </Button>
+          
+          <div className="space-y-6">
+            {/* Dados Pessoais */}
+            <div className="bg-white rounded-lg border">
+              <div className="px-4 py-3 border-b bg-gray-50 flex items-center justify-between">
+                <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
+                  <User className="w-5 h-5" />
+                  Dados Pessoais
+                </h3>
+                <div className="flex items-center gap-2">
+                  {isEditing ? (
+                    <>
+                      <Button onClick={() => saveEdits(localInputs)} size="sm" className="bg-[#00d856] hover:bg-[#00d856]/90">
+                         <Save className="w-4 h-4 mr-1" />
+                         Salvar
+                      </Button>
                    </>
                 ) : (
                   <>
-                    {/* Botão Gerar Contrato Unificado com ZapSign - só aparece se aprovado */}
-                    {selectedPreInscricao.status === 'aprovado' && (
-                      <Button 
-                        onClick={handleGerarContrato}
-                        variant="outline"
-                        size="sm"
-                        disabled={contratoExistente}
-                      >
-                        <FileText className="w-4 h-4 mr-1" />
-                        {contratoExistente ? 'Contrato Gerado' : 'Gerar Contrato'}
-                      </Button>
-                    )}
                     <Button onClick={() => setIsEditing(true)} variant="outline" size="sm">
                       <Edit className="w-4 h-4 mr-1" />
                       Editar
                     </Button>
-                    <Button 
-                      onClick={() => setDeleteConfirm(selectedPreInscricao.id)}
-                      variant="destructive"
-                      size="sm"
-                    >
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Excluir
-                    </Button>
                   </>
                 )}
+                </div>
               </div>
-            </div>
-
-            {/* Dados Principais */}
-            <div className="bg-white rounded-lg border">
-              <div className="px-4 py-3 border-b bg-gray-50 flex items-center justify-center">
-                 <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
-                   {selectedPreInscricao.tipo_pessoa === 'juridica' ? 
-                     <Building2 className="w-5 h-5" /> : 
-                     <User className="w-5 h-5" />
-                   }
-                   {selectedPreInscricao.tipo_pessoa === 'juridica' ? 'Dados da Empresa' : 'Dados Pessoais'}
-                 </h3>
-               </div>
               
-              <div className="p-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {selectedPreInscricao.tipo_pessoa === 'juridica' ? (
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {renderField('Tipo de Pessoa', getTextoLegivel.tipoPessoa(currentData.tipo_pessoa), 'tipo_pessoa', 'select', ['fisica', 'juridica'])}
+                  {currentData.tipo_pessoa === 'fisica' ? (
                     <>
-                      <div className="md:col-span-2">{renderField('Razão Social', currentData.razao_social, 'razao_social')}</div>
-                      <div>{renderField('CNPJ', currentData.cnpj, 'cnpj')}</div>
-                      <div className="md:col-span-2">{renderField('Nome Fantasia', currentData.nome_social, 'nome_social')}</div>
-                      <div>{renderField('Telefone', currentData.telefone_empresa, 'telefone_empresa')}</div>
-                      <div className="md:col-span-3">{renderField('E-mail', currentData.email_empresa, 'email_empresa')}</div>
-                      
-                      <div>{renderField('CEP', currentData.cep, 'cep')}</div>
-                      <div className="md:col-span-2">{renderField('Logradouro', currentData.logradouro, 'logradouro')}</div>
-                      <div>{renderField('Número', currentData.numero, 'numero')}</div>
-                      <div className="md:col-span-2">{renderField('Complemento', currentData.complemento, 'complemento')}</div>
-                      <div>{renderField('Bairro', currentData.bairro, 'bairro')}</div>
-                      <div>{renderField('Cidade', currentData.cidade, 'cidade')}</div>
-                      <div>{renderField('Estado', currentData.estado, 'estado')}</div>
+                      {renderField('Nome', currentData.nome_pf, 'nome_pf')}
+                      {renderField('CPF', currentData.cpf, 'cpf')}
+                      {renderField('Email', currentData.email_pf, 'email_pf')}
+                      {renderField('Telefone', currentData.telefone_pf, 'telefone_pf')}
                     </>
                   ) : (
                     <>
-                      <div>{renderField('Nome', currentData.nome_pf, 'nome_pf')}</div>
-                      <div>{renderField('Sobrenome', currentData.sobrenome_pf, 'sobrenome_pf')}</div>
-                      <div>{renderField('CPF', currentData.cpf, 'cpf')}</div>
-                      <div>{renderField('Telefone', currentData.telefone_pf, 'telefone_pf')}</div>
-                      <div className="md:col-span-2">{renderField('E-mail', currentData.email_pf, 'email_pf')}</div>
-                      
-                      <div>{renderField('CEP', currentData.cep_pf, 'cep_pf')}</div>
-                      <div className="md:col-span-2">{renderField('Logradouro', currentData.logradouro_pf, 'logradouro_pf')}</div>
-                      <div>{renderField('Número', currentData.numero_pf, 'numero_pf')}</div>
-                      <div className="md:col-span-2">{renderField('Complemento', currentData.complemento_pf, 'complemento_pf')}</div>
-                      <div>{renderField('Bairro', currentData.bairro_pf, 'bairro_pf')}</div>
-                      <div>{renderField('Cidade', currentData.cidade_pf, 'cidade_pf')}</div>
-                      <div>{renderField('Estado', currentData.estado_pf, 'estado_pf')}</div>
+                      {renderField('Razão Social', currentData.razao_social, 'razao_social')}
+                      {renderField('CNPJ', currentData.cnpj, 'cnpj')}
+                      {renderField('Email', currentData.email_empresa, 'email_empresa')}
+                      {renderField('Telefone', currentData.telefone_empresa, 'telefone_empresa')}
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Endereço */}
+            <div className="bg-white rounded-lg border">
+              <div className="px-4 py-3 border-b bg-gray-50 flex items-center justify-center">
+                <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
+                  <MapPin className="w-5 h-5" />
+                  Endereço
+                </h3>
+              </div>
+              
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {currentData.tipo_pessoa === 'fisica' ? (
+                    <>
+                      {renderField('CEP', currentData.cep_pf, 'cep_pf')}
+                      {renderField('Logradouro', currentData.logradouro_pf, 'logradouro_pf')}
+                      {renderField('Número', currentData.numero_pf, 'numero_pf')}
+                      {renderField('Complemento', currentData.complemento_pf, 'complemento_pf')}
+                      {renderField('Bairro', currentData.bairro_pf, 'bairro_pf')}
+                      {renderField('Cidade', currentData.cidade_pf, 'cidade_pf')}
+                      {renderField('Estado', currentData.estado_pf, 'estado_pf')}
+                    </>
+                  ) : (
+                    <>
+                      {renderField('CEP', currentData.cep, 'cep')}
+                      {renderField('Endereço', currentData.logradouro, 'logradouro')}
+                      {renderField('Número', currentData.numero, 'numero')}
+                      {renderField('Complemento', currentData.complemento, 'complemento')}
+                      {renderField('Bairro', currentData.bairro, 'bairro')}
+                      {renderField('Cidade', currentData.cidade, 'cidade')}
+                      {renderField('Estado', currentData.estado, 'estado')}
                     </>
                   )}
                 </div>
@@ -1518,45 +1245,21 @@ const AdminPreInscricaoExpositores = () => {
             {/* Responsáveis */}
             <div className="bg-white rounded-lg border">
               <div className="px-4 py-3 border-b bg-gray-50 flex items-center justify-center">
-                 <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
-                   <Users className="w-5 h-5" />
-                   Responsáveis
-                 </h3>
-               </div>
+                <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
+                  <Users className="w-5 h-5" />
+                  Responsáveis
+                </h3>
+              </div>
               
-              <div className="p-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {/* Responsável Legal */}
-                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="text-sm font-semibold text-blue-800 uppercase tracking-wide">Responsável Legal</h4>
-                    </div>
-                    <div className="space-y-3">
-                      {renderField('Nome', currentData.nome_responsavel, 'nome_responsavel')}
-                      {renderField('Sobrenome', currentData.sobrenome_responsavel, 'sobrenome_responsavel')}
-                      {renderField('E-mail', currentData.email_responsavel, 'email_responsavel')}
-                      {renderField('Contato', currentData.contato_responsavel, 'contato_responsavel')}
-                      {renderField('É WhatsApp?', getTextoLegivel.isWhatsApp(currentData.is_whatsapp || ''), 'is_whatsapp', 'select', ['sim', 'nao'])}
-                    </div>
-                  </div>
-                  
-                  {/* Responsável pelo Stand */}
-                  <div className="bg-green-50 border border-green-100 rounded-lg p-4">
-                    <div className="flex items-center gap-2 mb-4">
-                      <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                        <Store className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="text-sm font-semibold text-green-800 uppercase tracking-wide">Responsável pelo Stand</h4>
-                    </div>
-                    <div className="space-y-3">
-                      {renderField('Nome', currentData.nome_responsavel_stand, 'nome_responsavel_stand')}
-                      {renderField('Sobrenome', currentData.sobrenome_responsavel_stand, 'sobrenome_responsavel_stand')}
-                      {renderField('E-mail', currentData.email_responsavel_stand, 'email_responsavel_stand')}
-                    </div>
-                  </div>
+              <div className="p-4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {renderField('Nome Responsável Legal', currentData.nome_responsavel, 'nome_responsavel')}
+                  {renderField('Sobrenome Responsável Legal', currentData.sobrenome_responsavel, 'sobrenome_responsavel')}
+                  {renderField('Contato Responsável', currentData.contato_responsavel, 'contato_responsavel')}
+                  {renderField('É WhatsApp?', getTextoLegivel.isWhatsApp(currentData.is_whatsapp || ''), 'is_whatsapp', 'select', ['sim', 'nao'])}
+                  {renderField('Nome Responsável Stand', currentData.nome_responsavel_stand, 'nome_responsavel_stand')}
+                  {renderField('Sobrenome Responsável Stand', currentData.sobrenome_responsavel_stand, 'sobrenome_responsavel_stand')}
+                  {renderField('Email Responsável Stand', currentData.email_responsavel_stand, 'email_responsavel_stand')}
                 </div>
               </div>
             </div>
@@ -1564,109 +1267,40 @@ const AdminPreInscricaoExpositores = () => {
             {/* Stand e Pagamento */}
             <div className="bg-white rounded-lg border">
               <div className="px-4 py-3 border-b bg-gray-50 flex items-center justify-center">
-                 <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
-                   <MapPin className="w-5 h-5" />
-                   Stand e Pagamento
-                 </h3>
-               </div>
+                <h3 className="flex items-center gap-3 text-base font-bold text-[#0a2856] uppercase">
+                  <Store className="w-5 h-5" />
+                  Stand e Pagamento
+                </h3>
+              </div>
               
               <div className="p-4 space-y-4">
-                {/* Seleção de Stand */}
-                {isEditing ? (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium text-gray-700">Selecionar Stand</Label>
-                      <Select 
-                        value={currentData.numero_stand || ''}
-                        onValueChange={(value) => setEditData(prev => ({ ...prev, numero_stand: value }))}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione um stand disponível" />
-                        </SelectTrigger>
-                        <SelectContent>
-                           {/* Stand atual sempre disponível */}
-                           {selectedPreInscricao.numero_stand && (
-                             <SelectItem value={selectedPreInscricao.numero_stand}>
-                               Stand {selectedPreInscricao.numero_stand} (Atual) - {getStandInfo(selectedPreInscricao.numero_stand).categoria}
-                             </SelectItem>
-                           )}
-                           {/* Stands disponíveis */}
-                           {standsDisponiveis.filter(stand => stand.numero_stand && stand.numero_stand.trim() !== '').map((stand) => (
-                             <SelectItem key={stand.numero_stand} value={stand.numero_stand}>
-                               Stand {stand.numero_stand} - {stand.categoria} ({stand.tamanho}) - {stand.preco}
-                             </SelectItem>
-                           ))}
-                         </SelectContent>
-                      </Select>
+                {/* Informações do Stand */}
+                <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                    <Store className="w-4 h-4" />
+                    Stand Selecionado: #{currentData.numero_stand}
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
+                    <div>
+                      <span className="text-blue-600 font-medium">Categoria:</span>
+                      <p className="text-blue-800">{getStandInfo(currentData.numero_stand).categoria}</p>
                     </div>
-                    
-                    {/* Preview do stand selecionado */}
-                    {currentData.numero_stand && (
-                      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <div 
-                              className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center text-sm font-bold shadow-sm"
-                              style={{ backgroundColor: getStandInfo(currentData.numero_stand).cor }}
-                            >
-                              {currentData.numero_stand}
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-800 text-sm">{getStandInfo(currentData.numero_stand).categoria}</h4>
-                              <p className="text-xs text-gray-600">{getStandInfo(currentData.numero_stand).segmento}</p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs bg-white px-2 py-1 rounded border">
-                                  {getStandInfo(currentData.numero_stand).tamanho}
-                                </span>
-                                <span className="text-xs font-medium text-[#0a2856]">
-                                  {getStandInfo(currentData.numero_stand).preco}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-xs text-gray-500">Stand</div>
-                            <div className="text-lg font-bold text-[#0a2856]">#{currentData.numero_stand}</div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  /* Informações do Stand com Visual */
-                  <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div 
-                          className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center text-sm font-bold shadow-sm"
-                          style={{ backgroundColor: getStandInfo(selectedPreInscricao.numero_stand).cor }}
-                        >
-                          {selectedPreInscricao.numero_stand}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-800 text-sm">{getStandInfo(selectedPreInscricao.numero_stand).categoria}</h4>
-                          <p className="text-xs text-gray-600">{getStandInfo(selectedPreInscricao.numero_stand).segmento}</p>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-xs bg-white px-2 py-1 rounded border">
-                              {getStandInfo(selectedPreInscricao.numero_stand).tamanho}
-                            </span>
-                            <span className="text-xs font-medium text-[#0a2856]">
-                              {getStandInfo(selectedPreInscricao.numero_stand).preco}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500">Stand</div>
-                        <div className="text-lg font-bold text-[#0a2856]">#{selectedPreInscricao.numero_stand}</div>
-                      </div>
+                    <div>
+                      <span className="text-blue-600 font-medium">Segmento:</span>
+                      <p className="text-blue-800">{getStandInfo(currentData.numero_stand).segmento}</p>
+                    </div>
+                    <div>
+                      <span className="text-blue-600 font-medium">Tamanho:</span>
+                      <p className="text-blue-800">{getStandInfo(currentData.numero_stand).tamanho}</p>
+                    </div>
+                    <div>
+                      <span className="text-blue-600 font-medium">Valor:</span>
+                      <p className="text-blue-800 font-bold">{getStandInfo(currentData.numero_stand).preco}</p>
                     </div>
                   </div>
-                )}
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {renderField('Deseja Patrocínio?', getTextoLegivel.desejaPatrocinio(currentData.deseja_patrocinio || ''), 'deseja_patrocinio', 'select', ['sim', 'nao'])}
-                  {currentData.deseja_patrocinio === 'sim' && renderField('Categoria Patrocínio', getTextoLegivel.categoriaPatrocinio(currentData.categoria_patrocinio || ''), 'categoria_patrocinio', 'select', ['bronze', 'prata', 'ouro', 'telao_led'])}
                   {renderField('Condição de Pagamento', getTextoLegivel.condicaoPagamento(currentData.condicao_pagamento || ''), 'condicao_pagamento', 'select', ['a_vista_desconto', 'sinal_3_parcelas'])}
                   {renderField('Forma de Pagamento', getTextoLegivel.formaPagamento(currentData.forma_pagamento || ''), 'forma_pagamento', 'select', ['pix', 'boleto'])}
                 </div>
@@ -1722,40 +1356,40 @@ const AdminPreInscricaoExpositores = () => {
 
   const metrics = [
     {
-      title: 'Total',
-      value: stats.total,
-      icon: <Users className="w-8 h-8" />,
-      color: 'blue' as const
+      titulo: 'Total',
+      valor: stats.total,
+      icone: Users,
+      cor: 'azul' as const
     },
     {
-      title: 'Pendentes',
-      value: stats.pendentes,
-      icon: <Clock className="w-8 h-8" />,
-      color: 'yellow' as const
+      titulo: 'Pendentes',
+      valor: stats.pendentes,
+      icone: Clock,
+      cor: 'laranja' as const
     },
     {
-      title: 'Aprovadas',
-      value: stats.aprovadas,
-      icon: <CheckCircle className="w-8 h-8" />,
-      color: 'green' as const
+      titulo: 'Aprovadas',
+      valor: stats.aprovadas,
+      icone: CheckCircle,
+      cor: 'verde' as const
     },
     {
-      title: 'Rejeitadas',
-      value: stats.rejeitadas,
-      icon: <XCircle className="w-8 h-8" />,
-      color: 'gray' as const
+      titulo: 'Rejeitadas',
+      valor: stats.rejeitadas,
+      icone: XCircle,
+      cor: 'cinza' as const
     },
     {
-      title: 'Pessoa Física',
-      value: stats.fisicas,
-      icon: <User className="w-8 h-8" />,
-      color: 'purple' as const
+      titulo: 'Pessoa Física',
+      valor: stats.fisicas,
+      icone: User,
+      cor: 'roxo' as const
     },
     {
-      title: 'Pessoa Jurídica',
-      value: stats.juridicas,
-      icon: <Building2 className="w-8 h-8" />,
-      color: 'orange' as const
+      titulo: 'Pessoa Jurídica',
+      valor: stats.juridicas,
+      icone: Building2,
+      cor: 'laranja' as const
     }
   ];
 
@@ -1763,163 +1397,289 @@ const AdminPreInscricaoExpositores = () => {
     {
       label: 'Exportar Excel',
       onClick: exportToExcel,
-      icon: <Download className="w-4 h-4" />,
-      variant: 'secondary' as const
+      icone: Download,
+      variante: 'secundario' as const
     }
   ];
 
   return (
-    <div className="container mx-auto p-6 admin-page">
-      <PageHeader
-        title="Pré-Inscrições de Expositores"
-        description="Gerencie as pré-inscrições recebidas"
-        icon={Users}
-        actions={[
-          {
-            label: "Atualizar",
-            icon: RefreshCw,
-            onClick: loadPreInscricoes,
-            disabled: loading,
-            variant: "outline"
-          },
-          {
-            label: "Exportar",
-            icon: Download,
-            onClick: exportToExcel,
-            variant: "outline"
-          }
-        ]}
-      />
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] rounded-xl shadow-lg">
+              <Users className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Expositores <span className="text-[#ff3c00]">CONSTRUIND 2025</span>
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Gerencie todas as pré-inscrições recebidas
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={exportToExcel}
+              variant="outline"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Exportar Excel
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Estatísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Total</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-gray-500 to-slate-500 rounded-xl">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Pessoa Física</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.fisicas}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-purple-500 to-violet-500 rounded-xl">
+                <User className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Pessoa Jurídica</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.juridicas}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-500 rounded-xl">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium mb-2">Pendentes</p>
+                <p className="text-3xl font-bold text-gray-900">{stats.pendentes}</p>
+              </div>
+              <div className="p-3 bg-gradient-to-r from-yellow-500 to-amber-500 rounded-xl">
+                <Clock className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+        {/* Controles e Filtros */}
+        <Card className="bg-white border-0 shadow-lg">
+          <CardContent className="p-6">
+            <div className="flex flex-col lg:flex-row gap-6">
+              <div className="flex-1">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Input
+                    placeholder="Buscar por nome, CNPJ, CPF ou stand..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-gray-300 focus:border-[#ff3c00] focus:ring-[#ff3c00]"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-3">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-40 border-gray-300">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos Status</SelectItem>
+                    <SelectItem value="pendente">Pendente</SelectItem>
+                    <SelectItem value="aprovado">Aprovado</SelectItem>
+                    <SelectItem value="rejeitado">Rejeitado</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={tipoFilter} onValueChange={setTipoFilter}>
+                  <SelectTrigger className="w-40 border-gray-300">
+                    <SelectValue placeholder="Tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="todos">Todos Tipos</SelectItem>
+                    <SelectItem value="fisica">Pessoa Física</SelectItem>
+                    <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  onClick={exportToExcel}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar
+                </Button>
+
+                <Button
+                  onClick={loadPreInscricoes}
+                  disabled={loading}
+                  variant="outline"
+                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Atualizar
+                </Button>
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant={viewMode === 'cards' ? 'default' : 'outline'}
+                    onClick={() => setViewMode('cards')}
+                    size="sm"
+                    className={viewMode === 'cards' 
+                      ? "bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] text-white" 
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }
+                  >
+                    <Grid3X3 className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'lista' ? 'default' : 'outline'}
+                    onClick={() => setViewMode('lista')}
+                    size="sm"
+                    className={viewMode === 'lista' 
+                      ? "bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] text-white" 
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }
+                  >
+                    <List className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === 'tabela' ? 'default' : 'outline'}
+                    onClick={() => setViewMode('tabela')}
+                    size="sm"
+                    className={viewMode === 'tabela' 
+                      ? "bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] text-white" 
+                      : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                    }
+                  >
+                    <Table2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       <div className="space-y-6">
         {/* Estatísticas por Categoria de Stand */}
         {preInscricoes.length > 0 && (
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h3 className="text-sm font-medium text-gray-700 mb-1.5">Distribuição por Categoria de Stand</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#B6FF72' }}></div>
-                <div className="text-xs">
-                  <div className="font-medium">Academias</div>
-                  <div className="text-gray-600">{stats.academias} stands</div>
+          <Card className="bg-white border-0 shadow-lg mb-8">
+            <CardContent className="p-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-[#ff3c00]" />
+                Distribuição por Categoria de Stand
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-7 gap-3">
+                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#0097b2' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">2x2</div>
+                    <div className="text-gray-600">{stats.stands2x2} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#004aad' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">3x3 Básico</div>
+                    <div className="text-gray-600">{stats.stands3x3Basico} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#6cace3' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">3x3 Acabamentos</div>
+                    <div className="text-gray-600">{stats.stands3x3Acabamentos} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#55a04d' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">5x5</div>
+                    <div className="text-gray-600">{stats.stands5x5} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#ffb600' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">8x8</div>
+                    <div className="text-gray-600">{stats.stands8x8} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#ce1c21' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">10x10</div>
+                    <div className="text-gray-600">{stats.stands10x10} stands</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: '#ff5500' }}></div>
+                  <div className="text-xs">
+                    <div className="font-medium text-gray-900">9x10</div>
+                    <div className="text-gray-600">{stats.stands9x10} stands</div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FF776C' }}></div>
-                <div className="text-xs">
-                  <div className="font-medium">Bem-Estar</div>
-                  <div className="text-gray-600">{stats.bemEstar} stands</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#A6CFFF' }}></div>
-                <div className="text-xs">
-                  <div className="font-medium">Artigos</div>
-                  <div className="text-gray-600">{stats.artigos} stands</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#38FFB8' }}></div>
-                <div className="text-xs">
-                  <div className="font-medium">Saúde</div>
-                  <div className="text-gray-600">{stats.saude} stands</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FFD700' }}></div>
-                <div className="text-xs">
-                  <div className="font-medium">Área Livre</div>
-                  <div className="text-gray-600">{stats.areaLivre} stands</div>
-                </div>
-              </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         )}
 
-        {/* Filtros e Controles */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
-          <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-            <div className="flex flex-col md:flex-row gap-4 flex-1">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  placeholder="Buscar por nome, CNPJ, CPF, stand..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos Status</SelectItem>
-                  <SelectItem value="pendente">Pendente</SelectItem>
-                  <SelectItem value="aprovado">Aprovado</SelectItem>
-                  <SelectItem value="rejeitado">Rejeitado</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={tipoFilter} onValueChange={setTipoFilter}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="todos">Todos Tipos</SelectItem>
-                  <SelectItem value="fisica">Pessoa Física</SelectItem>
-                  <SelectItem value="juridica">Pessoa Jurídica</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                {filteredPreInscricoes.length === preInscricoes.length 
-                  ? `${filteredPreInscricoes.length} registros`
-                  : `${filteredPreInscricoes.length} de ${preInscricoes.length} registros`
-                }
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={viewMode === 'cards' ? 'default' : 'outline'}
-                  onClick={() => setViewMode('cards')}
-                  size="sm"
-                >
-                  <Grid3X3 className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'lista' ? 'default' : 'outline'}
-                  onClick={() => setViewMode('lista')}
-                  size="sm"
-                >
-                  <List className="w-4 h-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'tabela' ? 'default' : 'outline'}
-                  onClick={() => setViewMode('tabela')}
-                  size="sm"
-                >
-                  <Table2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
+        {/* Contador de Resultados */}
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between mb-6">
+          <div className="text-sm text-gray-600">
+            {filteredPreInscricoes.length === preInscricoes.length 
+              ? `${filteredPreInscricoes.length} registros`
+              : `${filteredPreInscricoes.length} de ${preInscricoes.length} registros`
+            }
           </div>
         </div>
 
         {/* Resultados */}
         {filteredPreInscricoes.length === 0 ? (
-          <Card className="text-center p-12">
-            <div className="text-gray-400 mb-4">
-              <Users className="w-16 h-16 mx-auto" />
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-1">
-              Nenhuma pré-inscrição encontrada
-            </h3>
-            <p className="text-gray-600">
-              {searchTerm || statusFilter !== 'todos' || tipoFilter !== 'todos' 
-                ? 'Tente ajustar os filtros de busca.'
-                : 'Ainda não há pré-inscrições cadastradas.'
-              }
-            </p>
+          <Card className="bg-white border-0 shadow-lg text-center p-12">
+            <CardContent>
+              <div className="text-gray-400 mb-4">
+                <Users className="w-16 h-16 mx-auto" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-1">
+                Nenhuma pré-inscrição encontrada
+              </h3>
+              <p className="text-gray-600">
+                {searchTerm || statusFilter !== 'todos' || tipoFilter !== 'todos' 
+                  ? 'Tente ajustar os filtros de busca.'
+                  : 'Ainda não há pré-inscrições cadastradas.'
+                }
+              </p>
+            </CardContent>
           </Card>
         ) : (
           <>
@@ -1932,92 +1692,31 @@ const AdminPreInscricaoExpositores = () => {
         {/* Modal de Detalhes */}
         <DetailModal />
 
-        {/* Modal de Seleção de Contrato */}
-        
-
-        {/* Modal de Confirmação para Adicionar à Entidades */}
-        <AlertDialog open={showEntidadeModal} onOpenChange={setShowEntidadeModal}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Adicionar à Entidades</AlertDialogTitle>
-              <AlertDialogDescription>
-                Deseja adicionar os dados desta pré-inscrição aprovada à tabela de entidades?
-                <br /><br />
-                <strong>Dados que serão adicionados:</strong>
-                <br />
-                {preInscricaoParaEntidade && (
-                  <div className="mt-2 p-3 bg-gray-50 rounded text-sm space-y-1">
-                    <div><strong>Nome:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' 
-                      ? `${preInscricaoParaEntidade.nome_pf} ${preInscricaoParaEntidade.sobrenome_pf}`
-                      : preInscricaoParaEntidade.razao_social || preInscricaoParaEntidade.nome_social
-                    }</div>
-                    <div><strong>Tipo:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' ? 'Pessoa Física' : 'Pessoa Jurídica'}</div>
-                    <div><strong>Stand:</strong> {preInscricaoParaEntidade.numero_stand}</div>
-                    <div><strong>Categoria:</strong> Expositores</div>
-                    <div><strong>Documento:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' ? preInscricaoParaEntidade.cpf : preInscricaoParaEntidade.cnpj}</div>
-                    <div><strong>Email Principal:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' ? preInscricaoParaEntidade.email_pf : preInscricaoParaEntidade.email_empresa}</div>
-                    <div><strong>Telefone:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' ? preInscricaoParaEntidade.telefone_pf : preInscricaoParaEntidade.telefone_empresa}</div>
-                    <div><strong>Cidade:</strong> {preInscricaoParaEntidade.tipo_pessoa === 'fisica' ? preInscricaoParaEntidade.cidade_pf : preInscricaoParaEntidade.cidade}</div>
-                    <div><strong>Observações:</strong> {preInscricaoParaEntidade.observacoes || 'Nenhuma observação'}</div>
-                  </div>
-                )}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel onClick={() => {
-                setShowEntidadeModal(false);
-                setPreInscricaoParaEntidade(null);
-              }}>Não, obrigado</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={async () => {
-                  if (preInscricaoParaEntidade) {
-                    const sucesso = await adicionarAEntidades(preInscricaoParaEntidade);
-                    if (sucesso) {
-                      setShowEntidadeModal(false);
-                      setPreInscricaoParaEntidade(null);
-                    }
-                  }
-                }}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Sim, adicionar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-
         {/* Dialog de Confirmação de Exclusão */}
         <AlertDialog open={!!deleteConfirm} onOpenChange={() => setDeleteConfirm(null)}>
-          <AlertDialogContent>
+          <AlertDialogContent className="bg-white border-gray-200">
             <AlertDialogHeader>
-              <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-              <AlertDialogDescription>
+              <AlertDialogTitle className="text-gray-900">Confirmar Exclusão</AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600">
                 Esta ação não pode ser desfeita. A pré-inscrição será permanentemente removida do sistema.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel className="bg-gray-100 text-gray-900 border-gray-300 hover:bg-gray-200">
+                Cancelar
+              </AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => deleteConfirm && deletePreInscricao(deleteConfirm)}
-                className="bg-red-600 hover:bg-red-700"
+                className="bg-red-600 hover:bg-red-700 text-white"
               >
                 Excluir
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
-        {/* Modal de Seleção de Modelo ZapSign */}
-        <ModalSelecaoModeloZapSign
-          isOpen={showZapSignModal}
-          onClose={handleCloseZapSignModal}
-          onSelectTemplate={handleSelectTemplate}
-          preInscricaoId={preInscricaoParaContrato?.id || ''}
-          preInscricao={preInscricaoParaContrato!}
-        />
       </div>
     </div>
   );
-};
+}
 
 export default AdminPreInscricaoExpositores;

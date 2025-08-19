@@ -1,70 +1,74 @@
-// Tipos para o sistema de Pré-inscrição de Expositores
+// Tipos relacionados à pré-inscrição de expositores
 
 export interface PreInscricaoExpositor {
   id: string;
-  
-  // Tipo de Pessoa
-  tipo_pessoa: 'fisica' | 'juridica';
-  
-  // Pessoa Física
-  nome_pf?: string;
-  sobrenome_pf?: string;
-  cpf?: string;
-  email_pf?: string;
-  telefone_pf?: string;
-  cep_pf?: string;
-  logradouro_pf?: string;
-  numero_pf?: string;
-  complemento_pf?: string;
-  bairro_pf?: string;
-  cidade_pf?: string;
-  estado_pf?: string;
-  
-  // Pessoa Jurídica
-  razao_social?: string;
-  nome_social?: string;
-  cnpj?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: string;
-  complemento?: string;
-  bairro?: string;
-  cidade?: string;
-  estado?: string;
-  telefone_empresa?: string;
-  email_empresa?: string;
-
-  
-  // Responsável Legal
+  nome_empresa: string;
+  cnpj?: string | null;
+  nome_fantasia?: string | null;
+  razao_social?: string | null;
+  inscricao_estadual?: string | null;
+  endereco_empresa?: string | null;
+  numero_empresa?: string | null;
+  complemento_empresa?: string | null;
+  bairro_empresa?: string | null;
+  cidade_empresa?: string | null;
+  estado_empresa?: string | null;
+  cep_empresa?: string | null;
+  telefone_empresa?: string | null;
+  email_empresa: string;
   nome_responsavel: string;
-  sobrenome_responsavel: string;
-  email_responsavel?: string;
-  contato_responsavel: string;
-  is_whatsapp: 'sim' | 'nao';
-  
-  // Responsável pelo Stand
-  nome_responsavel_stand: string;
-  sobrenome_responsavel_stand: string;
-  email_responsavel_stand: string;
-  
-  // Serviços
-  numero_stand: string;
-  deseja_patrocinio: 'sim' | 'nao';
-  categoria_patrocinio?: string;
-  condicao_pagamento: string;
-  forma_pagamento: string;
-  
-  // Informações Adicionais
-  observacoes?: string;
-  
-  // Dados de controle
-  status: 'pendente' | 'aprovado' | 'rejeitado';
-  ip_address?: string;
+  sobrenome_responsavel?: string | null;
+  email_responsavel?: string | null;
+  contato_responsavel?: string | null;
+  isWhatsApp?: boolean;
+  nome_responsavel_stand?: string | null;
+  sobrenome_responsavel_stand?: string | null;
+  email_responsavel_stand?: string | null;
+  telefone_responsavel_stand?: string | null;
+  area_stand_id?: string | null;
+  servicos_necessarios?: string[] | null;
+  informacoes_adicionais?: string | null;
+  status: 'pendente' | 'aprovado' | 'rejeitado' | 'contrato_enviado' | 'contrato_assinado' | 'stand_reservado';
+  observacoes_admin?: string | null;
   created_at: string;
   updated_at: string;
+  // Campos para patrocínio
+  interesse_patrocinio?: boolean;
+  tipo_patrocinio?: 'master' | 'diamante' | 'ouro' | 'telao_led' | null;
+  // Campos para pagamento
+  condicao_pagamento?: string | null;
+  forma_pagamento?: 'pix' | 'boleto' | null;
+  valor_total?: number | null;
+  // Relacionamentos (se necessário, adicione IDs de outras tabelas)
+  // categoria_id: string; // Exemplo: se houver uma tabela de categorias de expositores
 }
 
-export type StatusPreInscricao = 'pendente' | 'aprovado' | 'rejeitado';
-export type TipoPessoa = 'fisica' | 'juridica';
-export type DesejaPatrocinio = 'sim' | 'nao';
-export type IsWhatsApp = 'sim' | 'nao';
+export type FormFieldType = 'text' | 'number' | 'email' | 'tel' | 'textarea' | 'checkbox' | 'radio' | 'select' | 'date' | 'cnpj' | 'cep' | 'currency';
+
+export interface FormField {
+  id: string;
+  name: string;
+  label: string;
+  type: FormFieldType;
+  placeholder?: string;
+  required?: boolean;
+  defaultValue?: string | number | boolean;
+  options?: { label: string; value: string | number | boolean }[]; // For select, radio, checkbox
+  // Adicionar validações ou outras propriedades específicas de campo
+}
+
+export interface FormSection {
+  id: string;
+  title: string;
+  description?: string;
+  fields: FormField[];
+}
+
+export interface FormConfig {
+  id: string;
+  name: string;
+  description?: string;
+  sections: FormSection[];
+  created_at?: string;
+  updated_at?: string;
+}

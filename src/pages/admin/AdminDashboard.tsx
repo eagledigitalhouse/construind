@@ -1,196 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import PageHeader from '@/components/layout/PageHeader';
-import {
-  LayoutDashboard,
-  Building2,
-  Users,
-  RefreshCw,
-  Mail,
-  Store,
-  ClipboardList,
-  FileText,
-  Newspaper,
-  ChevronRight,
-  ChevronDown,
-  Globe
+import React, { useState } from 'react';
+import { 
+  LayoutDashboard, 
+  Store, 
+  Users, 
+  CreditCard,
+  Menu,
+  X,
+  LogOut
 } from 'lucide-react';
-// Removido SidebarProvider e useSidebar - não necessários com a nova sidebar
-import FespinSidebar from '@/components/admin/FespinSidebar';
-import AdminHeader from '@/components/admin/AdminHeader';
-
-import FespinDashboard from '@/components/admin/FespinDashboard';
-import AdminPatrocinadores from './AdminPatrocinadores';
-import AdminExpositores from './AdminExpositores';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import ConstruindDashboard from './ConstruindDashboard';
 import AdminStands from './AdminStands';
 import AdminPreInscricaoExpositores from './AdminPreInscricaoExpositores';
-import AdminNewsletter from './AdminNewsletter';
-import AdminContratos from './AdminContratos';
+import CondicoesPagamentoEditor from '@/components/admin/CondicoesPagamentoEditor';
 
+type PaginaAtual = 'dashboard' | 'stands' | 'pre-inscricoes' | 'payment-conditions';
 
-import AdminEntidades from './AdminEntidades';
-import AdminAgenda from './AdminAgenda';
-import Messages from '../Messages';
-import ErrorBoundary from '@/components/ErrorBoundary';
+const AdminDashboard: React.FC = () => {
+  const [paginaAtual, setPaginaAtual] = useState<PaginaAtual>('dashboard');
+  const [sidebarAberta, setSidebarAberta] = useState(true);
+  const { signOut } = useAuth();
 
-import { useNotificacoes } from '@/hooks/useNotificacoes';
-import NotificacoesPainel from '@/components/admin/NotificacoesPainel';
-
-const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [activeSection, setActiveSection] = useState('dashboard');
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [expandedSections, setExpandedSections] = useState({
-    'gestao-website': false,
-    'gestao': false,
-    'formularios': false,
-    'financeiro': false
-  });
-  const {
-    notificacoes,
-    contadorNaoLidas,
-    marcarComoLida,
-    marcarTodasComoLidas,
-    removerNotificacao
-  } = useNotificacoes();
-  const [atualizandoDados, setAtualizandoDados] = useState(false);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate('/admin/login');
-        return;
-      }
-      setUser(user);
-    };
-
-    getUser();
-  }, [navigate]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    await signOut();
   };
 
-  const getUserInitials = (email) => {
-    return email.split('@')[0].substring(0, 2).toUpperCase();
-  };
+  const itensMenu = [
+    {
+      id: 'dashboard' as PaginaAtual,
+      label: 'Dashboard',
+      icone: <LayoutDashboard className="w-5 h-5" />
+    },
+    {
+      id: 'stands' as PaginaAtual,
+      label: 'Gestão de Stands',
+      icone: <Store className="w-5 h-5" />
+    },
+    {
+      id: 'pre-inscricoes' as PaginaAtual,
+      label: 'Pré-Inscrições',
+      icone: <Users className="w-5 h-5" />
+    },
+    {
+      id: 'payment-conditions' as PaginaAtual,
+      label: 'Condições de Pagamento',
+      icone: <CreditCard className="w-5 h-5" />
+    }
+  ];
 
-  const getUserDisplayName = (email) => {
-    return email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1);
-  };
-
-  const atualizarDados = async () => {
-    setAtualizandoDados(true);
-    // Simular atualização
-    setTimeout(() => {
-      setAtualizandoDados(false);
-    }, 2000);
-  };
-
-  const toggleSection = (sectionKey) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [sectionKey]: !prev[sectionKey]
-    }));
-  };
-
-  // Função para fechar todas as seções quando a sidebar retrair
-  const closeAllSections = () => {
-    setExpandedSections({
-      'gestao-website': false,
-      'gestao': false,
-      'formularios': false,
-      'financeiro': false
-    });
-  };
-
-  // Função para renderizar o conteúdo baseado na seção ativa
-  const renderContent = () => {
-    switch (activeSection) {
+  const renderizarPagina = () => {
+    switch (paginaAtual) {
       case 'dashboard':
-        return <DashboardContent />;
-      case 'pagina-inicial':
-        window.location.href = '/';
-        return <DashboardContent />;
-      case 'patrocinadores':
-        return <AdminPatrocinadores />;
-      case 'expositores':
-        return <AdminExpositores />;
-      case 'entidades':
-        return <AdminEntidades />;
+        return <ConstruindDashboard />;
       case 'stands':
         return <AdminStands />;
       case 'pre-inscricoes':
         return <AdminPreInscricaoExpositores />;
-      case 'contratos':
-        return <AdminContratos />;
-      case 'newsletter':
-        return <AdminNewsletter />;
-      case 'messages':
-        return <Messages />;
-      case 'agenda':
-        return <AdminAgenda />;
+      case 'payment-conditions':
+        return <CondicoesPagamentoEditor />;
       default:
-        return <DashboardContent />;
+        return <ConstruindDashboard />;
     }
   };
 
-  // Componente do Dashboard
-  const DashboardContent = () => {
-    return (
-      <div className="space-y-6">
-        {/* Header */}
-        <PageHeader
-          title="Painel Administrativo"
-          description="Gerencie todos os aspectos da FESPIN 2025"
-          icon={LayoutDashboard}
-          actions={[
-            {
-              label: "Atualizar",
-              icon: RefreshCw,
-              variant: "outline",
-              // Remove size prop as it's not defined in ActionButton type
-              onClick: atualizarDados,
-              disabled: atualizandoDados,
-              customClassName: `${atualizandoDados ? 'animate-spin' : ''}`
-            }
-          ]}
-        />
-
-        {/* Dashboard Principal */}
-        <FespinDashboard />
-      </div>
-    );
-  };
-
-  // MainContent removido - integrado diretamente no return principal
-
   return (
-    <div className="min-h-screen bg-gray-50 admin-page flex">
-      {/* Nova Sidebar da Fespin */}
-      <FespinSidebar
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          onSignOut={handleSignOut}
-          isCollapsed={sidebarCollapsed}
-          setIsCollapsed={setSidebarCollapsed}
-        />
-      
-      {/* Conteúdo Principal */}
-      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
-        {/* Header */}
-        <AdminHeader className="" sticky={true} />
-        
-        {/* Conteúdo */}
-        <div className="flex-1 p-6">
-          {renderContent()}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex">
+      {/* Sidebar */}
+      <div className={`${sidebarAberta ? 'w-64' : 'w-16'} transition-all duration-300 bg-white shadow-xl border-r border-gray-200 flex flex-col`}>
+        {/* Header da Sidebar */}
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex items-center justify-between">
+            {sidebarAberta && (
+              <h2 className="text-lg font-bold text-gray-900">Admin CONSTRUIND</h2>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setSidebarAberta(!sidebarAberta)}
+              className="p-2"
+            >
+              {sidebarAberta ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+            </Button>
+          </div>
         </div>
+
+        {/* Menu Items */}
+        <nav className="flex-1 p-4 space-y-2">
+          {itensMenu.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setPaginaAtual(item.id)}
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left ${
+                paginaAtual === item.id
+                  ? 'bg-gradient-to-r from-[#ff3c00] to-[#ff6b35] text-white shadow-lg'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              {item.icone}
+              {sidebarAberta && (
+                <span className="font-medium">{item.label}</span>
+              )}
+            </button>
+          ))}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="p-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 text-left text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="w-5 h-5" />
+            {sidebarAberta && (
+              <span className="font-medium">Sair</span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Conteúdo Principal */}
+      <div className="flex-1 overflow-auto">
+        {renderizarPagina()}
       </div>
     </div>
   );
