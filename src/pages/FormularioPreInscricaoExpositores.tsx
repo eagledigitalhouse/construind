@@ -960,7 +960,7 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
         standSelecionado: dadosStand,
         // Dados de pagamento
         condicaoPagamento: condicaoPagamentoSelecionada?.label || formData.condicaoPagamento,
-        formaPagamento: formData.formaPagamento === 'pix' ? 'PIX' : 'Boleto Bancário',
+        formaPagamento: formData.formaPagamento === 'pix' ? 'PIX' : 'Transferência Bancária',
         // Valor total (stand + patrocínio, se aplicável)
         valorTotal: dadosStand?.valor || 0
       };
@@ -2167,11 +2167,13 @@ const FormularioPreInscricaoExpositores: React.FC = () => {
                       <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg border-2 border-gray-600 hover:bg-gray-700 transition-colors">
                         <RadioGroupItem value="pix" id="pagamento-pix" className="text-[#ff3c00]" />
                         <Label htmlFor="pagamento-pix" className="cursor-pointer text-white font-medium text-lg">PIX</Label>
-                            </div>
+                      </div>
+
                       <div className="flex items-center space-x-3 p-4 bg-gray-800 rounded-lg border-2 border-gray-600 hover:bg-gray-700 transition-colors">
-                        <RadioGroupItem value="boleto" id="pagamento-boleto" className="text-[#ff3c00]" />
-                        <Label htmlFor="pagamento-boleto" className="cursor-pointer text-white font-medium text-lg">BOLETO</Label>
-                            </div>
+                        <RadioGroupItem value="transferencia" id="pagamento-transferencia" className="text-[#ff3c00]" />
+                        <Label htmlFor="pagamento-transferencia" className="cursor-pointer text-white font-medium text-lg">Transferência Bancária</Label>
+                      </div>
+
                           </RadioGroup>
                         </div>
                 </CardContent>

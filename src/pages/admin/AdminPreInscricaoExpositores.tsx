@@ -440,7 +440,8 @@ const AdminPreInscricaoExpositores = () => {
     formaPagamento: (valor: string) => {
       const mapeamento = {
         'pix': 'PIX',
-        'boleto': 'Boleto'
+         'transferencia': 'Transferência Bancária'
+        
       };
       return mapeamento[valor as keyof typeof mapeamento] || valor;
     },
@@ -1287,7 +1288,7 @@ const AdminPreInscricaoExpositores = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {renderField('Condição de Pagamento', getTextoLegivel.condicaoPagamento(currentData.condicao_pagamento || ''), 'condicao_pagamento', 'select', ['a_vista_desconto', 'sinal_3_parcelas'])}
-                  {renderField('Forma de Pagamento', getTextoLegivel.formaPagamento(currentData.forma_pagamento || ''), 'forma_pagamento', 'select', ['pix', 'boleto'])}
+                  {renderField('Forma de Pagamento', getTextoLegivel.formaPagamento(currentData.forma_pagamento || ''), 'forma_pagamento', 'select', ['pix', 'transferencia'])}
                 </div>
               </div>
             </div>
